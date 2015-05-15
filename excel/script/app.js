@@ -6,10 +6,10 @@ $(document).ready(function() {
 
 function initialize() {
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-				"/script/EditorIntelliSense/Excel.txt",
-				"/script/EditorIntelliSense/Office.Runtime.txt",
-				"/script/EditorIntelliSense/Helpers.txt",
-				"/script/EditorIntelliSense/jquery.txt",
+				"script/EditorIntelliSense/Excel.txt",
+				"script/EditorIntelliSense/Office.Runtime.txt",
+				"script/EditorIntelliSense/Helpers.txt",
+				"script/EditorIntelliSense/jquery.txt",
 			]);
 }
 
