@@ -1,17 +1,17 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 
-//$(document).ready(function() {
-//	initialize();
-//});
-//
-//function initialize() {
-//	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-//				"/script/EditorIntelliSense/Excel.txt",
-//				"/script/EditorIntelliSense/Office.Runtime.txt",
-//				"/script/EditorIntelliSense/Helpers.txt",
-//				"/script/EditorIntelliSense/jquery.txt",
-//			]);
-//}
+$(document).ready(function() {
+	initialize();
+});
+
+function initialize() {
+	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
+				"/script/EditorIntelliSense/Excel.txt",
+				"/script/EditorIntelliSense/Office.Runtime.txt",
+				"/script/EditorIntelliSense/Helpers.txt",
+				"/script/EditorIntelliSense/jquery.txt",
+			]);
+}
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
