@@ -1,18 +1,16 @@
-<div style="height:100%" class="container">
-
-	<select ng-model="selectedGroup" ng-options="group.name for group in groups">
-		<option value="">-- choose a group --</option>
-	</select>
-
-	<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:selectedGroup">
-		<option value="">-- choose a sample --</option>
-	</select>
-
-	<p><button>Run!</button> <span>{{selectedSample.description}}</span></p>
-
-	<div style="height: 100%" id="TxtRichApiScript">
-
+<div class="container" style="display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 10px;">
+	<div>
+		<select ng-model="selectedGroup" ng-options="group.name for group in groups">
+			<option value="">-- choose a group --</option>
+		</select>
+		<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:selectedGroup">
+			<option value="">-- choose a sample --</option>
+		</select>
 	</div>
-
-
+	<div>
+		<p><button style="display:none;">Run!</button> <span>{{selectedSample.description}}</span></p>
+	</div>
+	<div style="flex-grow: 1" id="TxtRichApiScript">
+	
+	</div>
 </div>
