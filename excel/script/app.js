@@ -28,10 +28,10 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	$scope.samples = [{ name: "Loading..." }];
 	
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-			"/foo/script/EditorIntelliSense/Excel.txt",
-			"/foo/script/EditorIntelliSense/Office.Runtime.txt",
-			"/foo/script/EditorIntelliSense/Helpers.txt",
-			"/foo/script/EditorIntelliSense/jquery.txt",
+			"/excel/script/EditorIntelliSense/Excel.txt",
+			"/excel/script/EditorIntelliSense/Office.Runtime.txt",
+			"/excel/script/EditorIntelliSense/Helpers.txt",
+			"/excel/script/EditorIntelliSense/jquery.txt",
 		]);
 	
 	excelSamplesFactory.getSamples().then(function (response) {
