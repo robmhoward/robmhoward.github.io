@@ -42,7 +42,8 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	$scope.loadSampleCode = function() {
 		console.log("loadSampleCode called");
 		excelSamplesFactory.getSampleCode($scope.selectedSample.filename).then(function (response) {
-			$scope.selectedSample.code = response.data;
+			$scope.selectedSample.code = response.data;			
+			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
 		});
 	};
 
