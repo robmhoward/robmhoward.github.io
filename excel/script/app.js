@@ -1,18 +1,5 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 
-$(document).ready(function() {
-	initialize();
-});
-
-function initialize() {
-	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-				"script/EditorIntelliSense/Excel.txt",
-				"script/EditorIntelliSense/Office.Runtime.txt",
-				"script/EditorIntelliSense/Helpers.txt",
-				"script/EditorIntelliSense/jquery.txt",
-			]);
-}
-
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
 		.when('/samples',
@@ -39,6 +26,13 @@ excelSamplesApp.factory("excelSamplesFactory", ['$http', function ($http) {
 
 excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFactory) {
 	$scope.samples = [{ name: "Loading..." }];
+	
+	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
+			"script/EditorIntelliSense/Excel.txt",
+			"script/EditorIntelliSense/Office.Runtime.txt",
+			"script/EditorIntelliSense/Helpers.txt",
+			"script/EditorIntelliSense/jquery.txt",
+		]);
 	
 	excelSamplesFactory.getSamples().then(function (response) {
 		$scope.samples = response.data.values;
