@@ -1,0 +1,18 @@
+<div class="container">
+
+	<select ng-model="selectedGroup" ng-options="group.name for group in groups">
+		<option value="">-- choose a group --</option>
+	</select>
+
+	<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:selectedGroup">
+		<option value="">-- choose a sample --</option>
+	</select>
+
+	<p>{{selectedSample.description}}</p>
+
+	<p>
+	<textarea style="width:300px; height:200px">{{selectedSample.code}}</textarea>
+	</p>
+	<button>Run!</button>
+
+</div>
