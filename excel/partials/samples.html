@@ -1,4 +1,4 @@
-<div class="container">
+<div style="height:100%" class="container">
 
 	<select ng-model="selectedGroup" ng-options="group.name for group in groups">
 		<option value="">-- choose a group --</option>
@@ -10,7 +10,9 @@
 
 	<p>{{selectedSample.description}}</p>
 
+	<p>
 	<button>Run!</button>
+	</p>
 
 	<div style="height: 100%" id="TxtRichApiScript">
 
