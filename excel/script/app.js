@@ -1,6 +1,3 @@
-/// <reference path="../../typings/jquery/jquery.d.ts"/>
-/// <reference path="../../typings/angularjs/angular.d.ts"/>
-
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 
 //$(document).ready(function() {
@@ -30,11 +27,11 @@ excelSamplesApp.factory("excelSamplesFactory", ['$http', function ($http) {
 	var factory = {};
 	
 	factory.getSamples = function() {
-		return $http.get('../samples/samples.json');
+		return $http.get('samples/samples.json');
 	};
 
 	factory.getSampleCode = function(filename) {
-		return $http.get('../samples/' + filename);
+		return $http.get('samples/' + filename);
 	};
 
 	return factory;
