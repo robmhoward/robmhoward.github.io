@@ -3,7 +3,7 @@
 		<select ng-model="selectedGroup" ng-options="group.name for group in groups">
 			<option value="">-- choose a group --</option>
 		</select>
-		<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:selectedGroup">
+		<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:{group: selectedGroup.name}">
 			<option value="">-- choose a sample --</option>
 		</select>
 	</div>

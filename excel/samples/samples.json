@@ -14,7 +14,7 @@
 		{ "done": true, "filename": "createNewChart.js", "name": "Create Chart", "group": "Chart", "description": "Add a new chart to the worksheet based on data in a range called 'MyChartData'"},
 		{ "done": true, "filename": "createWorksheet.js", "name": "Create Worksheet", "group": "Worksheet", "description": "Create a new worksheet with a random name"},
 		{ "done": false, "filename": "insertRange.js", "name": "Insert Range", "group": "Range", "description": "Insert a 3x3 range at A1, shifting cells to the right"},
-		{ "done": false, "filename": "formatTableRow.js", "name": "Format Table Row", "group": "Formatting", "description": "Set the background color of the 4th row of 'MyTable' to green" },
+		{ "done": false, "filename": "formatTableRow.js", "name": "Format Table Row", "group": "Table;Formatting", "description": "Set the background color of the 4th row of 'MyTable' to green" },
 		{ "done": false, "filename": "deleteTableRow.js", "name": "Delete Table Row", "group": "Table", "description": "Delete the 4th row from 'MyTable' and shifts cells up" },
 		{ "done": false, "filename": "setNumberFormat.js", "name": "Set Number Format in Range", "group": "Range", "description": "Set the number format for all cells in the range A1:C3"},
 		{ "done": false, "filename": "getWorksheetsInWorkbook.js", "name": "Get Worksheets in Workbook", "group": "Worksheet", "description": "Output the names of all of the worksheets in the current workbook"},
