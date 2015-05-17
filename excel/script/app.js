@@ -41,6 +41,7 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 
 	$scope.loadSampleCode = function() {
 		console.log("loadSampleCode called");
+		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
 		excelSamplesFactory.getSampleCode($scope.selectedSample.filename).then(function (response) {
 			$scope.selectedSample.code = response.data;			
 			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
