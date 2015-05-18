@@ -2,7 +2,7 @@ var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 var insideOffice = false;
 
 console.log = function(message) {
-	document.getElementById('console').innerHTML += message + '<br/>';
+	document.getElementById('console').innerHTML += message + '\n';
 }
 
 Office.initialize = function (reason) {
@@ -58,5 +58,10 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
 		});
 	};
+	
+	$scope.runSelectedSample = function() {
+		var script = MonacoEditorIntegration.getJavaScriptToRun();
+		eval(script);
+	}
 
 });
