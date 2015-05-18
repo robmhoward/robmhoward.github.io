@@ -1,28 +1,43 @@
 ﻿declare module Excel {
+    class Application extends OfficeExtension.ClientObject {
+        private m_calculationMode;
+        public calculationMode : string;
+        public calculate(calculationType: string): void;
+        public handleResult(value: any): void;
+    }
     class Workbook extends OfficeExtension.ClientObject {
+        private m_application;
         private m_names;
         private m_tables;
         private m_worksheets;
+        public application : Application;
         public names : NamedItemCollection;
         public tables : TableCollection;
         public worksheets : WorksheetCollection;
     }
     class Worksheet extends OfficeExtension.ClientObject {
         private m_charts;
-        private m_entireSheetRange;
+        private m_id;
         private m_name;
         public charts : ChartCollection;
-        public entireSheetRange : Range;
-        public getUsedRange(): Range;
+        public id : string;
         public name : string;
         public deleteObject(): void;
         public getCell(row: number, column: number): Range;
+        public getEntireSheetRange(): Range;
         public getRange(address: string): Range;
+        public getUsedRange(): Range;
         public handleResult(value: any): void;
     }
     class WorksheetCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        private m__items;
+        public items : Worksheet[];
+        public count : number;
         public add(name: string): Worksheet;
         public getItem(index: string): Worksheet;
+        public getItemAt(index: number): Worksheet;
+        public handleResult(value: any): void;
     }
     class Range extends OfficeExtension.ClientObject {
         private m_address;
@@ -30,8 +45,6 @@
         private m_cellCount;
         private m_columnCount;
         private m_columnIndex;
-        private m_entireColumn;
-        private m_entireRow;
         private m_format;
         private m_formulas;
         private m_formulasLocal;
@@ -40,10 +53,7 @@
         private m_rowIndex;
         private m_text;
         private m_values;
-        public entireColumn : Range;
-        public entireRow : Range;
         public format : Format;
-        public getUsedRange(): Range;
         public address : string;
         public addressLocal : string;
         public cellCount : number;
@@ -59,6 +69,9 @@
         public clear(applyTo: string): void;
         public delete(shift: string): void;
         public getCell(row: number, column: number): Range;
+        public getEntireColumn(): Range;
+        public getEntireRow(): Range;
+        public getUsedRange(): Range;
         public insert(shift: string): void;
         public handleResult(value: any): void;
     }
@@ -67,15 +80,14 @@
     }
     class NamedItem extends OfficeExtension.ClientObject {
         private m_name;
-        private m_range;
         private m_type;
         private m_value;
         private m_visible;
-        public range : Range;
         public name : string;
         public type : string;
         public value : any;
         public visible : boolean;
+        public getRange(): Range;
         public handleResult(value: any): void;
     }
     class TableCollection extends OfficeExtension.ClientObject {
@@ -98,16 +110,16 @@
         private m_tableStyle;
         public tableColumns : TableColumnCollection;
         public tableRows : TableRowCollection;
-        public getDataBodyRange(): Range;
-        public getHeaderRowRange(): Range;
-        public getRange(): Range;
-        public getTotalRowRange(): Range;
         public id : number;
         public name : string;
         public showHeaders : boolean;
         public showTotals : boolean;
         public tableStyle : string;
         public deleteObject(): void;
+        public getDataBodyRange(): Range;
+        public getHeaderRowRange(): Range;
+        public getRange(): Range;
+        public getTotalRowRange(): Range;
         public handleResult(value: any): void;
     }
     class TableColumnCollection extends OfficeExtension.ClientObject {
@@ -125,15 +137,15 @@
         private m_index;
         private m_name;
         private m_values;
-        public getDataBodyRange(): Range;
-        public getHeaderRowRange(): Range;
-        public getRange(): Range;
-        public getTotalRowRange(): Range;
         public id : number;
         public index : number;
         public name : string;
         public values : any[][];
         public deleteObject(): void;
+        public getDataBodyRange(): Range;
+        public getHeaderRowRange(): Range;
+        public getRange(): Range;
+        public getTotalRowRange(): Range;
         public handleResult(value: any): void;
     }
     class TableRowCollection extends OfficeExtension.ClientObject {
@@ -148,10 +160,10 @@
     class TableRow extends OfficeExtension.ClientObject {
         private m_index;
         private m_values;
-        public getRange(): Range;
         public index : number;
         public values : any[][];
         public deleteObject(): void;
+        public getRange(): Range;
         public handleResult(value: any): void;
     }
     class Format extends OfficeExtension.ClientObject {
@@ -218,6 +230,7 @@
         private m_dataLabels;
         private m_format;
         private m_height;
+        private m_id;
         private m_left;
         private m_legend;
         private m_name;
@@ -230,6 +243,7 @@
         public title : ChartTitle;
         public colorScheme : number;
         public height : number;
+        public id : string;
         public left : number;
         public name : string;
         public top : number;
@@ -316,6 +330,16 @@
         static insideHorizontal: string;
         static diagonalDown: string;
         static diagonalUp: string;
+    }
+    class CalculationMode {
+        static automatic: string;
+        static automaticExceptTables: string;
+        static manual: string;
+    }
+    class CalculationType {
+        static recalculate: string;
+        static full: string;
+        static fullRebuild: string;
     }
     class ClearApplyTo {
         static all: string;

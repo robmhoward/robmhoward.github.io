@@ -94,6 +94,7 @@ declare module OfficeExtension {
         static id: string;
         static index: string;
         static items: string;
+        static iterativeExecutor: string;
         static localDocument: string;
         static localDocumentApiPrefix: string;
         static referenceId: string;
