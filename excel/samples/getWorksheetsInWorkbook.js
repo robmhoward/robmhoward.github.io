@@ -3,6 +3,6 @@ var worksheets = ctx.workbook.worksheets;
 ctx.load(worksheets);
 ctx.executeAsync().then(function() {
 	for (var i = 0; i < worksheets.items.length; i++) {
-		console.log(worksheets.items[i].name);
+		logComment(worksheets.items[i].name);
 	}
 });

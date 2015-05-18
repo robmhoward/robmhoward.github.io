@@ -4,7 +4,7 @@ ctx.load(range);
 ctx.executeAsync().then(function() {
 	for (var i = 0; i < range.formulas.length; i++) {
 		for (var j = 0; j < range.formulas[i].length; j++) {
-			console.log(range.formulas[i][j]);
+			logComment(range.formulas[i][j]);
 		}
 	}
 });
