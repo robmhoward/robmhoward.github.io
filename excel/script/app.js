@@ -3,6 +3,7 @@ var insideOffice = false;
 
 Office.initialize = function (reason) {
 	insideOffice = true;	
+	alert('hi');
 };
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
