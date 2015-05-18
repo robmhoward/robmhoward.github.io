@@ -48,14 +48,14 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	excelSamplesFactory.getSamples().then(function (response) {
 		$scope.samples = response.data.values;
 		$scope.groups = response.data.groups;
-		$scope.insideOffice = insideOffice;
 	});
 
 	$scope.loadSampleCode = function() {
 		console.log("loadSampleCode called");
 		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
 		excelSamplesFactory.getSampleCode($scope.selectedSample.filename).then(function (response) {
-			$scope.selectedSample.code = response.data;			
+			$scope.selectedSample.code = response.data;
+			$scope.insideOffice = insideOffice;
 			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
 		});
 	};
