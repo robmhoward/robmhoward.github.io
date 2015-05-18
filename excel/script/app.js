@@ -1,7 +1,7 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 var insideOffice = false;
 
-console.log = function(message) {
+var logComment = function(message) {
 	document.getElementById('console').innerHTML += message + '\n';
 }
 
