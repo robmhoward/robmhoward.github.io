@@ -1,9 +1,13 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 var insideOffice = false;
 
+console.log = function(message) {
+	document.getElementById('console').innerHTML += message + '<br/>';
+}
+
 Office.initialize = function (reason) {
 	insideOffice = true;	
-	alert('hi');
+	console.log('Initialized!');
 };
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
