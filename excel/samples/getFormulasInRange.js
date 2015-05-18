@@ -4,7 +4,7 @@ ctx.load(range);
 ctx.executeAsync().then(function() {
 	for (var i = 0; i < range.formulas.length; i++) {
 		for (var j = 0; j < range.formulas[i].length; j++) {
-			RichApiTest.log.comment(range.formulas[i][j]);
+			console.log(range.formulas[i][j]);
 		}
 	}
 });

@@ -13,12 +13,16 @@
 		{ "done": true, "filename": "getChartsInWorksheet.js", "name": "Get Charts in Worksheet", "group": "Chart", "description": "Retrieve the list of charts in the current worksheet"},
 		{ "done": true, "filename": "createNewChart.js", "name": "Create Chart", "group": "Chart", "description": "Add a new chart to the worksheet based on data in a range called 'MyChartData'"},
 		{ "done": true, "filename": "createWorksheet.js", "name": "Create Worksheet", "group": "Worksheet", "description": "Create a new worksheet with a random name"},
-		{ "done": false, "filename": "insertRange.js", "name": "Insert Range", "group": "Range", "description": "Insert a 3x3 range at A1, shifting cells to the right"},
-		{ "done": false, "filename": "formatTableRow.js", "name": "Format Table Row", "group": "Table;Formatting", "description": "Set the background color of the 4th row of 'MyTable' to green" },
-		{ "done": false, "filename": "deleteTableRow.js", "name": "Delete Table Row", "group": "Table", "description": "Delete the 4th row from 'MyTable' and shifts cells up" },
+		{ "done": true, "filename": "insertRange.js", "name": "Insert Range", "group": "Range", "description": "Insert a 3x3 range at A1, shifting cells to the right"},
+		{ "done": true, "filename": "formatTableRow.js", "name": "Format Table Row", "group": "Table;Formatting", "description": "Set the background color of the 4th row of 'MyTable' to green" },
+		{ "done": true, "filename": "deleteTableRow.js", "name": "Delete Table Row", "group": "Table", "description": "Delete the 4th row from 'MyTable' and shifts cells up" },
 		{ "done": false, "filename": "setNumberFormat.js", "name": "Set Number Format in Range", "group": "Range", "description": "Set the number format for all cells in the range A1:C3"},
-		{ "done": false, "filename": "getWorksheetsInWorkbook.js", "name": "Get Worksheets in Workbook", "group": "Worksheet", "description": "Output the names of all of the worksheets in the current workbook"},
-		{ "done": false, "filename": "formatChart.js", "name": "Format Chart", "group": "Chart", "description": "Update the formatting on a chart called 'MyChart'"}
+		{ "done": true, "filename": "getWorksheetsInWorkbook.js", "name": "Get Worksheets in Workbook", "group": "Worksheet", "description": "Output the names of all of the worksheets in the current workbook"},
+		{ "done": false, "filename": "formatChart.js", "name": "Format Chart", "group": "Chart", "description": "Update the formatting on a chart called 'MyChart'"},
+		
+		// Requested samples
+		{ "done": true, "filename": "readCalculationMode.js", "name": "Read Calculation Mode", "group": "Application", "description": "Read the calculation mode for the current workbook"},
+		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" }
 	],
 	"groups": [
 		{ "name": "Range" },
@@ -30,8 +34,6 @@
 	],
 	"suggestions": [
 		{ "missing": true, "done":false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
-		{ "missing": false, "done":false, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "description": "" },
-		
 		{ "missing": true, "done":false, "filename": "setApplicationScreenUpdating.js", "name": "Set Application Screen Updating", "description": "" },
 		{ "missing": true, "done":false, "filename": "findRange.js", "name": "Find Range", "description": "" },
 		{ "missing": true, "done":false, "filename": "moveToRangeEnd.js", "name": "Move to End of Range", "description": "" },
