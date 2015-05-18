@@ -8,7 +8,7 @@
 		</select>
 	</div>
 	<div>
-		<p><button style="display:none;">Run!</button> <span>{{selectedSample.description}}</span></p>
+		<p><button id="runButton" ng-hide="insideOffice == false" ng-click="runSelectedSample()">Run!</button> <span>{{selectedSample.description}}</span></p>
 	</div>
 	<div style="flex-grow: 1" id="TxtRichApiScript">
 	

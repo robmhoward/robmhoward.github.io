@@ -1,4 +1,9 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
+var insideOffice = false;
+
+Office.initialize = function (reason) {
+	insideOffice = true;	
+};
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
@@ -26,6 +31,7 @@ excelSamplesApp.factory("excelSamplesFactory", ['$http', function ($http) {
 
 excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFactory) {
 	$scope.samples = [{ name: "Loading..." }];
+	$scope.insideOffice = insideOffice;
 	
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
 			"/excel/script/EditorIntelliSense/Excel.txt",
