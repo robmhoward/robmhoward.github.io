@@ -3,6 +3,6 @@ var charts = ctx.workbook.worksheets.getItem("Charts").charts;
 ctx.load(charts);
 ctx.executeAsync().then(function () {
 	for (var i = 0; i < charts.items.length; i++) {
-		console.log(charts.items[i].name);
+		logComment(charts.items[i].name);
 	}
 });

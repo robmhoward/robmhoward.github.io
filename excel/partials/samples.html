@@ -3,14 +3,17 @@
 		<select ng-model="selectedGroup" ng-options="group.name for group in groups">
 			<option value="">-- choose a group --</option>
 		</select>
-		<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:selectedGroup">
+		<select ng-change="loadSampleCode()" ng-model="selectedSample" ng-options="sample.name for sample in samples | filter:{group: selectedGroup.name}">
 			<option value="">-- choose a sample --</option>
 		</select>
 	</div>
 	<div>
-		<p><button style="display:none;">Run!</button> <span>{{selectedSample.description}}</span></p>
+		<p><button id="runButton" ng-hide="!insideOffice" ng-click="runSelectedSample()">Run!</button> <span>{{selectedSample.description}}</span></p>
 	</div>
 	<div style="flex-grow: 1" id="TxtRichApiScript">
 	
+	</div>
+	<div ng-hide="!insideOffice">
+		<textarea style="width:100%; height:150px;" id="console"></textarea>
 	</div>
 </div>

@@ -1,4 +1,14 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
+var insideOffice = false;
+
+var logComment = function(message) {
+	document.getElementById('console').innerHTML += message + '\n';
+}
+
+Office.initialize = function (reason) {
+	insideOffice = true;	
+	console.log('Initialized!');
+};
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
@@ -26,6 +36,7 @@ excelSamplesApp.factory("excelSamplesFactory", ['$http', function ($http) {
 
 excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFactory) {
 	$scope.samples = [{ name: "Loading..." }];
+	$scope.insideOffice = insideOffice;
 	
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
 			"/excel/script/EditorIntelliSense/Excel.txt",
@@ -41,10 +52,17 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 
 	$scope.loadSampleCode = function() {
 		console.log("loadSampleCode called");
+		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
 		excelSamplesFactory.getSampleCode($scope.selectedSample.filename).then(function (response) {
-			$scope.selectedSample.code = response.data;			
+			$scope.selectedSample.code = response.data;
+			$scope.insideOffice = insideOffice;
 			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
 		});
 	};
+	
+	$scope.runSelectedSample = function() {
+		var script = MonacoEditorIntegration.getJavaScriptToRun();
+		eval(script);
+	}
 
 });
