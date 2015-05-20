@@ -29,6 +29,7 @@
 		{ "missing": true, "done":false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
 		{ "missing": false, "done":false, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "description": "" },
 		
+		{ "missing": true, "done":false, "filename": "activeSheetChangedEvent.js", "name": "Active Sheet Changed Event", "description": "" },
 		{ "missing": true, "done":false, "filename": "setApplicationScreenUpdating.js", "name": "Set Application Screen Updating", "description": "" },
 		{ "missing": true, "done":false, "filename": "findRange.js", "name": "Find Range", "description": "" },
 		{ "missing": true, "done":false, "filename": "moveToRangeEnd.js", "name": "Move to End of Range", "description": "" },
