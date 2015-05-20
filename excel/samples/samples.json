@@ -42,6 +42,9 @@
 		{ "missing": true, "done":false, "filename": "worksheetFunction.js", "name": "Worksheet Function", "description": "" },
 		{ "missing": true, "done":false, "filename": "setFormulaR1C1.js", "name": "Set Formula in R1C1 Notation", "description": "" },
 		{ "missing": true, "done":false, "filename": "applyTableFilter.js", "name": "Apply a Filter to a Table", "description": "" },
-		{ "missing": true, "done":false, "filename": "applyRangeFilter.js", "name": "Apply a Filter to a Range", "description": "" }		
+		{ "missing": true, "done":false, "filename": "applyRangeFilter.js", "name": "Apply a Filter to a Range", "description": "" },
+		{ "missing": true, "done":false, "filename": "handleCellChangedEvent.js", "name": "Handle Cell Changed Event", "description": "" },
+		{ "missing": true, "done":false, "filename": "handleCellResizedEvent.js", "name": "Handle Cell Resized Event", "description": "" },
+		{ "missing": true, "done":false, "filename": "hideRange.js", "name": "Hide a Range", "description": "" }		
 	]
 }
