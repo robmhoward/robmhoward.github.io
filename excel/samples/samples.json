@@ -31,17 +31,19 @@
 		{ "name": "Application" }
 	],
 	"suggestions": [
-		{ "missing": true, "done":false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
-		{ "missing": false, "done":false, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "description": "" },
-		{ "missing": true, "done":false, "filename": "activeSheetChangedEvent.js", "name": "Active Sheet Changed Event", "description": "" },
-		{ "missing": true, "done":false, "filename": "setApplicationScreenUpdating.js", "name": "Set Application Screen Updating", "description": "" },
-		{ "missing": true, "done":false, "filename": "findRange.js", "name": "Find Range", "description": "" },
-		{ "missing": true, "done":false, "filename": "moveToRangeEnd.js", "name": "Move to End of Range", "description": "" },
-		{ "missing": true, "done":false, "filename": "copyAndPasteRange.js", "name": "Copy and Paste Range", "description": "" },
-		{ "missing": true, "done":false, "filename": "pasteSpecial.js", "name": "Paste Special", "description": "" },
-		{ "missing": true, "done":false, "filename": "worksheetFunction.js", "name": "Worksheet Function", "description": "" },
-		{ "missing": true, "done":false, "filename": "setFormulaR1C1.js", "name": "Set Formula in R1C1 Notation", "description": "" },
-		{ "missing": true, "done":false, "filename": "applyTableFilter.js", "name": "Apply a Filter to a Table", "description": "" },
-		{ "missing": true, "done":false, "filename": "applyRangeFilter.js", "name": "Apply a Filter to a Range", "description": "" }		
+		{ "missing": false, "done": false, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "description": "" },
+		{ "missing": false, "done": false, "filename": "getSelectedRange.js", "name": "Get Selected Range", "description": "" },
+		{ "missing": false, "done": false, "filename": "getWorksheetFromRange.js", "name": "Get Worksheet from Range", "description": "" },
+		{ "missing": true, "done": false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
+		{ "missing": true, "done": false, "filename": "activeSheetChangedEvent.js", "name": "Active Sheet Changed Event", "description": "" },
+		{ "missing": true, "done": false, "filename": "setApplicationScreenUpdating.js", "name": "Set Application Screen Updating", "description": "" },
+		{ "missing": true, "done": false, "filename": "findRange.js", "name": "Find Range", "description": "" },
+		{ "missing": true, "done": false, "filename": "moveToRangeEnd.js", "name": "Move to End of Range", "description": "" },
+		{ "missing": true, "done": false, "filename": "copyAndPasteRange.js", "name": "Copy and Paste Range", "description": "" },
+		{ "missing": true, "done": false, "filename": "pasteSpecial.js", "name": "Paste Special", "description": "" },
+		{ "missing": true, "done": false, "filename": "worksheetFunction.js", "name": "Worksheet Function", "description": "" },
+		{ "missing": true, "done": false, "filename": "setFormulaR1C1.js", "name": "Set Formula in R1C1 Notation", "description": "" },
+		{ "missing": true, "done": false, "filename": "applyTableFilter.js", "name": "Apply a Filter to a Table", "description": "" },
+		{ "missing": true, "done": false, "filename": "applyRangeFilter.js", "name": "Apply a Filter to a Range", "description": "" }		
 	]
 }
