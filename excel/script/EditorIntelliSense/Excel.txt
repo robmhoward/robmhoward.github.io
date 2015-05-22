@@ -127,6 +127,9 @@
         private m__items;
         public items : TableColumn[];
         public count : number;
+        /**
+            Add a new item to the collection, at 0-based index
+        */
         public add(index: any, values: any): TableColumn;
         public getItem(id: any): TableColumn;
         public getItemAt(index: number): TableColumn;
