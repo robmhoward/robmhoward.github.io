@@ -65,7 +65,7 @@
         public rowCount : number;
         public rowIndex : number;
         public text : any[][];
-        public values : any[][];
+        public values : string [][] | number[][] | string | number;
         public clear(applyTo: string): void;
         public delete(shift: string): void;
         public getCell(row: number, column: number): Range;
