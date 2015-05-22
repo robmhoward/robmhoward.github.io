@@ -1,8 +1,8 @@
 var sheetName = "Charts";
-var sourceData = sheetName + "!" + "E2:E5";
+var sourceData = sheetName + "!" + "A1:B4";
 
 var ctx = new Excel.ExcelClientContext();
-var chart = ctx.workbook.worksheets.getItem(sheetName).charts.add("ColumnClustered", sourceData, "rows");
+var chart = ctx.workbook.worksheets.getItem(sheetName).charts.add("ColumnClustered", sourceData, "auto");
 ctx.executeAsync().then(function () {
-		logComment"New Chart Added");
+		logComment("New Chart Added");
 });
