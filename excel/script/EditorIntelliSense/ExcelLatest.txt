@@ -1,33 +1,38 @@
-﻿declare module Excel {
+declare module Excel {
     class Application extends OfficeExtension.ClientObject {
         private m_calculationMode;
         public calculationMode : string;
         public calculate(calculationType: string): void;
-        public handleResult(value: any): void;
     }
     class Workbook extends OfficeExtension.ClientObject {
         private m_application;
+        private m_bindings;
         private m_names;
         private m_tables;
         private m_worksheets;
         public application : Application;
+        public bindings : BindingCollection;
         public names : NamedItemCollection;
         public tables : TableCollection;
         public worksheets : WorksheetCollection;
+        public getActiveWorksheet(): Worksheet;
+        public getSelectedRange(): Range;
     }
     class Worksheet extends OfficeExtension.ClientObject {
         private m_charts;
         private m_id;
         private m_name;
+        private m_tables;
         public charts : ChartCollection;
+        public tables : TableCollection;
         public id : string;
         public name : string;
+        public activate(): void;
         public deleteObject(): void;
         public getCell(row: number, column: number): Range;
-        public getEntireSheetRange(): Range;
+        public getEntireWorksheetRange(): Range;
         public getRange(address: string): Range;
         public getUsedRange(): Range;
-        public handleResult(value: any): void;
     }
     class WorksheetCollection extends OfficeExtension.ClientObject {
         private m_count;
@@ -37,7 +42,6 @@
         public add(name: string): Worksheet;
         public getItem(index: string): Worksheet;
         public getItemAt(index: number): Worksheet;
-        public handleResult(value: any): void;
     }
     class Range extends OfficeExtension.ClientObject {
         private m_address;
@@ -53,7 +57,10 @@
         private m_rowIndex;
         private m_text;
         private m_values;
+        private m_worksheet;
+        private m__ReferenceId;
         public format : Format;
+        public worksheet : Worksheet;
         public address : string;
         public addressLocal : string;
         public cellCount : number;
@@ -65,7 +72,7 @@
         public rowCount : number;
         public rowIndex : number;
         public text : any[][];
-        public values : any;
+        public values : any[][];
         public clear(applyTo: string): void;
         public delete(shift: string): void;
         public getCell(row: number, column: number): Range;
@@ -73,7 +80,7 @@
         public getEntireRow(): Range;
         public getUsedRange(): Range;
         public insert(shift: string): void;
-        public handleResult(value: any): void;
+        public select(): void;
     }
     class NamedItemCollection extends OfficeExtension.ClientObject {
         public getItem(index: any): NamedItem;
@@ -88,7 +95,23 @@
         public value : any;
         public visible : boolean;
         public getRange(): Range;
-        public handleResult(value: any): void;
+    }
+    class Binding extends OfficeExtension.ClientObject {
+        private m_id;
+        private m_type;
+        public id : string;
+        public type : string;
+        public getRange(): Range;
+        public getTable(): Table;
+        public getText(): OfficeExtension.ClientResult<string>;
+    }
+    class BindingCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        private m__items;
+        public items : Binding[];
+        public count : number;
+        public getItem(id: string): Binding;
+        public getItemAt(index: number): Binding;
     }
     class TableCollection extends OfficeExtension.ClientObject {
         private m_count;
@@ -98,7 +121,6 @@
         public add(name: string, address: string, showHeaders: boolean, showTotals: boolean, tableStyle: string): Table;
         public getItem(id: any): Table;
         public getItemAt(index: number): Table;
-        public handleResult(value: any): void;
     }
     class Table extends OfficeExtension.ClientObject {
         private m_id;
@@ -120,20 +142,15 @@
         public getHeaderRowRange(): Range;
         public getRange(): Range;
         public getTotalRowRange(): Range;
-        public handleResult(value: any): void;
     }
     class TableColumnCollection extends OfficeExtension.ClientObject {
         private m_count;
         private m__items;
         public items : TableColumn[];
         public count : number;
-        /**
-            Add a new item to the collection, at index
-        */
         public add(index: any, values: any): TableColumn;
         public getItem(id: any): TableColumn;
         public getItemAt(index: number): TableColumn;
-        public handleResult(value: any): void;
     }
     class TableColumn extends OfficeExtension.ClientObject {
         private m_id;
@@ -149,16 +166,14 @@
         public getHeaderRowRange(): Range;
         public getRange(): Range;
         public getTotalRowRange(): Range;
-        public handleResult(value: any): void;
     }
     class TableRowCollection extends OfficeExtension.ClientObject {
         private m_count;
         private m__items;
         public items : TableRow[];
         public count : number;
-        public add(index: any, values: any): TableRow;
+       public add(index: any, values: any): TableRow;
         public getItemAt(index: number): TableRow;
-        public handleResult(value: any): void;
     }
     class TableRow extends OfficeExtension.ClientObject {
         private m_index;
@@ -167,7 +182,6 @@
         public values : any[][];
         public deleteObject(): void;
         public getRange(): Range;
-        public handleResult(value: any): void;
     }
     class Format extends OfficeExtension.ClientObject {
         private m_background;
@@ -181,13 +195,11 @@
         public font : Font;
         public horizontalAlignment : string;
         public verticalAlignment : string;
-        public wrapText : any;
-        public handleResult(value: any): void;
+        public wrapText : boolean;
     }
     class Background extends OfficeExtension.ClientObject {
         private m_color;
         public color : string;
-        public handleResult(value: any): void;
     }
     class Border extends OfficeExtension.ClientObject {
         private m_color;
@@ -198,7 +210,6 @@
         public lineStyle : string;
         public sideIndex : string;
         public weight : string;
-        public handleResult(value: any): void;
     }
     class BorderCollection extends OfficeExtension.ClientObject {
         public getItem(index: string): Border;
@@ -210,13 +221,12 @@
         private m_name;
         private m_size;
         private m_underline;
-        public bold : any;
+        public bold : boolean;
         public color : string;
-        public italic : any;
+        public italic : boolean;
         public name : string;
-        public size : any;
+        public size : number;
         public underline : string;
-        public handleResult(value: any): void;
     }
     class ChartCollection extends OfficeExtension.ClientObject {
         private m_count;
@@ -224,27 +234,29 @@
         public items : Chart[];
         public count : number;
         public add(type: string, sourceData: any, seriesBy: string): Chart;
-        public getItem(id: any): Chart;
-        public getItemAt(index: number): Chart;
-        public handleResult(value: any): void;
+        public getItem(id: string): Chart;
     }
     class Chart extends OfficeExtension.ClientObject {
-        private m_colorScheme;
+        private m_axes;
         private m_dataLabels;
-        private m_format;
+        private m_fillFormat;
+        private m_font;
         private m_height;
         private m_id;
         private m_left;
         private m_legend;
         private m_name;
+        private m_series;
         private m_title;
         private m_top;
         private m_width;
+        public axes : ChartAxes;
         public dataLabels : ChartDataLabels;
-        public format : ShapeFormat;
+        public fillFormat : ChartFill;
+        public font : ChartFont;
         public legend : ChartLegend;
+        public series : ChartSeriesCollection;
         public title : ChartTitle;
-        public colorScheme : number;
         public height : number;
         public id : string;
         public left : number;
@@ -252,12 +264,75 @@
         public top : number;
         public width : number;
         public deleteObject(): void;
-        public exportAsImage(): OfficeExtension.ClientResult<string>;
         public setData(sourceData: any, seriesBy: string): void;
-        public handleResult(value: any): void;
+    }
+    class ChartSeriesCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        private m__items;
+        public items : ChartSeries[];
+        public count : number;
+        public getItemAt(index: number): ChartSeries;
+    }
+    class ChartSeries extends OfficeExtension.ClientObject {
+        private m_fillFormat;
+        private m_lineFormat;
+        private m_name;
+        private m_points;
+        public fillFormat : ChartFill;
+        public lineFormat : ChartLineFormat;
+       public points : ChartPointsCollection;
+        public name : string;
+    }
+    class ChartPointsCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        private m__items;
+        public items : ChartPoint[];
+        public count : number;
+        public getItemAt(index: number): ChartPoint;
+    }
+    class ChartPoint extends OfficeExtension.ClientObject {
+        private m_fillFormat;
+        public fillFormat : ChartFill;
+    }
+    class ChartAxes extends OfficeExtension.ClientObject {
+        private m_categoryAxis;
+        private m_seriesAxis;
+        private m_valueAxis;
+        public categoryAxis : ChartAxis;
+        public seriesAxis : ChartAxis;
+        public valueAxis : ChartAxis;
+    }
+    class ChartAxis extends OfficeExtension.ClientObject {
+        private m_font;
+        private m_lineFormat;
+        private m_majorGridlines;
+        private m_majorUnit;
+        private m_maximum;
+        private m_minimum;
+        private m_minorGridlines;
+        private m_minorUnit;
+        private m_title;
+        public font : ChartFont;
+        public lineFormat : ChartLineFormat;
+        public majorGridlines : ChartGridlines;
+        public minorGridlines : ChartGridlines;
+        public title : ChartAxisTitle;
+        public majorUnit : any;
+        public maximum : any;
+        public minimum : any;
+        public minorUnit : any;
+    }
+    class ChartAxisTitle extends OfficeExtension.ClientObject {
+        private m_font;
+        private m_text;
+        private m_visible;
+        public font : ChartFont;
+        public text : string;
+        public visible : boolean;
     }
     class ChartDataLabels extends OfficeExtension.ClientObject {
-        private m_format;
+        private m_fillFormat;
+        private m_font;
         private m_position;
         private m_separator;
         private m_showBubbleSize;
@@ -266,7 +341,8 @@
         private m_showPercentage;
         private m_showSeriesName;
         private m_showValue;
-        public format : ShapeFormat;
+        public fillFormat : ChartFill;
+        public font : ChartFont;
         public position : string;
         public separator : string;
         public showBubbleSize : boolean;
@@ -275,34 +351,47 @@
         public showPercentage : boolean;
         public showSeriesName : boolean;
         public showValue : boolean;
-        public handleResult(value: any): void;
+    }
+    class ChartGridlines extends OfficeExtension.ClientObject {
+        private m_lineFormat;
+        private m_visible;
+       public lineFormat : ChartLineFormat;
+        public visible : boolean;
     }
     class ChartLegend extends OfficeExtension.ClientObject {
-        private m_format;
+        private m_fillFormat;
+        private m_font;
         private m_overlay;
         private m_position;
-        public format : ShapeFormat;
+        private m_visible;
+        public fillFormat : ChartFill;
+        public font : ChartFont;
         public overlay : boolean;
         public position : string;
-        public handleResult(value: any): void;
+        public visible : boolean;
     }
     class ChartTitle extends OfficeExtension.ClientObject {
-        private m_format;
+        private m_fillFormat;
+        private m_font;
         private m_overlay;
-        private m_position;
         private m_text;
-        public format : ShapeFormat;
+        private m_visible;
+        public fillFormat : ChartFill;
+        public font : ChartFont;
         public overlay : boolean;
-        public position : string;
         public text : string;
-        public handleResult(value: any): void;
+        public visible : boolean;
     }
-    class ShapeFill extends OfficeExtension.ClientObject {
-        private m_solidColor;
-        public solidColor : string;
-        public handleResult(value: any): void;
+    class ChartFill extends OfficeExtension.ClientObject {
+        public clear(): void;
+        public setSolidColor(color: string): void;
     }
-    class ShapeFont extends OfficeExtension.ClientObject {
+    class ChartLineFormat extends OfficeExtension.ClientObject {
+        private m_color;
+        public color : string;
+        public clear(): void;
+    }
+    class ChartFont extends OfficeExtension.ClientObject {
         private m_bold;
         private m_color;
         private m_italic;
@@ -315,16 +404,13 @@
         public name : string;
         public size : number;
         public underline : boolean;
-        public handleResult(value: any): void;
     }
-    class ShapeFormat extends OfficeExtension.ClientObject {
-        private m_fill;
-        private m_font;
-        public fill : ShapeFill;
-        public font : ShapeFont;
+    class BindingType {
+        static range: string;
+        static table: string;
+        static text: string;
     }
     class BorderIndex {
-        static none: string;
         static edgeTop: string;
         static edgeBottom: string;
         static edgeLeft: string;
@@ -333,6 +419,22 @@
         static insideHorizontal: string;
         static diagonalDown: string;
         static diagonalUp: string;
+    }
+    class BorderLineStyle {
+        static none: string;
+        static continuous: string;
+        static dash: string;
+        static dashDot: string;
+        static dashDotDot: string;
+        static dot: string;
+        static double: string;
+        static slantDashDot: string;
+    }
+    class BorderWeight {
+        static hairline: string;
+        static thin: string;
+        static medium: string;
+        static thick: string;
     }
     class CalculationMode {
         static automatic: string;
@@ -365,22 +467,17 @@
     }
     class ChartLegendPosition {
         static invalid: string;
-        static none: string;
         static top: string;
         static bottom: string;
         static left: string;
         static right: string;
+        static corner: string;
+        static custom: string;
     }
     class ChartSeriesBy {
-        static invalid: string;
         static auto: string;
         static columns: string;
         static rows: string;
-    }
-    class ChartTitlePosition {
-        static invalid: string;
-        static none: string;
-        static top: string;
     }
     class ChartType {
         static invalid: string;
@@ -462,9 +559,33 @@
         static up: string;
         static left: string;
     }
+    class HorizontalAlignment {
+        static general: string;
+        static left: string;
+        static center: string;
+        static right: string;
+        static fill: string;
+        static justify: string;
+        static centerAcrossSelection: string;
+        static distributed: string;
+    }
     class InsertShiftDirection {
         static down: string;
         static right: string;
+    }
+    class VerticalAlignment {
+        static top: string;
+        static center: string;
+        static bottom: string;
+        static justify: string;
+        static distributed: string;
+    }
+    class UnderlineStyle {
+        static none: string;
+        static single: string;
+        static double: string;
+        static singleAccountant: string;
+        static doubleAccountant: string;
     }
 }
 declare module Excel {

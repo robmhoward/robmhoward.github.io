@@ -39,7 +39,7 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	$scope.insideOffice = insideOffice;
 	
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-			"/excel/script/EditorIntelliSense/Excel.txt",
+			"/excel/script/EditorIntelliSense/ExcelLatest.txt",
 			"/excel/script/EditorIntelliSense/Office.Runtime.txt",
 			"/excel/script/EditorIntelliSense/Helpers.txt",
 			"/excel/script/EditorIntelliSense/jquery.txt",
