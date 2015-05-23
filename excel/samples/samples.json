@@ -19,7 +19,6 @@
 		{ "done": false, "filename": "setNumberFormat.js", "name": "Set Number Format in Range", "group": "Range", "description": "Set the number format for all cells in the range A1:C3"},
 		{ "done": true, "filename": "getWorksheetsInWorkbook.js", "name": "Get Worksheets in Workbook", "group": "Worksheet", "description": "Output the names of all of the worksheets in the current workbook"},
 		{ "done": true, "filename": "readCalculationMode.js", "name": "Read Calculation Mode", "group": "Application", "description": "Read the calculation mode for the current workbook"},
-<<<<<<< HEAD
 		{ "done": true, "filename": "addAxisTitle.js", "name": "Add Axis Title", "group": "Chart", "description": "Add Values as the title for the value Axis" }, 
 		{ "done": true, "filename": "addChart.js", "name": "Add Chart", "group": "Chart", "description": "Add a chart on worksheet Charts with source data from Range A1:B4 and serires is set to be auto" }, 
 		{ "done": true, "filename": "addChartTitle.js", "name": "Add Chart Title", "group": "Chart", "description": "Add 'New Title' as the title of Chart1" }, 
