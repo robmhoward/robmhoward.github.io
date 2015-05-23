@@ -17,13 +17,7 @@ declare module OfficeExtension {
     }
 }
 declare module OfficeExtension {
-    class ClientObject implements IResultHandler {
-        private m_context;
-        private m_objectPath;
-        constructor(context: ClientRequestContext, objectPath: ObjectPath);
-        public context : ClientRequestContext;
-        public objectPath : ObjectPath;
-        public handleResult(value: any): void;
+    class ClientObject {
     }
 }
 declare module OfficeExtension {
@@ -51,21 +45,9 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     class ClientRequestContext {
-        private m_nextId;
-        private m_pendingRequest;
-        private m_url;
-        private m_references;
-        public m_requestExecutor: IRequestExecutor;
-        public rootObject: ClientObject;
-        public customData: string;
-        constructor(url?: string);
-        public pendingRequest : ClientRequest;
-        public references : References;
         public load(clientObj: ClientObject, select?: string): void;
         public trace(message: string): void;
-        private executeAsyncPrivate(doneCallback, failCallback);
         public executeAsync(): IPromise;
-        public nextId(): number;
     }
 }
 declare module OfficeExtension {
