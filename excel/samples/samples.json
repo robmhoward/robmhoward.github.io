@@ -21,7 +21,8 @@
 		{ "done": false, "filename": "formatChart.js", "name": "Format Chart", "group": "Chart", "description": "Update the formatting on a chart called 'MyChart'"},
 		{ "done": true, "filename": "readCalculationMode.js", "name": "Read Calculation Mode", "group": "Application", "description": "Read the calculation mode for the current workbook"},
 		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" },
-		{ "done": true, "filename": "formatTableRows.js", "name": "Format Table Rows Based On Values", "group": "Table", "description": "Format the rows of a table based on a specific column's value"}
+		{ "done": true, "filename": "formatTableRows.js", "name": "Format Table Rows Based On Values", "group": "Table", "description": "Format the rows of a table based on a specific column's value"},
+		{ "done": true, "filename": "formatLargestRow.js", "name": "Format Table Row Based On Largest Value", "group": "Table", "description": "Format row of a table based on a specific column's largest value"}
 	],
 	"groups": [
 		{ "name": "Range" },
