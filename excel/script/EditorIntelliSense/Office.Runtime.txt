@@ -109,7 +109,7 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     interface IPromise {
-        then(doneCallback: (result?: any) => void, fallCallback?: (result?: any) => void): any;
+        then(doneCallback?: (result?: any) => void, fallCallback?: (result?: any) => void): any;
     }
 }
 declare module OfficeExtension {
