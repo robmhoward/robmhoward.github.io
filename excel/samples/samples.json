@@ -44,6 +44,8 @@
 		{ "done": true, "filename": "showDataLabels.js", "name": "Show DataLabels", "group": "Chart", "description": "Show DataLabels on Chart1" }, 
 		{ "done": true, "filename": "showLegend.js", "name": "Show Legend", "group": "Chart", "description": "Show Legend of Chart1" }, 
 		{ "done": true, "filename": "showMajorGridlines.js", "name": "Show MajorGridlines", "group": "Chart", "description": "Show Major Gridlines on ValueAxis of Chart1" }, 
+		{ "done": false, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
+		{ "done": false, "filename": "getSelectedRange.js", "name": "Get Selected Range", "group": "Range", "description": "Get the address of the workbook's currently selected range" },
 		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" }
 	],
 	"groups": [
@@ -55,8 +57,6 @@
 		{ "name": "Application" }
 	],
 	"suggestions": [
-		{ "missing": false, "done": false, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "description": "" },
-		{ "missing": false, "done": false, "filename": "getSelectedRange.js", "name": "Get Selected Range", "description": "" },
 		{ "missing": false, "done": false, "filename": "getWorksheetFromRange.js", "name": "Get Worksheet from Range", "description": "" },
 		{ "missing": true, "done": false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
 		{ "missing": false, "done": false, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "description": "" },
