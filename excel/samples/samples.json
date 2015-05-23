@@ -18,7 +18,6 @@
 		{ "done": true, "filename": "deleteTableRow.js", "name": "Delete Table Row", "group": "Table", "description": "Delete the 4th row from 'MyTable' and shifts cells up" },
 		{ "done": false, "filename": "setNumberFormat.js", "name": "Set Number Format in Range", "group": "Range", "description": "Set the number format for all cells in the range A1:C3"},
 		{ "done": true, "filename": "getWorksheetsInWorkbook.js", "name": "Get Worksheets in Workbook", "group": "Worksheet", "description": "Output the names of all of the worksheets in the current workbook"},
-		{ "done": false, "filename": "formatChart.js", "name": "Format Chart", "group": "Chart", "description": "Update the formatting on a chart called 'MyChart'"},
 		{ "done": true, "filename": "readCalculationMode.js", "name": "Read Calculation Mode", "group": "Application", "description": "Read the calculation mode for the current workbook"},
 		{ "done": true, "filename": "addAxisTitle.js", "name": "Add Axis Title", "group": "Chart", "description": "Add Values as the title for the value Axis" }, 
 		{ "done": true, "filename": "addChart.js", "name": "Add Chart", "group": "Chart", "description": "Add a chart on worksheet Charts with source data from Range A1:B4 and serires is set to be auto" }, 
@@ -44,8 +43,8 @@
 		{ "done": true, "filename": "showDataLabels.js", "name": "Show DataLabels", "group": "Chart", "description": "Show DataLabels on Chart1" }, 
 		{ "done": true, "filename": "showLegend.js", "name": "Show Legend", "group": "Chart", "description": "Show Legend of Chart1" }, 
 		{ "done": true, "filename": "showMajorGridlines.js", "name": "Show MajorGridlines", "group": "Chart", "description": "Show Major Gridlines on ValueAxis of Chart1" }, 
-		{ "done": false, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
-		{ "done": false, "filename": "getSelectedRange.js", "name": "Get Selected Range", "group": "Range", "description": "Get the address of the workbook's currently selected range" },
+		{ "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
+		{ "done": true, "filename": "getSelectedRange.js", "name": "Get Selected Range", "group": "Range", "description": "Get the address of the workbook's currently selected range" },
 		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" }
 	],
 	"groups": [
