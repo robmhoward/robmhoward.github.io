@@ -1,4 +1,5 @@
 var ctx = new Excel.ExcelClientContext();
+RichApiTest.log.comment("Format rows greater than 2 in green, other rows in red.");
 var rows = ctx.workbook.tables.getItem("Table1").tableRows;
 ctx.load(rows);
 ctx.executeAsync().then(function () {
