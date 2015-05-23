@@ -45,6 +45,7 @@
 		{ "done": true, "filename": "showMajorGridlines.js", "name": "Show MajorGridlines", "group": "Chart", "description": "Show Major Gridlines on ValueAxis of Chart1" }, 
 		{ "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
 		{ "done": true, "filename": "getSelectedRange.js", "name": "Get Selected Range", "group": "Range", "description": "Get the address of the workbook's currently selected range" },
+		{ "done": true, "filename": "setChartDataSource.js", "name": "SetChartDataSource", "group": "Chart", "description": "Set SourceData of Chart1" }, 
 		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" }
 	],
 	"groups": [
