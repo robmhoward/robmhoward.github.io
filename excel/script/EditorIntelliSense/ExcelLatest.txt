@@ -61,25 +61,85 @@ declare module Excel {
         private m__ReferenceId;
         public format : Format;
         public worksheet : Worksheet;
+        /**
+        Returns a String value that represents the range reference in A1 Style. Address value will contain the Sheet reference (e.g., Sheet1!A1:B4)
+        */
         public address : string;
+        /**
+        Returns the range reference for the specified range in the language of the user in A1 Style. Address value will contain the Sheet reference (e.g., Sheet1!A1:B4)
+        */
         public addressLocal : string;
+        /**
+        Number of cells in the range
+        */
         public cellCount : number;
+        /**
+        Returns the number of the first row of the first area in the range. This is adjusted to be zero indexed. Read-only
+        */
         public columnCount : number;
+        /**
+        Returns the number of the first column in the first area in the specified range. This is adjusted to be zero indexed. Read-only
+        */
         public columnIndex : number;
+        /**
+        Represents the object's formula in A1 style notation
+        */
         public formulas : any[][];
+        /**
+        Formula for the object, in the language of the user in A1 style notation
+        */
         public formulasLocal : any[][];
+        /**
+        Value that represents the format code for the object
+        */
         public numberFormat : any[][];
+        /**
+        Returns the total number of columns in the Range selected. Read-only
+        */
         public rowCount : number;
+        /**
+        Returns the number of the first row of the first area in the range. This is adjusted to be zero indexed. Read-only
+        */
         public rowIndex : number;
+        /**
+        Text values of the specified range. The Text value will not depend on the cell width. The # sign substitution that happens in Excel client will not affect the value returned by the API.
+        */
         public text : any[][];
+        /**
+        Unformatted values of the specified range
+        */
         public values : any[][];
+        /**
+        Clear Range values, format, background, border, etc.
+        */
         public clear(applyTo: string): void;
+        /**
+        Delete the Range data and clear the format and shift the cells.
+        */
         public delete(shift: string): void;
+        /**
+        Get the Cell (as a Range object) object based on row and column address relative to a top of worksheet.
+        */
         public getCell(row: number, column: number): Range;
+        /**
+        Get an object that represents the entire column of the Range. This API is valid only if the subject range object is a single cell or a column of cells.
+        */
         public getEntireColumn(): Range;
+        /**
+        Get an object that represents the entire row of the Range. This API is valid only if the subject range object is a single cell or a row of cells.
+        */
         public getEntireRow(): Range;
+        /**
+        Get the used-range of a worksheet.
+        */
         public getUsedRange(): Range;
+        /**
+        Inserts a cell or a range of cells into the worksheet and shifts other cells away to make space.
+        */
         public insert(shift: string): void;
+        /**
+        Selects the range.
+        */
         public select(): void;
     }
     class NamedItemCollection extends OfficeExtension.ClientObject {
