@@ -1,9 +1,6 @@
 declare module Excel {
     class Application extends OfficeExtension.ClientObject {
         private m_calculationMode;
-        /**
-         Specifies the Calculation mode of the workbook. Possible values are `Automatic`: Excel controls recalculation, `Manual`: Calculation is done when the user requests it, or `Semiautomatic`: Excel controls recalculation but ignores changes in tables.         
-        */
         public calculationMode : string;
         public calculate(calculationType: string): void;
     }
@@ -29,9 +26,6 @@ declare module Excel {
         public charts : ChartCollection;
         public tables : TableCollection;
         public id : string;
-        /**
-         A String value that represents a Worksheet object 
-        */
         public name : string;
         public activate(): void;
         public deleteObject(): void;
@@ -67,53 +61,17 @@ declare module Excel {
         private m__ReferenceId;
         public format : Format;
         public worksheet : Worksheet;
-        /**
-        Returns a String value that represents the range reference in A1 Style. **Address value will contain the Sheet reference (e.g., `Sheet1!A1:B4`)**
-        */
         public address : string;
-        /**
-        Returns the range reference for the specified range in the language of the user in A1 Style. **Address value will contain the Sheet reference (e.g., `Sheet1!A1:B4`)**
-        */
         public addressLocal : string;
-        /**
-        Number of cells in the range
-        */
         public cellCount : number;
-        /**
-        Returns the total number of columns in the Range selected. Read-only 
-        */
         public columnCount : number;
-        /**
-        Returns the number of the first column in the first area in the specified range. This is adjusted to be zero indexed. Read-only
-        */
         public columnIndex : number;
-        /**
-        Represents the object's formula in A1 style notation
-        */
         public formulas : any[][];
-        /**
-        Formula for the object, in the language of the user in A1 style notation
-        */
         public formulasLocal : any[][];
-        /**
-        Value that represents the format code for the object
-        */
         public numberFormat : any[][];
-        /**
-        Returns the total number of rows in the Range selected. Read-only 
-        */
         public rowCount : number;
-        /**
-        Returns the number of the first row of the first area in the range. This is adjusted to be zero indexed. Read-only
-        */
         public rowIndex : number;
-        /**
-        Text values of the specified range. The Text value will not depend on the cell width. The # sign substitution that happens in Excel client will not affect the value returned by the API. 
-        */
         public text : any[][];
-        /**
-        Unformatted values of the specified range
-        */
         public values : any[][];
         public clear(applyTo: string): void;
         public delete(shift: string): void;
@@ -232,33 +190,15 @@ declare module Excel {
         private m_horizontalAlignment;
         private m_verticalAlignment;
         private m_wrapText;
-        /**
-        Returns the Background object defined on the overall Range selected
-        */
         public background : Background;
         public borders : BorderCollection;
-        /**
-        Returns the Font object defined on the overall Range selected
-        */
         public font : Font;
-        /**
-        Represents the horizontal alignment for the specified object. The value of this property can be to one of the following constants: `General`, `Fill`, `CenterAcrossSelection`, `Center`, `Distributed`, `Justify`, `Left`, `Right`. `null` indicates that the entire range doesn't have uniform horizontal alignment.
-        */
         public horizontalAlignment : string;
-        /**
-        Represents the vertical alignment for the specified object. The value of this property can be to one of the following constants: `Bottom`, `Center`, `Distributed`, `Justify`, `Top`. `null` indicates that the entire range doesn't have uniform vertical alignment.
-        */
         public verticalAlignment : string;
-        /**
-        Indicates if Excel wraps the text in the object. `null` indicates that the entire range doesn't have uniform wrap setting
-        */
         public wrapText : boolean;
     }
     class Background extends OfficeExtension.ClientObject {
         private m_color;
-        /**
-        HTML color code representation of the background color. HTML color codes are strings that represents hexadecimal triplets of red, green, and blue values (#RRGGBB). e.g., `#FF0000` represents Red. ('255' red, '0' green, and '0' blue) 
-        */
         public color : string;
     }
     class Border extends OfficeExtension.ClientObject {
@@ -281,25 +221,10 @@ declare module Excel {
         private m_name;
         private m_size;
         private m_underline;
-        /**
-        Represents the bold status of font. true if the font is bold. 
-        */
         public bold : boolean;
-        /**
-        HTML color code representation of the text color. HTML color codes are strings that represents hexadecimal triplets of red, green, and blue values (#RRGGBB). e.g., `#FF0000` represents Red. ('255' red, '0' green, and '0' blue) 
-        */
         public color : string;
-        /**
-        Represents the bold status of italic. true if the font style is italic
-        */
         public italic : boolean;
-        /**
-        Font name (e.g., "Calibri")
-        */
         public name : string;
-        /**
-        Size of the font (e.g., 11)
-        */
         public size : number;
         public underline : string;
     }
@@ -393,13 +318,7 @@ declare module Excel {
         public minorGridlines : ChartGridlines;
         public title : ChartAxisTitle;
         public majorUnit : any;
-        /**
-        Returns or sets the maximum value on the value axis. Auto if left empty. 
-        */
         public maximum : any;
-        /**
-        Returns or sets the minimum value on the value axis. Auto if left empty.  
-        */
         public minimum : any;
         public minorUnit : any;
     }
@@ -408,13 +327,7 @@ declare module Excel {
         private m_text;
         private m_visible;
         public font : ChartFont;
-        /**
-        A String value that represents the title of a Axis. 
-        */
         public text : string;
-        /**
-        A boolean that specifies the visibility of an Axis Title. True if the axis or chart has a visible title.  
-        */
         public visible : boolean;
     }
     class ChartDataLabels extends OfficeExtension.ClientObject {
@@ -430,33 +343,12 @@ declare module Excel {
         private m_showValue;
         public fillFormat : ChartFill;
         public font : ChartFont;
-        /**
-        Returns or sets a DataLabelPosition value that represents the position of the data label.  
-        */
         public position : string;
-        /**
-        Sets or returns a String representing the separator used for the data labels on a chart. 
-        */
         public separator : string;
-        /**
-        True to show the bubble size for the data labels on a chart. False to hide.
-        */
         public showBubbleSize : boolean;
-        /**
-        True to display the category name for the data labels on a chart. False to hide. 
-        */
         public showCategoryName : boolean;
-        /**
-        True if the data label legend key is visible.  
-        */
         public showLegendKey : boolean;
-        /**
-        True to display the percentage value for the data labels on a chart. False to hide.  
-        */
         public showPercentage : boolean;
-        /**
-        Returns or sets a Boolean corresponding to a specified chart's data label values display behavior. True displays the values. False to hide.  
-        */
         public showSeriesName : boolean;
         public showValue : boolean;
     }
@@ -474,17 +366,8 @@ declare module Excel {
         private m_visible;
         public fillFormat : ChartFill;
         public font : ChartFont;
-        /**
-        True if the legend with be overlapping with the chart. 
-        */
         public overlay : boolean;
-        /**
-        Returns or sets a Legend Position value that represents the position of the legend on the chart, including `Top`,`Bottom`,`Cornor`,`Left`,`Right`,'Custom','Invalid'
-        */
         public position : string;
-        /**
-        A boolean value the represents the visibility of a ChartLegend object. If visible is set to be ture, the legend will be visible on the chart. 
-        */
         public visible : boolean;
     }
     class ChartTitle extends OfficeExtension.ClientObject {
@@ -495,17 +378,8 @@ declare module Excel {
         private m_visible;
         public fillFormat : ChartFill;
         public font : ChartFont;
-        /**
-        True if the title overlays the chart. 
-        */
         public overlay : boolean;
-        /**
-        A String value that represents the title text of a chart. When a title text is set, the display property will be automaticlly set to top and the chart title will be displayed on top of the chart without overlapping. 
-        */
         public text : string;
-        /**
-        A boolean value the represents the visibility of a chart title object. If visible is set to be ture, the chart title will be visible on the chart. 
-        */
         public visible : boolean;
     }
     class ChartFill extends OfficeExtension.ClientObject {
@@ -514,9 +388,6 @@ declare module Excel {
     }
     class ChartLineFormat extends OfficeExtension.ClientObject {
         private m_color;
-        /**
-        HTML color code representation of the background color. HTML color codes are strings that represents hexadecimal triplets of red, green, and blue values (#RRGGBB). e.g., `#FF0000` represents Red. ('255' red, '0' green, and '0' blue) 
-        */
         public color : string;
         public clear(): void;
     }
@@ -527,29 +398,11 @@ declare module Excel {
         private m_name;
         private m_size;
         private m_underline;
-        /**
-        Represents the bold status of font. true if the font is bold. 
-        */
         public bold : boolean;
-        /**
-        HTML color code representation of the text color. HTML color codes are strings that represents hexadecimal triplets of red, green, and blue values (#RRGGBB). e.g., `#FF0000` represents Red. ('255' red, '0' green, and '0' blue) 
-        */
         public color : string;
-        /**
-        Represents the bold status of italic. true if the font style is italic
-        */
         public italic : boolean;
-        /**
-        Font name (e.g., "Calibri")
-        */
         public name : string;
-        /**
-        Size of the font (e.g., 11)
-        */
         public size : number;
-        /**
-        Type of underline applied to the font. Can be one of the following constants. Possible Values: `None`, `Single`, `Double`, `SingleAccounting`, `DoubleAccounting`
-        */
         public underline : boolean;
     }
     class BindingType {
