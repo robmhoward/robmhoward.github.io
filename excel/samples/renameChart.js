@@ -1,7 +1,3 @@
 var ctx = new Excel.ExcelClientContext();
-var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");
-	
-chart.name="NewChartName";
-ctx.executeAsync().then(function () {
-		console.log("Chart Renamed");
-});
+ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1").name = "NewChartName";
+ctx.executeAsync().then();

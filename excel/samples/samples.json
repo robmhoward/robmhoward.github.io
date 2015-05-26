@@ -45,11 +45,12 @@
 		{ "done": true, "filename": "showMajorGridlines.js", "name": "Show MajorGridlines", "group": "Chart", "description": "Show Major Gridlines on ValueAxis of Chart1" }, 
 		{ "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
 		{ "done": true, "filename": "getSelectedRange.js", "name": "Get Selected Range", "group": "Range", "description": "Get the address of the workbook's currently selected range" },
-		{ "done": true, "filename": "setChartDataSource.js", "name": "SetChartDataSource", "group": "Chart", "description": "Set SourceData of Chart1" }, 
+		{ "done": true, "filename": "setChartDataSource.js", "name": "Set Chart Data Source", "group": "Chart", "description": "Set SourceData of Chart1" }, 
 		{ "done": true, "filename": "calculateWorkbooks.js", "name": "Calculate Workbooks", "group":"Application", "description": "Calculate the current workbook using the 'full' method'" },
 		{ "done": true, "filename": "formatTableRows.js", "name": "Format Table Rows Based On Values", "group": "Table;Formatting;Complex", "description": "Format rows of 'Table1' with 2nd cell greater than 2 in green, other rows in red."},
 		{ "done": true, "filename": "formatLargestRow.js", "name": "Format Table Row Based On Largest Value", "group": "Table;Formatting;Complex", "description": "Format row of a table based on a specific column's largest value"},
-		{ "done": false, "filename": "clearRowBackground.js", "name": "Remove Table Row Background", "group": "Table", "description": "Reset the background for all rows in a table"}
+		{ "done": false, "filename": "clearRowBackground.js", "name": "Clear Table Row Formatting", "group": "Table;Formatting", "description": "Clear formatting for all data rows in a table"},
+		{ "done": false, "filename": "deleteActiveWorksheet.js", "name": "Delete Active Worksheet", "group": "Worksheet", "description": "Delete the active worksheet from the workbook"}
 	],
 	"groups": [
 		{ "name": "Range" },
