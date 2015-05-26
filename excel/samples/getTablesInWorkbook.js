@@ -4,6 +4,6 @@ ctx.load(tables);
 ctx.executeAsync().then(function () {
 	for (var i = 0; i < tables.items.length; i++)
 	{
-		logComment(tables.items[i].name);
+		console.log(tables.items[i].name);
 	}
 });

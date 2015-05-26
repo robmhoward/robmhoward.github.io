@@ -5,5 +5,5 @@ chart.title.position = "top";
 chart.title.overlay=true;
 
 ctx.executeAsync().then(function () {
-		logComment("Char Title Position Changed");
+		console.log("Char Title Position Changed");
 });

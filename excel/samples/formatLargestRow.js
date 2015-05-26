@@ -1,5 +1,4 @@
 var ctx = new Excel.ExcelClientContext();
-RichApiTest.log.comment("Format the row with the largest value in column 2 in red.");
 var rows = ctx.workbook.tables.getItem("Table1").tableRows;
 ctx.load(rows);
 ctx.executeAsync().then(function () {

@@ -1,8 +1,4 @@
 var ctx = new Excel.ExcelClientContext();
 var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");	
-
-chart.datalabels.ShowSeriesName = true;
-
-ctx.executeAsync().then(function () {
-		logComment("Series Name Added to Datalabels");
-});
+chart.dataLabels.showSeriesName = true;
+ctx.executeAsync().then();

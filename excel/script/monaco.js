@@ -78,6 +78,10 @@ var MonacoEditorIntegration;
     MonacoEditorIntegration.resizeEditor = resizeEditor;
 
     function storeCurrentJSBuffer() {
+        console.log("storeCurrentJSBuffer");
+        if (MonacoEditorIntegration.setDirty) {
+            MonacoEditorIntegration.setDirty();
+        }
         if (window.localStorage) {
             window.localStorage[localStorageKey] = jsMonacoEditor.getValue();
         }

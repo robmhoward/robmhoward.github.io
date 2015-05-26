@@ -4,5 +4,5 @@ var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");
 chart.top =200;
 chart.left=200;
 ctx.executeAsync().then(function () {
-		logComment("Chart Moved");
+		console.log("Chart Moved");
 });

@@ -4,5 +4,5 @@ var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");
 chart.datalabels.visible = true;
 
 ctx.executeAsync().then(function () {
-		logComment("Datalabels Shown");
+		console.log("Datalabels Shown");
 });

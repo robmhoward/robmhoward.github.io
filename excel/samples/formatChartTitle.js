@@ -4,6 +4,4 @@ var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");
 chart.title.font.bold = true; 
 chart.title.font.color = "#FF0000";
 
-ctx.executeAsync().then(function () {
-		logComment("Title Format Updated");
-});
+ctx.executeAsync().then();
