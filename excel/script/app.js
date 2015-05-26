@@ -69,8 +69,7 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	};
 	
 	$scope.runSelectedSample = function() {
-		var script = MonacoEditorIntegration.getJavaScriptToRun();
-		script.replace("console.log", "logComment");
+		var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
 		eval(script);
 	}
 
