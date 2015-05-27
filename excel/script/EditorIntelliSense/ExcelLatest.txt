@@ -13,10 +13,22 @@ declare module Excel {
         private m_names;
         private m_tables;
         private m_worksheets;
+        /**
+         Returns an object that represents epresents the Excel application which is managing the workbook. 
+        */
         public application : Application;
         public bindings : BindingCollection;
+        /**
+         Collection of Named Ranges associated with the workbook  
+        */
         public names : NamedItemCollection;
+        /**
+         Collection of Tables associated with the workbook        
+        */
         public tables : TableCollection;
+        /**
+         Collection of Worksheets associated with the workbook    
+        */
         public worksheets : WorksheetCollection;
         public getActiveWorksheet(): Worksheet;
         public getSelectedRange(): Range;
@@ -26,7 +38,13 @@ declare module Excel {
         private m_id;
         private m_name;
         private m_tables;
+        /**
+         Collection of Charts associated with the Worksheet
+        */
         public charts : ChartCollection;
+        /**
+         Collection of Tables associated with the Worksheet
+        */
         public tables : TableCollection;
         public id : string;
         /**
@@ -65,7 +83,13 @@ declare module Excel {
         private m_values;
         private m_worksheet;
         private m__ReferenceId;
+        /**
+        Format object contains Range's Font, Background, Borders, Alignment, Style, etc. settings 
+        */
         public format : Format;
+        /**
+         The worksheet containing the current range 
+        */
         public worksheet : Worksheet;
         /**
         Returns a String value that represents the range reference in A1 Style. **Address value will contain the Sheet reference (e.g., `Sheet1!A1:B4`)**
@@ -80,39 +104,39 @@ declare module Excel {
         */
         public cellCount : number;
         /**
-        Returns the total number of columns in the Range selected. Read-only 
+        Total number of columns in the range. Read-only 
         */
         public columnCount : number;
         /**
-        Returns the number of the first column in the first area in the specified range. This is adjusted to be zero indexed. Read-only
+        Zero-based index of the first column in the first area of the range. Read-only
         */
         public columnIndex : number;
         /**
-        Represents the object's formula in A1 style notation
+        Array of arrays representing the formulas in the range's cells using A1 style notation. Setting to a single value applies to all cells.
         */
         public formulas : any[][];
         /**
-        Formula for the object, in the language of the user in A1 style notation
+        Array of arrays representing the formulas in the range's cells using A1 style notation in the user's language. Setting to a single value applies to all cells.
         */
         public formulasLocal : any[][];
         /**
-        Value that represents the format code for the object
+        Array of arrays representing the format code for each of the cells in the range
         */
         public numberFormat : any[][];
         /**
-        Returns the total number of rows in the Range selected. Read-only 
+        Total number of rows in the range. Read-only 
         */
         public rowCount : number;
         /**
-        Returns the number of the first row of the first area in the range. This is adjusted to be zero indexed. Read-only
+        Zero-based index of the first row in the first area of the range. Read-only
         */
         public rowIndex : number;
         /**
-        Text values of the specified range. The Text value will not depend on the cell width. The # sign substitution that happens in Excel client will not affect the value returned by the API. 
+        Array of arrays representing the formatted text values of the cells in the range. The text value will not depend on the cell width. The # sign substitution that happens in Excel client will not affect the value returned by the API.
         */
         public text : any[][];
         /**
-        Unformatted values of the specified range
+        Array of arrays representing the unformatted values of the cells in the range
         */
         public values : any[][];
         public clear(applyTo: string): void;
@@ -236,6 +260,9 @@ declare module Excel {
         Returns the Background object defined on the overall Range selected
         */
         public background : Background;
+        /**
+        Collection of border objects that apply to the overall Range selected
+        */
         public borders : BorderCollection;
         /**
         Returns the Font object defined on the overall Range selected
@@ -373,8 +400,17 @@ declare module Excel {
         private m_categoryAxis;
         private m_seriesAxis;
         private m_valueAxis;
+        /**
+         Represents the category axis in a chart. 
+        */
         public categoryAxis : ChartAxis;
+        /**
+        Represents the series axis in a 3D chart. 
+        */
         public seriesAxis : ChartAxis;
+        /**
+         Represents the value axis in a chart.  
+        */
         public valueAxis : ChartAxis;
     }
     class ChartAxis extends OfficeExtension.ClientObject {
@@ -387,10 +423,22 @@ declare module Excel {
         private m_minorGridlines;
         private m_minorUnit;
         private m_title;
+        /**
+         Represents the font attributes (font name, font size, color, and so on) for an object. 
+        */
         public font : ChartFont;
         public lineFormat : ChartLineFormat;
+        /**
+         Returns a Gridlines object that represents the major gridlines for the specified axis.   
+        */
         public majorGridlines : ChartGridlines;
+        /**
+         Returns a Gridlines object that represents the minor gridlines for the specified axis.  
+        */
         public minorGridlines : ChartGridlines;
+        /**
+         Represents the title of a specified axis. 
+        */
         public title : ChartAxisTitle;
         public majorUnit : any;
         /**
@@ -407,6 +455,9 @@ declare module Excel {
         private m_font;
         private m_text;
         private m_visible;
+        /**
+         Represents the font attributes (font name, font size, color, and so on) for an object. 
+        */
         public font : ChartFont;
         /**
         A String value that represents the title of a Axis. 
@@ -428,7 +479,13 @@ declare module Excel {
         private m_showPercentage;
         private m_showSeriesName;
         private m_showValue;
+        /**
+         Represents the fill format of an object, which includes interior/background formating information. 
+        */
         public fillFormat : ChartFill;
+        /**
+         Represents the font attributes (font name, font size, color, and so on) for an object. 
+        */
         public font : ChartFont;
         /**
         Returns or sets a DataLabelPosition value that represents the position of the data label.  
@@ -463,6 +520,9 @@ declare module Excel {
     class ChartGridlines extends OfficeExtension.ClientObject {
         private m_lineFormat;
         private m_visible;
+        /**
+         Represents line and arrowhead formatting.
+        */
        public lineFormat : ChartLineFormat;
         public visible : boolean;
     }
@@ -472,7 +532,13 @@ declare module Excel {
         private m_overlay;
         private m_position;
         private m_visible;
+        /**
+         Represents the fill format of an object, which includes interior/background formating information. 
+        */
         public fillFormat : ChartFill;
+        /**
+         Represents the font attributes (font name, font size, color, and so on) for an object. 
+        */
         public font : ChartFont;
         /**
         True if the legend with be overlapping with the chart. 
@@ -493,7 +559,13 @@ declare module Excel {
         private m_overlay;
         private m_text;
         private m_visible;
+        /**
+         Represents the fill format of an object, which includes interior/background formating information. 
+        */
         public fillFormat : ChartFill;
+        /**
+         Represents the font attributes (font name, font size, color, and so on) for an object. 
+        */
         public font : ChartFont;
         /**
         True if the title overlays the chart. 
