@@ -4,7 +4,7 @@
 		{ "done": true, "filename": "setValueInRange.js", "name": "Set Value in Range", "group": "Range", "description": "Set the value of all cells in the range A1:C3 to 7"},
 		{ "done": true, "filename": "setValuesInRange.js", "name": "Set Multiple Values in Range", "group": "Range", "description": "Set the values in the range A1:C3 to 1, 2, 3, 4, 5, 6, 7, 8, 9"},
 		{ "done": true, "filename": "getFormulasInRange.js", "name": "Get Formulas in Range", "group": "Range", "description": "Retrieve the formulas in the range A1:C3"},
-		{ "done": true, "filename": "setFormulaInRange.js", "name": "Set Formula in Range", "group": "Range", "description": "Set the formula in all cells in the range A1:C3 to '=SUM(1, 2, 3, 4, 5, 6, 7, 8, 9)'"},
+		{ "done": true, "filename": "setFormulaInRange.js", "name": "Set Formula in Range", "group": "Range", "description": "Set the formula in all cells in the range A1:C3 to '=RAND()*17'"},
 		{ "done": true, "filename": "setFormulasInRange.js", "name": "Set Formulas in Range", "group": "Range", "description": "Set the formulas in the range A1:B2 to an array of different formulas"},
 		{ "done": true, "filename": "getTablesInWorkbook.js", "name": "Get Tables in Workbook", "group": "Table", "description": "Retrieve the list of tables in the current workbook"},
 		{ "done": true, "filename": "createTableFromRange.js", "name": "Create a Table", "group": "Table", "description": "Create a table from the data in range A1:E7"},

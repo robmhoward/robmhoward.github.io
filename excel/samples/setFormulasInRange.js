@@ -1,4 +1,4 @@
 var ctx = new Excel.ExcelClientContext();
 var range = ctx.workbook.worksheets.getItem("Sheet1").getRange("A1:B2");
-range.formulas = [["12345", "=A1"], ["=B1", "=RAND()"]];
+range.formulas = [["=RAND()*12", "=RAND()*19"], ["=A1*.7", "=B1*.9"]];
 ctx.executeAsync().then();
