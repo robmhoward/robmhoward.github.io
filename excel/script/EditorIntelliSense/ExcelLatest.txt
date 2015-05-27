@@ -51,11 +51,29 @@ declare module Excel {
          A String value that represents a Worksheet object 
         */
         public name : string;
+        /**
+         Activates the worksheet 
+        */
         public activate(): void;
+        /**
+         Deletes the worksheet 
+        */
         public deleteObject(): void;
+        /**
+        Returns a range containing the single cell specified by the zero-indexed row and column numbers
+        */
         public getCell(row: number, column: number): Range;
+        /**
+        Returns the range containing all cells in the worksheet
+        */
         public getEntireWorksheetRange(): Range;
+        /**
+        Returns the range specified by the address
+        */
         public getRange(address: string): Range;
+        /**
+        Returns the used range of the worksheet
+        */
         public getUsedRange(): Range;
     }
     class WorksheetCollection extends OfficeExtension.ClientObject {
