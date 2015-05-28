@@ -1,0 +1,213 @@
+﻿declare module Word {
+    class Body extends OfficeExtension.ClientObject {
+        private m_contentControls;
+        private m_inlinePictures;
+        private m_paragraphs;
+        public contentControls : ContentControlCollection;
+        public inlinePictures : InlinePictureCollection;
+        public paragraphs : ParagraphCollection;
+        public insertContentControl(): ContentControl;
+        public insertParagraph(paragraphText: string, loc: string): Paragraph;
+    }
+    class ContentControl extends OfficeExtension.ClientObject {
+        private m_appearance;
+        private m_contentControls;
+        private m_font;
+        private m_html;
+        private m_id;
+        private m_inlinePictures;
+        private m_ooxml;
+        private m_paragraphs;
+        private m_style;
+        private m_tag;
+        private m_text;
+        private m_title;
+        private m_type;
+        public contentControls : ContentControlCollection;
+        public font : Font;
+        public inlinePictures : InlinePictureCollection;
+        public paragraphs : ParagraphCollection;
+        public appearance : string;
+        public html : string;
+        public id : number;
+        public ooxml : string;
+        public style : string;
+        public tag : string;
+        public text : string;
+        public title : string;
+        public type : string;
+        public clear(): void;
+        public delete(): void;
+        public deleteWhole(): void;
+        public insertFile(path: string, loc: string): Range;
+        public insertHtml(html: string, loc: string): Range;
+        public insertOoxml(ooxml: string, loc: string): Range;
+        public insertText(txt: string, loc: string): Range;
+        public select(): void;
+        public handleResult(value: any): void;
+    }
+    class ContentControlCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        public count : number;
+        public getById(Id: number): ContentControl;
+        public getByTag(Tag: string): ContentControlCollection;
+        public getByTitle(Title: string): ContentControlCollection;
+        public getItemAt(index: number): ContentControl;
+        public handleResult(value: any): void;
+    }
+    class Document extends OfficeExtension.ClientObject {
+        private m_body;
+        private m_properties;
+        private m_saved;
+        private m_sections;
+        private m_selection;
+        public body : Body;
+        public sections : SectionCollection;
+        public selection : Range;
+        public properties : string;
+        public saved : boolean;
+        public save(): void;
+        public handleResult(value: any): void;
+    }
+    class Font extends OfficeExtension.ClientObject {
+        private m_bold;
+        private m_color;
+        private m_doubleStrikeThrough;
+        private m_highlightColor;
+        private m_italic;
+        private m_name;
+        private m_size;
+        private m_strikeThrough;
+        private m_subscript;
+        private m_superscript;
+        private m_underline;
+        public bold : boolean;
+        public color : string;
+        public doubleStrikeThrough : boolean;
+        public highlightColor : string;
+        public italic : boolean;
+        public name : string;
+        public size : number;
+        public strikeThrough : boolean;
+        public subscript : boolean;
+        public superscript : boolean;
+        public underline : string;
+        public handleResult(value: any): void;
+    }
+    class InlinePicture extends OfficeExtension.ClientObject {
+        private m_altTextDescription;
+        private m_altTextTitle;
+        private m_height;
+        private m_hyperlink;
+        private m_id;
+        private m_lockAspectRatio;
+        private m_width;
+        public altTextDescription : string;
+        public altTextTitle : string;
+        public height : number;
+        public hyperlink : string;
+        public id : number;
+        public lockAspectRatio : boolean;
+        public width : number;
+        public getBase64ImageSrc(): OfficeExtension.ClientResult<string>;
+        public insertContentControl(): ContentControl;
+        public handleResult(value: any): void;
+    }
+    class InlinePictureCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        public count : number;
+        public getItem(index: any): InlinePicture;
+        public getItemAt(index: number): InlinePicture;
+        public handleResult(value: any): void;
+    }
+    class Paragraph extends OfficeExtension.ClientObject {
+        private m_font;
+        public font : Font;
+        public getPlainText(): OfficeExtension.ClientResult<string>;
+        public insertBreak(bt: string, loc: string): void;
+        public insertContentControl(): ContentControl;
+        public insertFile(path: string, loc: string): Range;
+        public insertHtml(html: string, loc: string): Range;
+        public insertInlinePictureBase64(base64EncodedImage: string, loc: string): InlinePicture;
+        public insertInlinePictureUrl(url: string, loc: string, linkToFile: boolean, saveWithDoc: boolean): InlinePicture;
+        public insertOoxml(ooxml: string, loc: string): Range;
+        public insertParagraph(paragraphText: string, loc: string): Paragraph;
+        public insertText(txt: string, loc: string): Range;
+    }
+    class ParagraphCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        public count : number;
+        public getItemAt(index: number): Paragraph;
+        public handleResult(value: any): void;
+    }
+    class Range extends OfficeExtension.ClientObject {
+        public getPlainText(): OfficeExtension.ClientResult<string>;
+        public insertContentControl(): ContentControl;
+        public insertFile(path: string, loc: string): Range;
+        public insertHtml(html: string, loc: string): Range;
+        public insertOoxml(ooxml: string, loc: string): Range;
+        public insertText(txt: string, loc: string): Range;
+    }
+    class Section extends OfficeExtension.ClientObject {
+        private m_body;
+        public body : Body;
+    }
+    class SectionCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        public count : number;
+        public getItemAt(index: number): Section;
+        public handleResult(value: any): void;
+    }
+    class ContentControlType {
+        static unknown: string;
+        static inline: string;
+        static paragraph: string;
+        static cell: string;
+        static row: string;
+        static count: string;
+    }
+    class ContentControlAppearance {
+        static boundingBox: string;
+        static tags: string;
+        static hidden: string;
+    }
+    class UnderlineType {
+        static none: string;
+        static single: string;
+        static word: string;
+        static double: string;
+        static dotted: string;
+        static hidden: string;
+        static thick: string;
+        static dashLine: string;
+        static dotLine: string;
+        static dotDashLine: string;
+        static twoDotDashLine: string;
+        static wave: string;
+    }
+    class BreakType {
+        static page: string;
+        static column: string;
+        static next: string;
+        static sectionContinuous: string;
+        static sectionEven: string;
+        static sectionOdd: string;
+        static line: string;
+        static lineClearLeft: string;
+        static lineClearRight: string;
+        static textWrapping: string;
+    }
+    class InsertLocation {
+        static before: string;
+        static after: string;
+        static start: string;
+        static end: string;
+    }
+}
+declare module Word {
+    class WordClientContext extends OfficeExtension.ClientRequestContext {
+        private m_document;
+        constructor(url?: string);
+        public document : Document;
+    }
+}

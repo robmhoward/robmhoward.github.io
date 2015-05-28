@@ -1,0 +1,18 @@
+{
+	"values": [
+		{ "done": true, "filename": "insertPictureFromURL.js", "name": "Insert Picture from URL", "group": "Picture", "description": "Insert picture into the first paragraph."},
+		{ "done": true, "filename": "insertPictureFromBase64.js", "name": "Insert Picture from Base64", "group": "Picture", "description": "Insert picture into the first paragraph."}
+	],
+	"groups": [
+		{ "name": "Range" },
+		{ "name": "ContentControl" },
+		{ "name": "Picture" },
+		{ "name": "Paragraph" },
+		{ "name": "Document" },
+		{ "name": "Formatting" },
+		{ "name": "Others" }
+	],
+	"suggestions": [
+		{ "missing": false, "done": false, "filename": "findAndReplace.js", "name": "Find Text and Replace", "description": "" }
+	]
+}
