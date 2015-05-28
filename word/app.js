@@ -40,10 +40,10 @@ wordSamplesApp.controller("SamplesController", function($scope, wordSamplesFacto
 	$scope.insideOffice = insideOffice;
 	
 	MonacoEditorIntegration.initializeJsEditor('TxtRichApiScript', [
-			"/script/EditorIntelliSense/Word.txt",
-			"/script/EditorIntelliSense/Office.Runtime.txt",
-			"/script/EditorIntelliSense/Helpers.txt",
-			"/script/EditorIntelliSense/jquery.txt",
+			"/word/script/EditorIntelliSense/WordLatest.txt",
+			"/word/script/EditorIntelliSense/Office.Runtime.txt",
+			"/word/script/EditorIntelliSense/Helpers.txt",
+			"/word/script/EditorIntelliSense/jquery.txt",
 		]);
 	
 	MonacoEditorIntegration.setDirty = function() {
