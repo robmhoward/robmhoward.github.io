@@ -1,5 +1,5 @@
 var ctx = new Excel.ExcelClientContext();
-var chart = ctx.workbook.worksheets.getItem("Charts").charts.getItem("Chart1");	
+var chart = ctx.workbook.worksheets.getItem("Sheet1").charts.getItem("Chart1");	
 
 chart.fillFormat.SetSolidColor("#FF0000");
 
