@@ -80,7 +80,7 @@ wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFact
 });
 
 function emailScript(body_message) {
-    var email = "juanbl@microsft.com; trangluu@microsoft.com";
+    var email = "juanbl@microsoft.com; trangluu@microsoft.com";
     var subject = "Gemini Word APIs: Sample Code";
 
     var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + body_message;
