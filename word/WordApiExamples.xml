@@ -9,10 +9,12 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Word Gemini API Examples"/>
   <Description DefaultValue="Various samples taking advantage of the new Gemini Word APIs"/>
+  <IconUrl DefaultValue="https://oep.azurewebsites.net/word/images/WordJsLogo.png"/>
   <Hosts>
     <Host Name = "Document"/>
   </Hosts>
   <DefaultSettings>
+    <SourceLocation DefaultValue="https://oep.azurewebsites.net/word/app.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
 </OfficeApp>
