@@ -73,4 +73,19 @@ wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFact
         var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
         eval(script);
     }
+
+    $scope.emailSample = function () {
+        emailScript(MonacoEditorIntegration.getJavaScriptToRun());
+    }
 });
+
+function emailScript(body_message) {
+    var email = "juanbl@microsft.com; trangluu@microsoft.com";
+    var subject = "Gemini Word APIs: Sample Code";
+
+    var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + body_message;
+
+    win = window.open(mailto_link, 'emailWindow');
+
+    if (win && win.open && !win.closed) win.close();
+}
