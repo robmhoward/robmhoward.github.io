@@ -1,6 +1,6 @@
 var MonacoEditorIntegration;
 (function (MonacoEditorIntegration) {
-    var localStorageKey = 'rich-api-test';
+    var localStorageKey = 'word-api-samples';
     var jsMonacoEditor;
 
     function initializeJsEditor(textAreaId, intellisensePaths) {
