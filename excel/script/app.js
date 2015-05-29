@@ -1,13 +1,20 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
 var insideOffice = false;
+var consoleLogFunction;
 
 var logComment = function(message) {
-	document.getElementById('console').innerHTML += message + '\n';
+	var console;
+	console = document.getElementById('console');
+	console.innerHTML += message + '\n';
+	console.scrollTop = console.scrollHeight;
+	//console.setSelectionRange(console.textContent.length, console.textContent.length);
 }
 
 Office.initialize = function (reason) {
 	insideOffice = true;	
-	console.log('Initialized!');
+	console.log('Add-in initialized, redirecting console.log() to console textArea');
+	consoleLogFunction = console.log;
+	console.log = logComment;
 };
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
@@ -59,18 +66,23 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	});
 
 	$scope.loadSampleCode = function() {
-		console.log("loadSampleCode called");
 		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
 		excelSamplesFactory.getSampleCode($scope.selectedSample.filename).then(function (response) {
-			$scope.selectedSample.code = response.data;
+			$scope.selectedSample.code = addErrorHandlingIfNeeded(response.data);
 			$scope.insideOffice = insideOffice;
 			MonacoEditorIntegration.setJavaScriptText($scope.selectedSample.code);
+			MonacoEditorIntegration.resizeEditor();
 		});
 	};
 	
 	$scope.runSelectedSample = function() {
-		var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
+		var script = MonacoEditorIntegration.getJavaScriptToRun(); //.replace("console.log", "logComment");
 		eval(script);
 	}
 
 });
+
+function addErrorHandlingIfNeeded(sampleCode) {
+	if (!insideOffice) return sampleCode;
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.name + \":\" + error.message);\r\n});");
+}

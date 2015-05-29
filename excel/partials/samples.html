@@ -1,4 +1,4 @@
-<div class="container" style="display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 10px;">
+<div class="container" style="overflow: hidden; display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 10px;">
 	<div>
 		<select ng-model="selectedGroup" ng-options="group.name for group in groups">
 			<option value="">-- choose a group --</option>
@@ -10,7 +10,7 @@
 	<div>
 		<p><button id="runButton" ng-hide="!insideOffice" ng-click="runSelectedSample()">Run!</button> <span>{{selectedSample.description}}</span></p>
 	</div>
-	<div style="flex-grow: 1" id="TxtRichApiScript">
+	<div style="flex-grow: 1; overflow: hidden" id="TxtRichApiScript">
 	
 	</div>
 	<div ng-hide="!insideOffice">
