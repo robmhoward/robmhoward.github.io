@@ -1,19 +1,21 @@
 {
-	"values": [
-		{ "done": true, "filename": "getParagraphs.js", "name": "Get Paragraphs", "group": "Paragraph", "description": "Get all paragraphs and print out the length of individual paragraphs."},
-		{ "done": true, "filename": "insertPictureFromURL.js", "name": "Insert Picture from URL", "group": "Picture", "description": "Insert picture into the first paragraph."},
-		{ "done": true, "filename": "insertPictureFromBase64.js", "name": "Insert Picture from Base64", "group": "Picture", "description": "Insert picture into the first paragraph."}
-	],
-	"groups": [
-		{ "name": "Range" },
-		{ "name": "ContentControl" },
-		{ "name": "Picture" },
-		{ "name": "Paragraph" },
-		{ "name": "Document" },
-		{ "name": "Formatting" },
-		{ "name": "Others" }
-	],
-	"suggestions": [
-		{ "missing": false, "done": false, "filename": "findAndReplace.js", "name": "Find Text and Replace", "description": "" }
-	]
+    "values": [
+        { "done": true, "filename": "getContentControls.js", "name": "Get Content Controls", "group": "ContentControl", "description": "Get all Content Controls and print out the length of individual CC text." },
+        { "done": true, "filename": "setParagraphProperties.js", "name": "Set Paragraph Properties", "group": "Paragraph", "description": "Set paragraph properties." },
+        { "done": true, "filename": "getParagraphs.js", "name": "Get Paragraphs", "group": "Paragraph", "description": "Get all paragraphs and print out the length of individual paragraphs." },
+        { "done": true, "filename": "insertPictureFromURL.js", "name": "Insert Picture from URL", "group": "Picture", "description": "Insert picture into the first paragraph." },
+        { "done": true, "filename": "insertPictureFromBase64.js", "name": "Insert Picture from Base64", "group": "Picture", "description": "Insert picture into the first paragraph." }
+    ],
+    "groups": [
+        { "name": "Range" },
+        { "name": "ContentControl" },
+        { "name": "Picture" },
+        { "name": "Paragraph" },
+        { "name": "Document" },
+        { "name": "Formatting" },
+        { "name": "Others" }
+    ],
+    "suggestions": [
+        { "missing": false, "done": false, "filename": "findAndReplace.js", "name": "Find Text and Replace", "description": "" }
+    ]
 }
