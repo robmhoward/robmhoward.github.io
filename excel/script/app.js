@@ -87,5 +87,5 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 
 function addErrorHandlingIfNeeded(sampleCode) {
 	if (!insideOffice) return sampleCode;
-	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.name + \":\" + error.message);\r\n});");
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.errorCode + \":\" + error.errorMessage);\r\n});");
 }
