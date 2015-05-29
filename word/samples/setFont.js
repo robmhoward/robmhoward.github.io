@@ -1,4 +1,5 @@
 var ctx = new Word.WordClientContext();
+var para = ctx.document.body.paragraphs.getItemAt(0);
 var font = para.font;
 
 font.size = 32;
@@ -15,4 +16,3 @@ ctx.executeAsync().then(
         console.log(result.traceMessages);
     }
 );
-

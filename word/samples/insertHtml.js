@@ -3,7 +3,7 @@ var range = ctx.document.selection;
 
 var htmlText =
     "<h1><strong>Insert Html</strong></h1>" +
-    "<h2><em>Office Extensiblity Platform</em></h2>" +
+    "<h2><em>Office Extensibility Platform</em></h2>" +
     "<p>This is an example of how the InsertHtml method works.</p>" +
     "<table>" +
         "<tr><td>Check</td><td>out</td></tr>" +
