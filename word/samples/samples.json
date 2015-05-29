@@ -15,6 +15,7 @@
         { "name": "ContentControl" },
         { "name": "Picture" },
         { "name": "Paragraph" },
+        { "name": "Section" },
         { "name": "Document" },
         { "name": "Formatting" },
         { "name": "Others" }
