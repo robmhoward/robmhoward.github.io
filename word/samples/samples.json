@@ -4,6 +4,7 @@
         { "done": true, "filename": "getParagraphs.js", "name": "Get Paragraphs", "group": "Paragraph", "description": "Get all paragraphs and print out the length of individual paragraphs." },
         { "done": true, "filename": "insertHtml.js", "name": "Insert Html", "group": "Document", "description": "Insert HTML blop into current selection." },
         { "done": true, "filename": "insertOoxml.js", "name": "Insert OOXML", "group": "Document", "description": "Insert OXML blop into current selection." },
+        { "done": true, "filename": "insertText.js", "name": "Insert Text", "group": "Document", "description": "Insert text into current selection." },
         { "done": true, "filename": "insertPictureFromURL.js", "name": "Insert Picture from URL", "group": "Picture", "description": "Insert picture into the first paragraph." },
         { "done": true, "filename": "insertPictureFromBase64.js", "name": "Insert Picture from Base64", "group": "Picture", "description": "Insert picture into the first paragraph." },
         { "done": true, "filename": "setFont.js", "name": "Set Paragraph Font", "group": "Formatting", "description": "Set paragraph font properties." },
