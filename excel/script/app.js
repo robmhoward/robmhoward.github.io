@@ -1,5 +1,5 @@
 var excelSamplesApp = angular.module("excelSamplesApp", ['ngRoute']);
-var insideOffice = false;
+var insideOffice = true;
 var consoleErrorFunction;
 
 var logComment = function(message) {
@@ -13,6 +13,7 @@ Office.initialize = function (reason) {
 	insideOffice = true;	
 	console.log('Add-in initialized, redirecting console.log() to console textArea');
 	consoleErrorFunction = console.error;
+	console.
 	console.error = logComment;
 };
 
@@ -76,7 +77,11 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	
 	$scope.runSelectedSample = function() {
 		var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
-		eval(script);
+		try {
+			eval(script);
+		} catch (e) {
+			logComment(e.name + ": " + e.message);
+		}
 	}
 
 });
