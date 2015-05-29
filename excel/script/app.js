@@ -13,7 +13,6 @@ Office.initialize = function (reason) {
 	insideOffice = true;	
 	console.log('Add-in initialized, redirecting console.log() to console textArea');
 	consoleErrorFunction = console.error;
-	console.
 	console.error = logComment;
 };
 
@@ -76,7 +75,7 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 	};
 	
 	$scope.runSelectedSample = function() {
-		var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
+		var script = MonacoEditorIntegration.getJavaScriptToRun().replace(/console.log/g, "logComment");
 		try {
 			eval(script);
 		} catch (e) {
