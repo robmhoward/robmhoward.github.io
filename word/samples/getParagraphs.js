@@ -7,7 +7,7 @@ ctx.load(paras);
 ctx.executeAsync().then(
     function () {
         var results = new Array();
-            for (var i = 0; i < paras.count; i++) {
+        for (var i = 0; i < paras.count; i++) {
             results.push(paras.getItemAt(i).getPlainText());
         }
         ctx.executeAsync().then(
