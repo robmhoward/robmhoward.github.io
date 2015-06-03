@@ -11,13 +11,19 @@ declare module OfficeExtension {
     class ActionFactory {
         static createSetPropertyAction(context: ClientRequestContext, parent: ClientObject, propertyName: string, value: any): Action;
         static createMethodAction(context: ClientRequestContext, parent: ClientObject, methodName: string, operationType: OperationType, args: any[]): Action;
-        static createQueryAction(context: ClientRequestContext, parent: ClientObject, propertyNames: string[]): Action;
+        static createQueryAction(context: ClientRequestContext, parent: ClientObject, queryOption: QueryInfo): Action;
         static createInstantiateAction(context: ClientRequestContext, obj: ClientObject): Action;
         static createTraceAction(context: ClientRequestContext, message: string): Action;
     }
 }
 declare module OfficeExtension {
-    class ClientObject {
+    class ClientObject implements IResultHandler {
+        private m_context;
+        private m_objectPath;
+        constructor(context: ClientRequestContext, objectPath: ObjectPath);
+        public context : ClientRequestContext;
+        public objectPath : ObjectPath;
+        public handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
@@ -44,10 +50,29 @@ declare module OfficeExtension {
     }
 }
 declare module OfficeExtension {
+    interface LoadOption {
+        select?: string;
+        expand?: string;
+        top?: number;
+        skip?: number;
+    }
     class ClientRequestContext {
-        public load(clientObj: ClientObject, select?: string): void;
+        private m_nextId;
+        private m_pendingRequest;
+        private m_url;
+        private m_references;
+        public m_requestExecutor: IRequestExecutor;
+        public rootObject: ClientObject;
+        public customData: string;
+        constructor(url?: string);
+        public pendingRequest : ClientRequest;
+        public references : References;
+        public load(clientObj: ClientObject, option?: any): void;
         public trace(message: string): void;
+        private parseSelectExpand(select);
+        private executeAsyncPrivate(doneCallback, failCallback);
         public executeAsync(): IPromise;
+        public nextId(): number;
     }
 }
 declare module OfficeExtension {
@@ -74,6 +99,7 @@ declare module OfficeExtension {
     class Constants {
         static getItemAt: string;
         static id: string;
+        static idPrivate: string;
         static index: string;
         static items: string;
         static iterativeExecutor: string;
@@ -91,7 +117,7 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     interface IPromise {
-        then(doneCallback?: (result?: any) => void, fallCallback?: (result?: any) => void): any;
+        then(doneCallback: (result?: any) => void, fallCallback?: (result?: any) => void): any;
     }
 }
 declare module OfficeExtension {
@@ -153,12 +179,19 @@ declare module OfficeExtension {
         Arguments?: any[];
         ReferencedObjectPathIds?: number[];
     }
+    interface QueryInfo {
+        Select?: string[];
+        Expand?: string[];
+        Skip?: number;
+        Top?: number;
+    }
     interface ActionInfo {
         Id: number;
         ActionType: ActionType;
         Name: string;
         ObjectPathId: number;
         ArgumentInfo?: ArgumentInfo;
+        QueryInfo?: QueryInfo;
     }
     interface ActionResult {
         ActionId: number;
@@ -204,6 +237,7 @@ declare module OfficeExtension {
         public parentObjectPath : ObjectPath;
         public argumentObjectPaths : ObjectPath[];
         public isValid : boolean;
+        public updateUsingObjectData(value: Object): void;
     }
 }
 declare module OfficeExtension {
@@ -318,5 +352,6 @@ declare module OfficeExtension {
         static validateObjectPath(clientObject: ClientObject): void;
         static validateReferencedObjectPaths(objectPaths: ObjectPath[]): void;
         static getResourceString(resourceId: string): string;
+        static log(message: string): void;
     }
 }
