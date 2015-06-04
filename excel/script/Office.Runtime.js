@@ -68,16 +68,15 @@ var OfficeExtension;
             return ret;
         };
 
-        ActionFactory.createQueryAction = function (context, parent, propertyNames) {
+        ActionFactory.createQueryAction = function (context, parent, queryOption) {
             OfficeExtension.Utility.validateObjectPath(parent);
             var actionInfo = {
                 Id: context.nextId(),
                 ActionType: 2 /* Query */,
                 Name: "",
-                ObjectPathId: parent.objectPath.objectPathInfo.Id,
-                ArgumentInfo: {}
+                ObjectPathId: parent.objectPath.objectPathInfo.Id
             };
-            actionInfo.ArgumentInfo.Arguments = propertyNames;
+            actionInfo.QueryInfo = queryOption;
             var ret = new OfficeExtension.Action(actionInfo, false);
             context.pendingRequest.addAction(ret);
             context.pendingRequest.addReferencedObjectPath(parent.objectPath);
@@ -300,24 +299,47 @@ var OfficeExtension;
             configurable: true
         });
 
-        ClientRequestContext.prototype.load = function (clientObj, select) {
-            var args = [];
+        ClientRequestContext.prototype.load = function (clientObj, option) {
+            var queryOption = {};
 
-            if (!OfficeExtension.Utility.isNullOrEmptyString(select)) {
-                var propertyNames = select.split(",");
-                for (var i in propertyNames) {
-                    var propertyName = propertyNames[i];
-                    propertyName = propertyName.trim();
-                    args.push(propertyName);
+            if (typeof (option) == "string") {
+                var select = option;
+                queryOption.Select = this.parseSelectExpand(select);
+            } else if (typeof (option) == "object") {
+                var loadOption = option;
+                if (typeof (loadOption.select) == "string") {
+                    queryOption.Select = this.parseSelectExpand(loadOption.select);
+                }
+                if (typeof (loadOption.expand) == "string") {
+                    queryOption.Expand = this.parseSelectExpand(loadOption.expand);
+                }
+                if (typeof (loadOption.top) == "number") {
+                    queryOption.Top = loadOption.top;
+                }
+                if (typeof (loadOption.skip) == "number") {
+                    queryOption.Skip = loadOption.skip;
                 }
             }
 
-            var action = OfficeExtension.ActionFactory.createQueryAction(this, clientObj, args);
+            var action = OfficeExtension.ActionFactory.createQueryAction(this, clientObj, queryOption);
             this.pendingRequest.addActionResultHandler(action, clientObj);
         };
 
         ClientRequestContext.prototype.trace = function (message) {
             OfficeExtension.ActionFactory.createTraceAction(this, message);
+        };
+
+        ClientRequestContext.prototype.parseSelectExpand = function (select) {
+            var args = [];
+            if (!OfficeExtension.Utility.isNullOrEmptyString(select)) {
+                var propertyNames = select.split(",");
+                for (var i = 0; i < propertyNames.length; i++) {
+                    var propertyName = propertyNames[i];
+                    propertyName = propertyName.trim();
+                    args.push(propertyName);
+                }
+            }
+            return args;
         };
 
         ClientRequestContext.prototype.executeAsyncPrivate = function (doneCallback, failCallback) {
@@ -433,6 +455,7 @@ var OfficeExtension;
         }
         Constants.getItemAt = "GetItemAt";
         Constants.id = "Id";
+        Constants.idPrivate = "_Id";
         Constants.index = "_Index";
         Constants.items = "_Items";
         Constants.iterativeExecutor = "IterativeExecutor";
@@ -574,6 +597,38 @@ var OfficeExtension;
             configurable: true
         });
 
+
+        ObjectPath.prototype.updateUsingObjectData = function (value) {
+            var referenceId = value[OfficeExtension.Constants.referenceId];
+            if (!OfficeExtension.Utility.isNullOrEmptyString(referenceId)) {
+                this.m_isInvalidAfterRequest = false;
+                this.m_isValid = true;
+                this.m_objectPathInfo.ObjectPathType = 6 /* ReferenceId */;
+                this.m_objectPathInfo.Name = referenceId;
+                this.m_objectPathInfo.ArgumentInfo = {};
+                this.m_parentObjectPath = null;
+                this.m_argumentObjectPaths = null;
+                return;
+            }
+
+            if (this.parentObjectPath && this.parentObjectPath.isCollection) {
+                var id = value[OfficeExtension.Constants.id];
+                if (OfficeExtension.Utility.isNullOrUndefined(id)) {
+                    id = value[OfficeExtension.Constants.idPrivate];
+                }
+
+                if (!OfficeExtension.Utility.isNullOrUndefined(id)) {
+                    this.m_isInvalidAfterRequest = false;
+                    this.m_isValid = true;
+                    this.m_objectPathInfo.ObjectPathType = 5 /* Indexer */;
+                    this.m_objectPathInfo.Name = "";
+                    this.m_objectPathInfo.ArgumentInfo = {};
+                    this.m_objectPathInfo.ArgumentInfo.Arguments = [id];
+                    this.m_argumentObjectPaths = null;
+                    return;
+                }
+            }
+        };
         return ObjectPath;
     })();
     OfficeExtension.ObjectPath = ObjectPath;
@@ -644,6 +699,10 @@ var OfficeExtension;
 
         ObjectPathFactory.createChildItemObjectPathUsingIndexer = function (context, parent, childItem) {
             var id = childItem[OfficeExtension.Constants.id];
+            if (OfficeExtension.Utility.isNullOrUndefined(id)) {
+                id = childItem[OfficeExtension.Constants.idPrivate];
+            }
+
             var objectPathInfo = objectPathInfo = {
                 Id: context.nextId(),
                 ObjectPathType: 5 /* Indexer */,
@@ -689,8 +748,8 @@ var OfficeExtension;
             var requestMessageText = JSON.stringify(requestMessage.Body);
             var messageSafearray = OfficeExtension.RichApiMessageUtility.buildRequestMessageSafeArray(customData, requestFlags, "POST", "ProcessQuery", null, requestMessageText);
             OSF.DDA.RichApi.executeRichApiRequestAsync(messageSafearray, function (result) {
-                console.log("Response:");
-                console.log(JSON.stringify(result));
+                OfficeExtension.Utility.log("Response:");
+                OfficeExtension.Utility.log(JSON.stringify(result));
                 var response = { ErrorCode: '', ErrorMessage: '', Headers: null, Body: null };
                 if (result.status == "succeeded") {
                     var bodyText = OfficeExtension.RichApiMessageUtility.getResponseBody(result);
@@ -1072,19 +1131,8 @@ var OfficeExtension;
         };
 
         Utility.fixObjectPathIfNecessary = function (clientObject, value) {
-            var referenceId = value[OfficeExtension.Constants.referenceId];
-            if (!Utility.isNullOrUndefined(referenceId)) {
-                clientObject.objectPath = OfficeExtension.ObjectPathFactory.createReferenceIdObjectPath(clientObject.context, referenceId);
-                return;
-            }
-
-            if (clientObject.objectPath && clientObject.objectPath.parentObjectPath && clientObject.objectPath.parentObjectPath.isCollection) {
-                var id = value[OfficeExtension.Constants.id];
-                if (!Utility.isNullOrUndefined(id)) {
-                    var parentObjectPath = clientObject.objectPath.parentObjectPath;
-                    clientObject.objectPath = OfficeExtension.ObjectPathFactory.createIndexerObjectPathUsingParentPath(clientObject.context, parentObjectPath, [id]);
-                    return;
-                }
+            if (clientObject && clientObject.objectPath && value) {
+                clientObject.objectPath.updateUsingObjectData(value);
             }
         };
 
@@ -1114,6 +1162,12 @@ var OfficeExtension;
 
         Utility.getResourceString = function (resourceId) {
             return resourceId;
+        };
+
+        Utility.log = function (message) {
+            if (window.console && window.console.log) {
+                window.console.log(message);
+            }
         };
         return Utility;
     })();
