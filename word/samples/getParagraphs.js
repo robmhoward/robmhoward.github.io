@@ -8,7 +8,7 @@ ctx.executeAsync().then(
     function () {
         var results = new Array();
         for (var i = 0; i < paras.count; i++) {
-            results.push(paras.getItemAt(i).getPlainText());
+            results.push(paras.getItemAt(i).getText());
         }
         ctx.executeAsync().then(
             function () {
