@@ -7,9 +7,13 @@
             <option value="">-- choose a sample --</option>
         </select>
     </div>
-    <div class="button_input">
-        <!--<p><button id="runButton" ng-click="emailSample()">Email Sample...</button></p>-->
-        <p><button id="runButton" ng-hide="!insideOffice" ng-click="runSelectedSample()">Run!</button> <span>{{selectedSample.description}}</span></p>
+    <div class="button_input" ng-hide="!insideOffice">
+       <button id="runButton" ng-click="runSelectedSample()">Run!</button>
+       <button id="clearButton" ng-click="clearLog()">Clear Log</button>
+       <label><input type="checkbox" ng-model="debugOption.value" ng-change="toggleDebugOption()" />Debug</label><br />
+    </div>
+    <div class="sample_text">
+        <p>{{selectedSample.description}}</p>
     </div>
     <div style="flex-grow: 1" id="TxtRichApiScript">
 

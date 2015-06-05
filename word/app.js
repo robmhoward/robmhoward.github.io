@@ -1,12 +1,36 @@
 var wordSamplesApp = angular.module("wordSamplesApp", ['ngRoute']);
 var insideOffice = false;
+var debugOption = false;
 
 var logComment = function (message) {
-    document.getElementById('console').innerHTML += message + '\n';
+    var span = document.createElement('span');
+    span.className = 'message-text';
+    span.innerHTML = message + '<br/>';
+    $('#console').append(span);
+}
+
+var logDebug = function (message) {
+    if (debugOption) {
+        var span = document.createElement('span');
+        span.className = 'debug-text';
+        span.innerHTML = message + '<br/>';
+        $('#console').append(span);
+    }
 }
 
 Office.initialize = function (reason) {
     insideOffice = true;
+
+    // Override window.console to log framework debug info
+    window.console.log = function (message) {
+        logDebug(message);
+    };
+
+    // Log all unhandled exceptions
+    window.onerror = function (em, url, ln) {
+        logDebug("OnError: " + em + ", " + url + ", " + ln);
+    };
+
     console.log('Initialized!');
 };
 
@@ -37,6 +61,7 @@ wordSamplesApp.factory("wordSamplesFactory", ['$http', function ($http) {
 wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFactory) {
     $scope.samples = [{ name: "Loading..." }];
     $scope.selectedSample = { description: "No sample loaded" };
+    $scope.debugOption = { value: false };
     $scope.insideOffice = insideOffice;
 
     // Update to full path if word is not at the root folder
@@ -71,21 +96,17 @@ wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFact
 
     $scope.runSelectedSample = function () {
         var script = MonacoEditorIntegration.getJavaScriptToRun().replace("console.log", "logComment");
+        script = "try {" + script + "} catch(e) { logComment(\"Exception: \" + e.message ? e.message : e);}";
+
+        logComment("====="); // Add separators between executions
         eval(script);
     }
 
-    $scope.emailSample = function () {
-        emailScript(MonacoEditorIntegration.getJavaScriptToRun());
+    $scope.toggleDebugOption = function () {
+        debugOption = $scope.debugOption.value;
+    }
+
+    $scope.clearLog = function () {
+        $('#console').empty();
     }
 });
-
-function emailScript(body_message) {
-    var email = "juanbl@microsoft.com; trangluu@microsoft.com";
-    var subject = "Gemini Word APIs: Sample Code";
-
-    var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + body_message;
-
-    win = window.open(mailto_link, 'emailWindow');
-
-    if (win && win.open && !win.closed) win.close();
-}
