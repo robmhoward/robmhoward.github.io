@@ -7,7 +7,7 @@
             <option value="">-- choose a sample --</option>
         </select>
     </div>
-    <div class="button_input" ng-hide="!insideOffice">
+    <div class="button_input">
        <button id="runButton" ng-click="runSelectedSample()">Run!</button>
        <button id="clearButton" ng-click="clearLog()">Clear Log</button>
        <label><input type="checkbox" ng-model="debugOption.value" ng-change="toggleDebugOption()" />Debug</label><br />
