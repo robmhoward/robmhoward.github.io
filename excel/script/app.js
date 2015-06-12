@@ -91,7 +91,7 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 });
 
 
-excelSamplesApp.controller("TestAllController", function($scope, excelSamplesFactory) {
+excelSamplesApp.controller("TestAllController", function($scope, $q, excelSamplesFactory) {
 	$scope.insideOffice = insideOffice;
 
 	excelSamplesFactory.getSamples().then(function (response) {
@@ -105,10 +105,42 @@ excelSamplesApp.controller("TestAllController", function($scope, excelSamplesFac
 	};
 
 	$scope.runSamples = function() {
-		for (var i = 0; i < 8; i++) {
-			var sample = $scope.samples[i];
-			sample.runStatus = "Loading";
-			runSample(sample, excelSamplesFactory.getSampleCode(sample.filename));
+		
+		var promiseProducingSampleFunctions = new Array();
+		
+		for (var i = 1; i < 8; i++) {
+			promiseProducingSampleFunctions.push(createRunSample(i));
+		}
+		
+		var result = createRunSample(0);
+		result = result();
+		promiseProducingSampleFunctions.forEach(function (f) {
+			result = result.then(f);
+		});
+		
+		function createRunSample(sampleIndex) {
+			
+			var sample = $scope.samples[sampleIndex];
+			
+			return function() {
+				var deferred = $q.defer();
+				logComment("running next call");
+				sample.runStatus = "Loading";
+				excelSamplesFactory.getSampleCode(sample.filename).then(function (response) {
+					sample.code = addTestResults(addDeferredErrorHandling(response.data)).replace(/console.log/g, "logComment");
+					sample.runStatus = "Running";
+					try {
+						logComment(sample.code);
+						eval(sample.code);
+					} catch (e) {
+						sample.runStatus = "Error: " + e.name + ": " + e.message;
+						deferred.resolve();
+					}
+				});
+				
+				
+				return deferred.promise;
+			}
 		}
 	}
 	
@@ -118,21 +150,13 @@ excelSamplesApp.controller("TestAllController", function($scope, excelSamplesFac
 
 });
 
-function runSample(sample, codePromise) {
-	codePromise.then(function (response) {
-		sample.code = addTestResults(addErrorHandling(response.data)).replace(/console.log/g, "logComment");
-		sample.runStatus = "Running";
-		try {
-			//logComment(sample.code);
-			eval(sample.code);
-		} catch (e) {
-			sample.runStatus = "Error: " + e.name + ": " + e.message;
-		}
-	});	
+function addTestResults(sampleCode) {
+	return sampleCode.replace("console.log(\"done\");", "sample.runStatus = \"Success\"; deferred.resolve();");
 }
 
-function addTestResults(sampleCode) {
-	return sampleCode.replace("console.log(\"done\");", "sample.runStatus = \"Success\";");
+
+function addDeferredErrorHandling(sampleCode) {
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    deferred.resolve(); });");
 }
 
 function addErrorHandling(sampleCode) {
