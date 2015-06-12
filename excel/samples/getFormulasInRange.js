@@ -7,4 +7,5 @@ ctx.executeAsync().then(function() {
 			console.log(range.formulas[i][j]);
 		}
 	}
+	console.log("done");
 });

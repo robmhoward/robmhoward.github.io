@@ -23,6 +23,11 @@ excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 				controller: 'SamplesController',
 				templateUrl: 'partials/samples.html'
 			})
+		.when('/testAll',
+			{
+				controller: 'TestAllController',
+				templateUrl: 'partials/testAll.html'
+			})
 		.otherwise({redirectTo: '/samples' });
 }]);
 
@@ -85,7 +90,52 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 
 });
 
+
+excelSamplesApp.controller("TestAllController", function($scope, excelSamplesFactory) {
+	$scope.insideOffice = insideOffice;
+
+	excelSamplesFactory.getSamples().then(function (response) {
+		$scope.samples = response.data.values;
+		$scope.groups = response.data.groups;
+	});
+
+	$scope.loadSampleCode = function() {
+		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
+
+	};
+
+	$scope.runSamples = function() {
+		for (var i = 0; i < 8; i++) {
+			var sample = $scope.samples[i];
+			sample.runStatus = "Loading";
+			runSample(sample, excelSamplesFactory.getSampleCode(sample.filename));
+		}
+	}
+
+});
+
+function runSample(sample, codePromise) {
+	codePromise.then(function (response) {
+		sample.code = addTestResults(addErrorHandling(response.data)).replace(/console.log/g, "logComment");
+		sample.runStatus = "Running";
+		try {
+			logComment(sample.code);
+			eval(sample.code);
+		} catch (e) {
+			sample.runStatus = "Error: " + e.name + ": " + e.message;
+		}
+	});	
+}
+
+function addTestResults(sampleCode) {
+	return sampleCode.replace("console.log(\"done\");", "sample.runStatus = \"Success\";");
+}
+
+function addErrorHandling(sampleCode) {
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.errorCode + \":\" + error.errorMessage);\r\n});");
+}
+
 function addErrorHandlingIfNeeded(sampleCode) {
 	if (!insideOffice) return sampleCode;
-	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.errorCode + \":\" + error.errorMessage);\r\n});");
+	return addErrorHandling(sampleCode);	
 }

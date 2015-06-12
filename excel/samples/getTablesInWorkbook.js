@@ -6,4 +6,5 @@ ctx.executeAsync().then(function () {
 	{
 		console.log(tables.items[i].name);
 	}
+	console.log("done");
 });
