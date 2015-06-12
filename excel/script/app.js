@@ -108,7 +108,7 @@ excelSamplesApp.controller("TestAllController", function($scope, $q, excelSample
 		
 		var promiseProducingSampleFunctions = new Array();
 		
-		for (var i = 1; i < 8; i++) {
+		for (var i = 1; i < $scope.samples.length; i++) {
 			promiseProducingSampleFunctions.push(createRunSample(i));
 		}
 		
@@ -124,13 +124,13 @@ excelSamplesApp.controller("TestAllController", function($scope, $q, excelSample
 			
 			return function() {
 				var deferred = $q.defer();
-				logComment("running next call");
+				//logComment("running next call");
 				sample.runStatus = "Loading";
 				excelSamplesFactory.getSampleCode(sample.filename).then(function (response) {
 					sample.code = addTestResults(addDeferredErrorHandling(response.data)).replace(/console.log/g, "logComment");
 					sample.runStatus = "Running";
 					try {
-						logComment(sample.code);
+						//logComment(sample.code);
 						eval(sample.code);
 					} catch (e) {
 						sample.runStatus = "Error: " + e.name + ": " + e.message;
