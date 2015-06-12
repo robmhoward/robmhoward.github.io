@@ -156,7 +156,7 @@ function addTestResults(sampleCode) {
 
 
 function addDeferredErrorHandling(sampleCode) {
-	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    deferred.resolve(); });");
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    sample.runStatus = \"Error: \" + error.errorCode + \":\" + error.errorMessage; deferred.resolve(); });");
 }
 
 function addErrorHandling(sampleCode) {
