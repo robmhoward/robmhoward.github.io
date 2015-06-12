@@ -111,6 +111,10 @@ excelSamplesApp.controller("TestAllController", function($scope, excelSamplesFac
 			runSample(sample, excelSamplesFactory.getSampleCode(sample.filename));
 		}
 	}
+	
+	$scope.refreshResults = function() {
+		$scope.$apply();
+	}
 
 });
 
@@ -119,7 +123,7 @@ function runSample(sample, codePromise) {
 		sample.code = addTestResults(addErrorHandling(response.data)).replace(/console.log/g, "logComment");
 		sample.runStatus = "Running";
 		try {
-			logComment(sample.code);
+			//logComment(sample.code);
 			eval(sample.code);
 		} catch (e) {
 			sample.runStatus = "Error: " + e.name + ": " + e.message;
