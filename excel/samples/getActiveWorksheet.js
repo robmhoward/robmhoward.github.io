@@ -3,4 +3,5 @@ var activeWorksheet = ctx.workbook.getActiveWorksheet();
 ctx.load(activeWorksheet);
 ctx.executeAsync().then(function () {
 	console.log(activeWorksheet.name);
+	console.log("done");
 });
