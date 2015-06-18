@@ -22,6 +22,17 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Body.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Word.Font(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         Object.defineProperty(Body.prototype, "inlinePictures", {
             get: function () {
                 if (!this.m_inlinePictures) {
@@ -55,6 +66,23 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Body.prototype, "style", {
+            get: function () {
+                return this.m_style;
+            },
+            set: function (value) {
+                this.m_style = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Style", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Body.prototype.clearContent = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "ClearContent", 0 /* Default */, []);
+        };
+
         Body.prototype.getHtml = function () {
             var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
@@ -69,16 +97,43 @@ var Word;
             return ret;
         };
 
+        Body.prototype.getText = function () {
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var ret = new OfficeExtension.ClientResult();
+            this.context.pendingRequest.addActionResultHandler(action, ret);
+            return ret;
+        };
+
+        Body.prototype.insertBreak = function (bt, loc) {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "InsertBreak", 0 /* Default */, [bt, loc]);
+        };
+
         Body.prototype.insertContentControl = function () {
             return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, false));
+        };
+
+        Body.prototype.insertFile = function (path, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
+        };
+
+        Body.prototype.insertHtml = function (html, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, false));
+        };
+
+        Body.prototype.insertOoxml = function (ooxml, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, false));
         };
 
         Body.prototype.insertParagraph = function (paragraphText, loc) {
             return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, loc], false, false));
         };
 
-        Body.prototype.search = function (find) {
-            return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [find], true, true));
+        Body.prototype.insertText = function (txt, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, false));
+        };
+
+        Body.prototype.search = function (searchText, searchOptions) {
+            return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
         };
 
         Body.prototype.handleResult = function (value) {
@@ -86,6 +141,29 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
+                this.m_style = obj["Style"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
+                this.contentControls.handleResult(obj["ContentControls"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["InlinePictures"])) {
+                this.inlinePictures.handleResult(obj["InlinePictures"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Paragraphs"])) {
+                this.paragraphs.handleResult(obj["Paragraphs"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
+                this.parentContentControl.handleResult(obj["ParentContentControl"]);
+            }
         };
         return Body;
     })(OfficeExtension.ClientObject);
@@ -293,6 +371,13 @@ var Word;
             return ret;
         };
 
+        ContentControl.prototype.getText = function () {
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var ret = new OfficeExtension.ClientResult();
+            this.context.pendingRequest.addActionResultHandler(action, ret);
+            return ret;
+        };
+
         ContentControl.prototype.insertFile = function (path, loc) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
         };
@@ -360,6 +445,26 @@ var Word;
 
             if (!OfficeExtension.Utility.isUndefined(obj["Type"])) {
                 this.m_type = obj["Type"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
+                this.contentControls.handleResult(obj["ContentControls"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["InlinePictures"])) {
+                this.inlinePictures.handleResult(obj["InlinePictures"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Paragraphs"])) {
+                this.paragraphs.handleResult(obj["Paragraphs"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
+                this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
         };
         return ContentControl;
@@ -476,14 +581,6 @@ var Word;
             configurable: true
         });
 
-        Object.defineProperty(Document.prototype, "properties", {
-            get: function () {
-                return this.m_properties;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
         Object.defineProperty(Document.prototype, "saved", {
             get: function () {
                 return this.m_saved;
@@ -519,53 +616,29 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Properties"])) {
-                this.m_properties = obj["Properties"];
-            }
-
             if (!OfficeExtension.Utility.isUndefined(obj["Saved"])) {
                 this.m_saved = obj["Saved"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Body"])) {
+                this.body.handleResult(obj["Body"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
+                this.contentControls.handleResult(obj["ContentControls"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Sections"])) {
+                this.sections.handleResult(obj["Sections"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Selection"])) {
+                this.selection.handleResult(obj["Selection"]);
             }
         };
         return Document;
     })(OfficeExtension.ClientObject);
     Word.Document = Document;
-
-    var Find = (function (_super) {
-        __extends(Find, _super);
-        function Find() {
-            _super.apply(this, arguments);
-        }
-        Object.defineProperty(Find.prototype, "text", {
-            get: function () {
-                return this.m_text;
-            },
-            set: function (value) {
-                this.m_text = value;
-                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Text", value);
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-
-        Find.prototype.handleResult = function (value) {
-            if (OfficeExtension.Utility.isNullOrUndefined(value))
-                return;
-            var obj = value;
-            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Text"])) {
-                this.m_text = obj["Text"];
-            }
-        };
-
-        Find.newObject = function (context) {
-            var ret = new Word.Find(context, OfficeExtension.ObjectPathFactory.createNewObjectObjectPath(context, "Microsoft.WordServices.Find", false));
-            return ret;
-        };
-        return Find;
-    })(OfficeExtension.ClientObject);
-    Word.Find = Find;
 
     var Font = (function (_super) {
         __extends(Font, _super);
@@ -913,6 +986,10 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["Width"])) {
                 this.m_width = obj["Width"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
+                this.parentContentControl.handleResult(obj["ParentContentControl"]);
+            }
         };
         return InlinePicture;
     })(OfficeExtension.ClientObject);
@@ -1209,6 +1286,18 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
                 this.m_style = obj["Style"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
+                this.contentControls.handleResult(obj["ContentControls"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
+                this.parentContentControl.handleResult(obj["ParentContentControl"]);
+            }
         };
         return Paragraph;
     })(OfficeExtension.ClientObject);
@@ -1375,6 +1464,18 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
                 this.m_style = obj["Style"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
+                this.contentControls.handleResult(obj["ContentControls"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
+                this.parentContentControl.handleResult(obj["ParentContentControl"]);
+            }
         };
         return Range;
     })(OfficeExtension.ClientObject);
@@ -1441,6 +1542,161 @@ var Word;
     })(OfficeExtension.ClientObject);
     Word.RangeCollection = RangeCollection;
 
+    var SearchOptions = (function (_super) {
+        __extends(SearchOptions, _super);
+        function SearchOptions() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(SearchOptions.prototype, "ignorePunct", {
+            get: function () {
+                return this.m_ignorePunct;
+            },
+            set: function (value) {
+                this.m_ignorePunct = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "IgnorePunct", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "ignoreSpace", {
+            get: function () {
+                return this.m_ignoreSpace;
+            },
+            set: function (value) {
+                this.m_ignoreSpace = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "IgnoreSpace", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchCase", {
+            get: function () {
+                return this.m_matchCase;
+            },
+            set: function (value) {
+                this.m_matchCase = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchCase", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchPrefix", {
+            get: function () {
+                return this.m_matchPrefix;
+            },
+            set: function (value) {
+                this.m_matchPrefix = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchPrefix", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchSoundsLike", {
+            get: function () {
+                return this.m_matchSoundsLike;
+            },
+            set: function (value) {
+                this.m_matchSoundsLike = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchSoundsLike", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchSuffix", {
+            get: function () {
+                return this.m_matchSuffix;
+            },
+            set: function (value) {
+                this.m_matchSuffix = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchSuffix", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchWholeWord", {
+            get: function () {
+                return this.m_matchWholeWord;
+            },
+            set: function (value) {
+                this.m_matchWholeWord = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchWholeWord", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(SearchOptions.prototype, "matchWildCards", {
+            get: function () {
+                return this.m_matchWildCards;
+            },
+            set: function (value) {
+                this.m_matchWildCards = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "MatchWildCards", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        SearchOptions.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["IgnorePunct"])) {
+                this.m_ignorePunct = obj["IgnorePunct"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["IgnoreSpace"])) {
+                this.m_ignoreSpace = obj["IgnoreSpace"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchCase"])) {
+                this.m_matchCase = obj["MatchCase"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchPrefix"])) {
+                this.m_matchPrefix = obj["MatchPrefix"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchSoundsLike"])) {
+                this.m_matchSoundsLike = obj["MatchSoundsLike"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchSuffix"])) {
+                this.m_matchSuffix = obj["MatchSuffix"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchWholeWord"])) {
+                this.m_matchWholeWord = obj["MatchWholeWord"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MatchWildCards"])) {
+                this.m_matchWildCards = obj["MatchWildCards"];
+            }
+        };
+
+        SearchOptions.newObject = function (context) {
+            var ret = new Word.SearchOptions(context, OfficeExtension.ObjectPathFactory.createNewObjectObjectPath(context, "Microsoft.WordServices.SearchOptions", false));
+            return ret;
+        };
+        return SearchOptions;
+    })(OfficeExtension.ClientObject);
+    Word.SearchOptions = SearchOptions;
+
     var SearchResultCollection = (function (_super) {
         __extends(SearchResultCollection, _super);
         function SearchResultCollection() {
@@ -1506,11 +1762,22 @@ var Word;
             configurable: true
         });
 
+        Section.prototype.getFooter = function (type) {
+            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetFooter", 0 /* Default */, [type], false, false));
+        };
+
+        Section.prototype.getHeader = function (type) {
+            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetHeader", 0 /* Default */, [type], false, false));
+        };
+
         Section.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Body"])) {
+                this.body.handleResult(obj["Body"]);
+            }
         };
         return Section;
     })(OfficeExtension.ClientObject);
@@ -1569,10 +1836,15 @@ var Word;
         function ContentControlType() {
         }
         ContentControlType.unknown = "Unknown";
+
         ContentControlType.inline = "Inline";
+
         ContentControlType.paragraph = "Paragraph";
+
         ContentControlType.cell = "Cell";
+
         ContentControlType.row = "Row";
+
         ContentControlType.count = "Count";
         return ContentControlType;
     })();
@@ -1582,7 +1854,9 @@ var Word;
         function ContentControlAppearance() {
         }
         ContentControlAppearance.boundingBox = "BoundingBox";
+
         ContentControlAppearance.tags = "Tags";
+
         ContentControlAppearance.hidden = "Hidden";
         return ContentControlAppearance;
     })();
@@ -1592,16 +1866,27 @@ var Word;
         function UnderlineType() {
         }
         UnderlineType.none = "None";
+
         UnderlineType.single = "Single";
+
         UnderlineType.word = "Word";
+
         UnderlineType.double = "Double";
+
         UnderlineType.dotted = "Dotted";
+
         UnderlineType.hidden = "Hidden";
+
         UnderlineType.thick = "Thick";
+
         UnderlineType.dashLine = "DashLine";
+
         UnderlineType.dotLine = "DotLine";
+
         UnderlineType.dotDashLine = "DotDashLine";
+
         UnderlineType.twoDotDashLine = "TwoDotDashLine";
+
         UnderlineType.wave = "Wave";
         return UnderlineType;
     })();
@@ -1611,14 +1896,23 @@ var Word;
         function BreakType() {
         }
         BreakType.page = "Page";
+
         BreakType.column = "Column";
+
         BreakType.next = "Next";
+
         BreakType.sectionContinuous = "SectionContinuous";
+
         BreakType.sectionEven = "SectionEven";
+
         BreakType.sectionOdd = "SectionOdd";
+
         BreakType.line = "Line";
+
         BreakType.lineClearLeft = "LineClearLeft";
+
         BreakType.lineClearRight = "LineClearRight";
+
         BreakType.textWrapping = "TextWrapping";
         return BreakType;
     })();
@@ -1628,9 +1922,13 @@ var Word;
         function InsertLocation() {
         }
         InsertLocation.before = "Before";
+
         InsertLocation.after = "After";
+
         InsertLocation.start = "Start";
+
         InsertLocation.end = "End";
+
         InsertLocation.replace = "Replace";
         return InsertLocation;
     })();
@@ -1640,14 +1938,29 @@ var Word;
         function Alignment() {
         }
         Alignment.unknown = "Unknown";
+
         Alignment.left = "Left";
+
         Alignment.centered = "Centered";
+
         Alignment.right = "Right";
+
         Alignment.justified = "Justified";
-        Alignment.count = "Count";
         return Alignment;
     })();
     Word.Alignment = Alignment;
+
+    var HeaderFooterType = (function () {
+        function HeaderFooterType() {
+        }
+        HeaderFooterType.primary = "Primary";
+
+        HeaderFooterType.firstPage = "FirstPage";
+
+        HeaderFooterType.evenPages = "EvenPages";
+        return HeaderFooterType;
+    })();
+    Word.HeaderFooterType = HeaderFooterType;
 
     var ErrorCodes = (function () {
         function ErrorCodes() {

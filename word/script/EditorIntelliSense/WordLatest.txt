@@ -1,18 +1,29 @@
 ﻿declare module Word {
     class Body extends OfficeExtension.ClientObject {
         private m_contentControls;
+        private m_font;
         private m_inlinePictures;
         private m_paragraphs;
         private m_parentContentControl;
+        private m_style;
         public contentControls : ContentControlCollection;
+        public font : Font;
         public inlinePictures : InlinePictureCollection;
         public paragraphs : ParagraphCollection;
         public parentContentControl : ContentControl;
+        public style : string;
+        public clearContent(): void;
         public getHtml(): OfficeExtension.ClientResult<string>;
         public getOoxml(): OfficeExtension.ClientResult<string>;
+        public getText(): OfficeExtension.ClientResult<string>;
+        public insertBreak(bt: string, loc: string): void;
         public insertContentControl(): ContentControl;
+        public insertFile(path: string, loc: string): Range;
+        public insertHtml(html: string, loc: string): Range;
+        public insertOoxml(ooxml: string, loc: string): Range;
         public insertParagraph(paragraphText: string, loc: string): Paragraph;
-        public search(find: Find): SearchResultCollection;
+        public insertText(txt: string, loc: string): Range;
+        public search(searchText: string, searchOptions: SearchOptions): SearchResultCollection;
         public handleResult(value: any): void;
     }
     class ContentControl extends OfficeExtension.ClientObject {
@@ -50,6 +61,7 @@
         public deleteElement(): void;
         public getHtml(): OfficeExtension.ClientResult<string>;
         public getOoxml(): OfficeExtension.ClientResult<string>;
+        public getText(): OfficeExtension.ClientResult<string>;
         public insertFile(path: string, loc: string): Range;
         public insertHtml(html: string, loc: string): Range;
         public insertOoxml(ooxml: string, loc: string): Range;
@@ -72,7 +84,6 @@
     class Document extends OfficeExtension.ClientObject {
         private m_body;
         private m_contentControls;
-        private m_properties;
         private m_saved;
         private m_sections;
         private m_selection;
@@ -80,19 +91,12 @@
         public contentControls : ContentControlCollection;
         public sections : SectionCollection;
         public selection : Range;
-        public properties : string;
         public saved : boolean;
         public save(): void;
         public _GetObjectByReferenceId(referenceId: string): OfficeExtension.ClientResult<any>;
         public _GetObjectTypeNameByReferenceId(referenceId: string): OfficeExtension.ClientResult<string>;
         public _RemoveReference(referenceId: string): void;
         public handleResult(value: any): void;
-    }
-    class Find extends OfficeExtension.ClientObject {
-        private m_text;
-        public text : string;
-        public handleResult(value: any): void;
-        static newObject(context: OfficeExtension.ClientRequestContext): Find;
     }
     class Font extends OfficeExtension.ClientObject {
         private m_bold;
@@ -235,6 +239,26 @@
         public getItemAt(index: number): Range;
         public handleResult(value: any): void;
     }
+    class SearchOptions extends OfficeExtension.ClientObject {
+        private m_ignorePunct;
+        private m_ignoreSpace;
+        private m_matchCase;
+        private m_matchPrefix;
+        private m_matchSoundsLike;
+        private m_matchSuffix;
+        private m_matchWholeWord;
+        private m_matchWildCards;
+        public ignorePunct : boolean;
+        public ignoreSpace : boolean;
+        public matchCase : boolean;
+        public matchPrefix : boolean;
+        public matchSoundsLike : boolean;
+        public matchSuffix : boolean;
+        public matchWholeWord : boolean;
+        public matchWildCards : boolean;
+        public handleResult(value: any): void;
+        static newObject(context: OfficeExtension.ClientRequestContext): SearchOptions;
+    }
     class SearchResultCollection extends OfficeExtension.ClientObject {
         private m__ReferenceId;
         private m__items;
@@ -246,6 +270,8 @@
     class Section extends OfficeExtension.ClientObject {
         private m_body;
         public body : Body;
+        public getFooter(type: string): Body;
+        public getHeader(type: string): Body;
         public handleResult(value: any): void;
     }
     class SectionCollection extends OfficeExtension.ClientObject {
@@ -308,7 +334,11 @@
         static centered: string;
         static right: string;
         static justified: string;
-        static count: string;
+    }
+    class HeaderFooterType {
+        static primary: string;
+        static firstPage: string;
+        static evenPages: string;
     }
     class ErrorCodes {
         static generalException: string;
