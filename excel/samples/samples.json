@@ -44,7 +44,9 @@
 		{ "done": true, "filename": "getTablesInWorkbook.js", "name": "Get Tables in Workbook", "group": "Table", "description": "Retrieve the list of tables in the current workbook"},
 		{ "done": true, "filename": "deleteAxisTitle.js", "name": "Hide Axis Title", "group": "Chart", "description": "Hide the Title of Value Axis" }, 
 		{ "done": true, "filename": "deleteChart.js", "name": "Delete Chart", "group": "Chart", "description": "Delete Chart Named Chart1" }, 
-		{ "done": true, "filename": "deleteChartTitle.js", "name": "Hide Chart Title", "group": "Chart", "description": "Hide the title of Chart1" }
+		{ "done": true, "filename": "deleteChartTitle.js", "name": "Hide Chart Title", "group": "Chart", "description": "Hide the title of Chart1" },
+		{ "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
+		{ "done": true, "filename": "deleteActiveWorksheet.js", "name": "Delete Active Worksheet", "group": "Worksheet", "description": "Delete the active worksheet from the workbook"} 
 	],
 	"groups": [
 		{ "name": "Range" },
