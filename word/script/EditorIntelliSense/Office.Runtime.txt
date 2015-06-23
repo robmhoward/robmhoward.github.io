@@ -90,6 +90,7 @@ declare module OfficeExtension {
     class ClientRequestResult {
         errorCode: string;
         errorMessage: string;
+        errorLocation: string;
         traceMessages: Array<string>;
     }
 }
@@ -232,6 +233,7 @@ declare module OfficeExtension {
     interface ErrorInfo {
         Code: string;
         Message: string;
+        Location: string;
     }
     interface ResponseMessageBody {
         Error: ErrorInfo;
@@ -337,6 +339,7 @@ declare module OfficeExtension {
     class ResourceStrings {
         static invalidObjectPath: string;
         static propertyNotLoaded: string;
+        static invalidRequestContext: string;
     }
 }
 declare module OfficeExtension {
@@ -365,14 +368,17 @@ declare module OfficeExtension {
         static trim(str: string): string;
         static caseInsensitiveCompareString(str1: string, str2: string): boolean;
         static isReadonlyRestRequest(method: string): boolean;
-        static setMethodArguments(argumentInfo: ArgumentInfo, args: Array<any>): Array<ObjectPath>;
+        static setMethodArguments(context: ClientRequestContext, argumentInfo: ArgumentInfo, args: Array<any>): Array<ObjectPath>;
         static fixObjectPathIfNecessary(clientObject: ClientObject, value: Object): void;
         static validateObjectPath(clientObject: ClientObject): void;
         static validateReferencedObjectPaths(objectPaths: Array<ObjectPath>): void;
-        static getResourceString(resourceId: string): string;
+        static validateContext(context: ClientRequestContext, obj: ClientObject): void;
+        static getResourceString(resourceId: string, arg?: string): string;
         static log(message: string): void;
         static load(clientObj: ClientObject, option?: any): void;
         private static s_underscoreCharCode;
         static throwIfNotLoaded(propertyName: string, fieldValue: any): void;
+        static getObjectPathExpression(objectPath: ObjectPath): string;
+        private static normalizeName(name);
     }
 }

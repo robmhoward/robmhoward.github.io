@@ -38,7 +38,7 @@ var OfficeExtension;
                 ArgumentInfo: {}
             };
             var args = [value];
-            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(actionInfo.ArgumentInfo, args);
+            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, actionInfo.ArgumentInfo, args);
             OfficeExtension.Utility.validateReferencedObjectPaths(referencedArgumentObjectPaths);
             var ret = new OfficeExtension.Action(actionInfo, true);
             context._pendingRequest.addAction(ret);
@@ -55,7 +55,7 @@ var OfficeExtension;
                 ObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
-            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(actionInfo.ArgumentInfo, args);
+            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, actionInfo.ArgumentInfo, args);
             OfficeExtension.Utility.validateReferencedObjectPaths(referencedArgumentObjectPaths);
             var isWriteOperation = operationType != 1 /* Read */;
             var ret = new OfficeExtension.Action(actionInfo, isWriteOperation);
@@ -185,7 +185,8 @@ var OfficeExtension;
                 return;
             }
             if (!objectPath.isValid) {
-                throw Error(OfficeExtension.Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                var pathExpression = OfficeExtension.Utility.getObjectPathExpression(objectPath);
+                throw Error(OfficeExtension.Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
             }
             while (objectPath) {
                 if (objectPath.isWriteOperation) {
@@ -286,6 +287,7 @@ var OfficeExtension;
             configurable: true
         });
         ClientRequestContext.prototype.load = function (clientObj, option) {
+            OfficeExtension.Utility.validateContext(this, clientObj);
             var queryOption = {};
             if (typeof (option) == "string") {
                 var select = option;
@@ -352,6 +354,7 @@ var OfficeExtension;
                 else if (response.Body && response.Body.Error) {
                     result.errorCode = response.Body.Error.Code;
                     result.errorMessage = response.Body.Error.Message;
+                    result.errorLocation = response.Body.Error.Location;
                     hasError = true;
                 }
                 if (response.Body && response.Body.TraceIds) {
@@ -670,7 +673,7 @@ var OfficeExtension;
                 ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
-            var argumentObjectPaths = OfficeExtension.Utility.setMethodArguments(objectPathInfo.ArgumentInfo, args);
+            var argumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, objectPathInfo.ArgumentInfo, args);
             var ret = new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, isCollection, isInvalidAfterRequest);
             ret.argumentObjectPaths = argumentObjectPaths;
             ret.isWriteOperation = (operationType != 1 /* Read */);
@@ -1478,6 +1481,7 @@ var OfficeExtension;
         }
         ResourceStrings.invalidObjectPath = "InvalidObjectPath";
         ResourceStrings.propertyNotLoaded = "PropertyNotLoaded";
+        ResourceStrings.invalidRequestContext = "InvalidRequestContext";
         return ResourceStrings;
     })();
     OfficeExtension.ResourceStrings = ResourceStrings;
@@ -1595,7 +1599,7 @@ var OfficeExtension;
         Utility.isReadonlyRestRequest = function (method) {
             return Utility.caseInsensitiveCompareString(method, "GET");
         };
-        Utility.setMethodArguments = function (argumentInfo, args) {
+        Utility.setMethodArguments = function (context, argumentInfo, args) {
             if (Utility.isNullOrUndefined(args)) {
                 return null;
             }
@@ -1605,6 +1609,7 @@ var OfficeExtension;
             for (var i = 0; i < args.length; i++) {
                 if (args[i] instanceof OfficeExtension.ClientObject) {
                     var clientObject = args[i];
+                    Utility.validateContext(context, clientObject);
                     args[i] = clientObject._objectPath.objectPathInfo.Id;
                     referencedObjectPathIds.push(clientObject._objectPath.objectPathInfo.Id);
                     referencedObjectPaths.push(clientObject._objectPath);
@@ -1630,7 +1635,8 @@ var OfficeExtension;
             var objectPath = clientObject._objectPath;
             while (objectPath) {
                 if (!objectPath.isValid) {
-                    throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                    var pathExpression = Utility.getObjectPathExpression(objectPath);
+                    throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
                 }
                 objectPath = objectPath.parentObjectPath;
             }
@@ -1641,15 +1647,32 @@ var OfficeExtension;
                     var objectPath = objectPaths[i];
                     while (objectPath) {
                         if (!objectPath.isValid) {
-                            throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                            var pathExpression = Utility.getObjectPathExpression(objectPath);
+                            throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
                         }
                         objectPath = objectPath.parentObjectPath;
                     }
                 }
             }
         };
-        Utility.getResourceString = function (resourceId) {
-            return resourceId;
+        Utility.validateContext = function (context, obj) {
+            if (obj && obj.context !== context) {
+                throw new Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidRequestContext));
+            }
+        };
+        Utility.getResourceString = function (resourceId, arg) {
+            var ret = resourceId;
+            if (window.Strings && window.Strings.OfficeOM) {
+                var stringName = "L_" + resourceId;
+                var stringValue = window.Strings.OfficeOM[stringName];
+                if (stringValue) {
+                    ret = stringValue;
+                }
+            }
+            if (!Utility.isNullOrUndefined(arg)) {
+                ret = ret.replace("{0}", arg);
+            }
+            return ret;
         };
         Utility.log = function (message) {
             if (window.console && window.console.log) {
@@ -1661,9 +1684,38 @@ var OfficeExtension;
         };
         Utility.throwIfNotLoaded = function (propertyName, fieldValue) {
             if (Utility.isUndefined(fieldValue) && propertyName.charCodeAt(0) != Utility.s_underscoreCharCode) {
-                Utility.log("Property " + propertyName + " is not loaded");
-                throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.propertyNotLoaded));
+                throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.propertyNotLoaded, propertyName));
             }
+        };
+        Utility.getObjectPathExpression = function (objectPath) {
+            var ret = "";
+            while (objectPath) {
+                switch (objectPath.objectPathInfo.ObjectPathType) {
+                    case 1 /* GlobalObject */:
+                        ret = ret;
+                        break;
+                    case 2 /* NewObject */:
+                        ret = "new()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 3 /* Method */:
+                        ret = Utility.normalizeName(objectPath.objectPathInfo.Name) + "()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 4 /* Property */:
+                        ret = Utility.normalizeName(objectPath.objectPathInfo.Name) + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 5 /* Indexer */:
+                        ret = "getItem()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 6 /* ReferenceId */:
+                        ret = "_reference()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                }
+                objectPath = objectPath.parentObjectPath;
+            }
+            return ret;
+        };
+        Utility.normalizeName = function (name) {
+            return name.substr(0, 1).toLowerCase() + name.substr(1);
         };
         Utility.s_underscoreCharCode = "_".charCodeAt(0);
         return Utility;

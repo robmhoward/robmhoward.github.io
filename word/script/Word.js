@@ -68,6 +68,7 @@ var Word;
 
         Object.defineProperty(Body.prototype, "style", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("style", this.m_style);
                 return this.m_style;
             },
             set: function (value) {
@@ -79,26 +80,35 @@ var Word;
         });
 
 
-        Body.prototype.clearContent = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "ClearContent", 0 /* Default */, []);
+        Object.defineProperty(Body.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Body.prototype.clear = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Clear", 0 /* Default */, []);
         };
 
         Body.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Body.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Body.prototype.getText = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
@@ -109,31 +119,35 @@ var Word;
         };
 
         Body.prototype.insertContentControl = function () {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, false));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
         };
 
         Body.prototype.insertFile = function (path, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
 
         Body.prototype.insertHtml = function (html, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
         };
 
         Body.prototype.insertOoxml = function (ooxml, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, true));
         };
 
         Body.prototype.insertParagraph = function (paragraphText, loc) {
-            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, loc], false, false));
+            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, loc], false, true));
         };
 
         Body.prototype.insertText = function (txt, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, true));
         };
 
         Body.prototype.search = function (searchText, searchOptions) {
             return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
+        };
+
+        Body.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         Body.prototype.handleResult = function (value) {
@@ -143,6 +157,10 @@ var Word;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
             if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
                 this.m_style = obj["Style"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
             }
 
             if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
@@ -164,6 +182,11 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
                 this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
+        };
+
+        Body.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return Body;
     })(OfficeExtension.ClientObject);
@@ -231,6 +254,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "appearance", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("appearance", this.m_appearance);
                 return this.m_appearance;
             },
             set: function (value) {
@@ -244,6 +268,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "cannotDelete", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("cannotDelete", this.m_cannotDelete);
                 return this.m_cannotDelete;
             },
             set: function (value) {
@@ -257,6 +282,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "cannotEdit", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("cannotEdit", this.m_cannotEdit);
                 return this.m_cannotEdit;
             },
             set: function (value) {
@@ -270,6 +296,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "color", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("color", this.m_color);
                 return this.m_color;
             },
             set: function (value) {
@@ -283,6 +310,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "id", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("id", this.m_id);
                 return this.m_id;
             },
             enumerable: true,
@@ -291,6 +319,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "removeWhenEdited", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("removeWhenEdited", this.m_removeWhenEdited);
                 return this.m_removeWhenEdited;
             },
             set: function (value) {
@@ -304,6 +333,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "style", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("style", this.m_style);
                 return this.m_style;
             },
             set: function (value) {
@@ -317,6 +347,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "tag", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("tag", this.m_tag);
                 return this.m_tag;
             },
             set: function (value) {
@@ -330,6 +361,7 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "title", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("title", this.m_title);
                 return this.m_title;
             },
             set: function (value) {
@@ -343,63 +375,73 @@ var Word;
 
         Object.defineProperty(ContentControl.prototype, "type", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("type", this.m_type);
                 return this.m_type;
             },
             enumerable: true,
             configurable: true
         });
 
-        ContentControl.prototype.clearContent = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "ClearContent", 0 /* Default */, []);
+        Object.defineProperty(ContentControl.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ContentControl.prototype.clear = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Clear", 0 /* Default */, []);
         };
 
-        ContentControl.prototype.deleteElement = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteElement", 0 /* Default */, []);
+        ContentControl.prototype.delete = function (keepContent) {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, [keepContent]);
         };
 
         ContentControl.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         ContentControl.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         ContentControl.prototype.getText = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         ContentControl.prototype.insertFile = function (path, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
 
         ContentControl.prototype.insertHtml = function (html, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
         };
 
         ContentControl.prototype.insertOoxml = function (ooxml, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, true));
         };
 
         ContentControl.prototype.insertText = function (txt, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, false));
-        };
-
-        ContentControl.prototype.remove = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Remove", 0 /* Default */, []);
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, true));
         };
 
         ContentControl.prototype.select = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
+        };
+
+        ContentControl.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         ContentControl.prototype.handleResult = function (value) {
@@ -447,6 +489,10 @@ var Word;
                 this.m_type = obj["Type"];
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
                 this.contentControls.handleResult(obj["ContentControls"]);
             }
@@ -467,6 +513,11 @@ var Word;
                 this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
         };
+
+        ContentControl.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
+        };
         return ContentControl;
     })(OfficeExtension.ClientObject);
     Word.ContentControl = ContentControl;
@@ -478,6 +529,7 @@ var Word;
         }
         Object.defineProperty(ContentControlCollection.prototype, "items", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("items", this.m__items);
                 return this.m__items;
             },
             enumerable: true,
@@ -486,6 +538,7 @@ var Word;
 
         Object.defineProperty(ContentControlCollection.prototype, "count", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("count", this.m_count);
                 return this.m_count;
             },
             enumerable: true,
@@ -493,15 +546,15 @@ var Word;
         });
 
         ContentControlCollection.prototype.getById = function (Id) {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetById", 0 /* Default */, [Id], false, false));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetById", 1 /* Read */, [Id], false, false));
         };
 
         ContentControlCollection.prototype.getByTag = function (Tag) {
-            return new Word.ContentControlCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetByTag", 0 /* Default */, [Tag], true, false));
+            return new Word.ContentControlCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetByTag", 1 /* Read */, [Tag], true, false));
         };
 
         ContentControlCollection.prototype.getByTitle = function (Title) {
-            return new Word.ContentControlCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetByTitle", 0 /* Default */, [Title], true, false));
+            return new Word.ContentControlCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetByTitle", 1 /* Read */, [Title], true, false));
         };
 
         ContentControlCollection.prototype.getItemAt = function (index) {
@@ -527,6 +580,11 @@ var Word;
                     this.m__items.push(_item);
                 }
             }
+        };
+
+        ContentControlCollection.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return ContentControlCollection;
     })(OfficeExtension.ClientObject);
@@ -570,24 +628,18 @@ var Word;
             configurable: true
         });
 
-        Object.defineProperty(Document.prototype, "selection", {
-            get: function () {
-                if (!this.m_selection) {
-                    this.m_selection = new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Selection", false, false));
-                }
-                return this.m_selection;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
         Object.defineProperty(Document.prototype, "saved", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("saved", this.m_saved);
                 return this.m_saved;
             },
             enumerable: true,
             configurable: true
         });
+
+        Document.prototype.getSelection = function () {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetSelection", 1 /* Read */, [], false, true));
+        };
 
         Document.prototype.save = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Save", 0 /* Default */, []);
@@ -608,7 +660,7 @@ var Word;
         };
 
         Document.prototype._RemoveReference = function (referenceId) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_RemoveReference", 0 /* Default */, [referenceId]);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_RemoveReference", 1 /* Read */, [referenceId]);
         };
 
         Document.prototype.handleResult = function (value) {
@@ -631,10 +683,11 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["Sections"])) {
                 this.sections.handleResult(obj["Sections"]);
             }
+        };
 
-            if (!OfficeExtension.Utility.isUndefined(obj["Selection"])) {
-                this.selection.handleResult(obj["Selection"]);
-            }
+        Document.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return Document;
     })(OfficeExtension.ClientObject);
@@ -647,6 +700,7 @@ var Word;
         }
         Object.defineProperty(Font.prototype, "bold", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("bold", this.m_bold);
                 return this.m_bold;
             },
             set: function (value) {
@@ -660,6 +714,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "color", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("color", this.m_color);
                 return this.m_color;
             },
             set: function (value) {
@@ -673,6 +728,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "doubleStrikeThrough", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("doubleStrikeThrough", this.m_doubleStrikeThrough);
                 return this.m_doubleStrikeThrough;
             },
             set: function (value) {
@@ -686,6 +742,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "highlightColor", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("highlightColor", this.m_highlightColor);
                 return this.m_highlightColor;
             },
             set: function (value) {
@@ -699,6 +756,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "italic", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("italic", this.m_italic);
                 return this.m_italic;
             },
             set: function (value) {
@@ -712,6 +770,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "name", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("name", this.m_name);
                 return this.m_name;
             },
             set: function (value) {
@@ -725,6 +784,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "size", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("size", this.m_size);
                 return this.m_size;
             },
             set: function (value) {
@@ -738,6 +798,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "strikeThrough", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("strikeThrough", this.m_strikeThrough);
                 return this.m_strikeThrough;
             },
             set: function (value) {
@@ -751,6 +812,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "subscript", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("subscript", this.m_subscript);
                 return this.m_subscript;
             },
             set: function (value) {
@@ -764,6 +826,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "superscript", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("superscript", this.m_superscript);
                 return this.m_superscript;
             },
             set: function (value) {
@@ -777,6 +840,7 @@ var Word;
 
         Object.defineProperty(Font.prototype, "underline", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("underline", this.m_underline);
                 return this.m_underline;
             },
             set: function (value) {
@@ -787,6 +851,19 @@ var Word;
             configurable: true
         });
 
+
+        Object.defineProperty(Font.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Font.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
+        };
 
         Font.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
@@ -836,6 +913,15 @@ var Word;
             if (!OfficeExtension.Utility.isUndefined(obj["Underline"])) {
                 this.m_underline = obj["Underline"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
+            }
+        };
+
+        Font.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return Font;
     })(OfficeExtension.ClientObject);
@@ -859,6 +945,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "altTextDescription", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("altTextDescription", this.m_altTextDescription);
                 return this.m_altTextDescription;
             },
             set: function (value) {
@@ -872,6 +959,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "altTextTitle", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("altTextTitle", this.m_altTextTitle);
                 return this.m_altTextTitle;
             },
             set: function (value) {
@@ -885,6 +973,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "height", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("height", this.m_height);
                 return this.m_height;
             },
             set: function (value) {
@@ -898,6 +987,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "hyperlink", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("hyperlink", this.m_hyperlink);
                 return this.m_hyperlink;
             },
             set: function (value) {
@@ -911,6 +1001,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "id", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("id", this.m_id);
                 return this.m_id;
             },
             enumerable: true,
@@ -919,6 +1010,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "lockAspectRatio", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("lockAspectRatio", this.m_lockAspectRatio);
                 return this.m_lockAspectRatio;
             },
             set: function (value) {
@@ -932,6 +1024,7 @@ var Word;
 
         Object.defineProperty(InlinePicture.prototype, "width", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("width", this.m_width);
                 return this.m_width;
             },
             set: function (value) {
@@ -943,6 +1036,15 @@ var Word;
         });
 
 
+        Object.defineProperty(InlinePicture.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         InlinePicture.prototype.getBase64ImageSrc = function () {
             var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetBase64ImageSrc", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
@@ -951,7 +1053,11 @@ var Word;
         };
 
         InlinePicture.prototype.insertContentControl = function () {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, false));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
+        };
+
+        InlinePicture.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         InlinePicture.prototype.handleResult = function (value) {
@@ -987,9 +1093,18 @@ var Word;
                 this.m_width = obj["Width"];
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
                 this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
+        };
+
+        InlinePicture.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return InlinePicture;
     })(OfficeExtension.ClientObject);
@@ -1002,15 +1117,17 @@ var Word;
         }
         Object.defineProperty(InlinePictureCollection.prototype, "items", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("items", this.m__items);
                 return this.m__items;
             },
             enumerable: true,
             configurable: true
         });
 
-        Object.defineProperty(InlinePictureCollection.prototype, "count", {
+        Object.defineProperty(InlinePictureCollection.prototype, "_ReferenceId", {
             get: function () {
-                return this.m_count;
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
             },
             enumerable: true,
             configurable: true
@@ -1020,8 +1137,8 @@ var Word;
             return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
 
-        InlinePictureCollection.prototype.getItemAt = function (index) {
-            return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
+        InlinePictureCollection.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         InlinePictureCollection.prototype.handleResult = function (value) {
@@ -1029,8 +1146,8 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
-                this.m_count = obj["Count"];
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
             }
 
             if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
@@ -1043,6 +1160,11 @@ var Word;
                     this.m__items.push(_item);
                 }
             }
+        };
+
+        InlinePictureCollection.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return InlinePictureCollection;
     })(OfficeExtension.ClientObject);
@@ -1075,6 +1197,17 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Paragraph.prototype, "inlinePictures", {
+            get: function () {
+                if (!this.m_inlinePictures) {
+                    this.m_inlinePictures = new Word.InlinePictureCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "InlinePictures", true, false));
+                }
+                return this.m_inlinePictures;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         Object.defineProperty(Paragraph.prototype, "parentContentControl", {
             get: function () {
                 if (!this.m_parentContentControl) {
@@ -1086,8 +1219,149 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Paragraph.prototype, "alignment", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("alignment", this.m_alignment);
+                return this.m_alignment;
+            },
+            set: function (value) {
+                this.m_alignment = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Alignment", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "firstLineIndent", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("firstLineIndent", this.m_firstLineIndent);
+                return this.m_firstLineIndent;
+            },
+            set: function (value) {
+                this.m_firstLineIndent = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "FirstLineIndent", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "leftIndent", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("leftIndent", this.m_leftIndent);
+                return this.m_leftIndent;
+            },
+            set: function (value) {
+                this.m_leftIndent = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "LeftIndent", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "lineSpacing", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("lineSpacing", this.m_lineSpacing);
+                return this.m_lineSpacing;
+            },
+            set: function (value) {
+                this.m_lineSpacing = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "LineSpacing", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "lineUnitAfter", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("lineUnitAfter", this.m_lineUnitAfter);
+                return this.m_lineUnitAfter;
+            },
+            set: function (value) {
+                this.m_lineUnitAfter = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "LineUnitAfter", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "lineUnitBefore", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("lineUnitBefore", this.m_lineUnitBefore);
+                return this.m_lineUnitBefore;
+            },
+            set: function (value) {
+                this.m_lineUnitBefore = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "LineUnitBefore", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "outlineLevel", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("outlineLevel", this.m_outlineLevel);
+                return this.m_outlineLevel;
+            },
+            set: function (value) {
+                this.m_outlineLevel = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "OutlineLevel", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "rightIndent", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("rightIndent", this.m_rightIndent);
+                return this.m_rightIndent;
+            },
+            set: function (value) {
+                this.m_rightIndent = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "RightIndent", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "spaceAfter", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("spaceAfter", this.m_spaceAfter);
+                return this.m_spaceAfter;
+            },
+            set: function (value) {
+                this.m_spaceAfter = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "SpaceAfter", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(Paragraph.prototype, "spaceBefore", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("spaceBefore", this.m_spaceBefore);
+                return this.m_spaceBefore;
+            },
+            set: function (value) {
+                this.m_spaceBefore = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "SpaceBefore", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
         Object.defineProperty(Paragraph.prototype, "style", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("style", this.m_style);
                 return this.m_style;
             },
             set: function (value) {
@@ -1099,100 +1373,48 @@ var Word;
         });
 
 
-        Paragraph.prototype.clearContent = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "ClearContent", 0 /* Default */, []);
+        Object.defineProperty(Paragraph.prototype, "_Id", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_Id", this.m__Id);
+                return this.m__Id;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(Paragraph.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Paragraph.prototype.clear = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Clear", 0 /* Default */, []);
         };
 
-        Paragraph.prototype.deleteElement = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteElement", 0 /* Default */, []);
-        };
-
-        Paragraph.prototype.getAlignment = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetAlignment", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getFirstLineIndent = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetFirstLineIndent", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
+        Paragraph.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         Paragraph.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getLeftIndent = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetLeftIndent", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getLineSpacing = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetLineSpacing", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getLineUnitAfter = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetLineUnitAfter", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getLineUnitBefore = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetLineUnitBefore", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Paragraph.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getOutlineLevel = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOutlineLevel", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getRightIndent = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetRightIndent", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getSpaceAfter = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetSpaceAfter", 0 /* Default */, []);
-            var ret = new OfficeExtension.ClientResult();
-            this.context.pendingRequest.addActionResultHandler(action, ret);
-            return ret;
-        };
-
-        Paragraph.prototype.getSpaceBefore = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetSpaceBefore", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Paragraph.prototype.getText = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
@@ -1203,79 +1425,43 @@ var Word;
         };
 
         Paragraph.prototype.insertContentControl = function () {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, false));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
         };
 
         Paragraph.prototype.insertFile = function (path, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
 
         Paragraph.prototype.insertHtml = function (html, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
         };
 
-        Paragraph.prototype.insertInlinePictureBase64 = function (base64EncodedImage, loc) {
-            return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertInlinePictureBase64", 0 /* Default */, [base64EncodedImage, loc], false, false));
+        Paragraph.prototype.insertInlinePictureFromBase64 = function (base64EncodedImage, loc) {
+            return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertInlinePictureFromBase64", 0 /* Default */, [base64EncodedImage, loc], false, true));
         };
 
-        Paragraph.prototype.insertInlinePictureUrl = function (url, loc, linkToFile, saveWithDoc) {
-            return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertInlinePictureUrl", 0 /* Default */, [url, loc, linkToFile, saveWithDoc], false, false));
+        Paragraph.prototype.insertInlinePictureFromUrl = function (url, loc, linkToFile, saveWithDoc) {
+            return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertInlinePictureFromUrl", 0 /* Default */, [url, loc, linkToFile, saveWithDoc], false, true));
         };
 
         Paragraph.prototype.insertOoxml = function (ooxml, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, true));
         };
 
         Paragraph.prototype.insertParagraph = function (paragraphText, loc) {
-            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, loc], false, false));
+            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, loc], false, true));
         };
 
         Paragraph.prototype.insertText = function (txt, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, true));
         };
 
         Paragraph.prototype.select = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
 
-        Paragraph.prototype.setAlignment = function (alignment) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetAlignment", 0 /* Default */, [alignment]);
-        };
-
-        Paragraph.prototype.setFirstLineIndent = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetFirstLineIndent", 0 /* Default */, [points]);
-        };
-
-        Paragraph.prototype.setLeftIndent = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetLeftIndent", 0 /* Default */, [points]);
-        };
-
-        Paragraph.prototype.setLineSpacing = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetLineSpacing", 0 /* Default */, [points]);
-        };
-
-        Paragraph.prototype.setLineUnitAfter = function (lines) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetLineUnitAfter", 0 /* Default */, [lines]);
-        };
-
-        Paragraph.prototype.setLineUnitBefore = function (lines) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetLineUnitBefore", 0 /* Default */, [lines]);
-        };
-
-        Paragraph.prototype.setOutlineLevel = function (level) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetOutlineLevel", 0 /* Default */, [level]);
-        };
-
-        Paragraph.prototype.setRightIndent = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetRightIndent", 0 /* Default */, [points]);
-        };
-
-        Paragraph.prototype.setSpaceAfter = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetSpaceAfter", 0 /* Default */, [points]);
-        };
-
-        Paragraph.prototype.setSpaceBefore = function (points) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "SetSpaceBefore", 0 /* Default */, [points]);
+        Paragraph.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         Paragraph.prototype.handleResult = function (value) {
@@ -1283,8 +1469,56 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Alignment"])) {
+                this.m_alignment = obj["Alignment"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["FirstLineIndent"])) {
+                this.m_firstLineIndent = obj["FirstLineIndent"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["LeftIndent"])) {
+                this.m_leftIndent = obj["LeftIndent"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["LineSpacing"])) {
+                this.m_lineSpacing = obj["LineSpacing"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["LineUnitAfter"])) {
+                this.m_lineUnitAfter = obj["LineUnitAfter"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["LineUnitBefore"])) {
+                this.m_lineUnitBefore = obj["LineUnitBefore"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["OutlineLevel"])) {
+                this.m_outlineLevel = obj["OutlineLevel"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["RightIndent"])) {
+                this.m_rightIndent = obj["RightIndent"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["SpaceAfter"])) {
+                this.m_spaceAfter = obj["SpaceAfter"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["SpaceBefore"])) {
+                this.m_spaceBefore = obj["SpaceBefore"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
                 this.m_style = obj["Style"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_Id"])) {
+                this.m__Id = obj["_Id"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
             }
 
             if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
@@ -1295,9 +1529,18 @@ var Word;
                 this.font.handleResult(obj["Font"]);
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["InlinePictures"])) {
+                this.inlinePictures.handleResult(obj["InlinePictures"]);
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
                 this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
+        };
+
+        Paragraph.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return Paragraph;
     })(OfficeExtension.ClientObject);
@@ -1310,22 +1553,28 @@ var Word;
         }
         Object.defineProperty(ParagraphCollection.prototype, "items", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("items", this.m__items);
                 return this.m__items;
             },
             enumerable: true,
             configurable: true
         });
 
-        Object.defineProperty(ParagraphCollection.prototype, "count", {
+        Object.defineProperty(ParagraphCollection.prototype, "_ReferenceId", {
             get: function () {
-                return this.m_count;
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
             },
             enumerable: true,
             configurable: true
         });
 
-        ParagraphCollection.prototype.getItemAt = function (index) {
-            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
+        ParagraphCollection.prototype.getItem = function (index) {
+            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
+        };
+
+        ParagraphCollection.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         ParagraphCollection.prototype.handleResult = function (value) {
@@ -1333,20 +1582,25 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
-                this.m_count = obj["Count"];
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
             }
 
             if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
                 this.m__items = [];
                 var _data = obj[OfficeExtension.Constants.items];
                 for (var i = 0; i < _data.length; i++) {
-                    var _item = new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingGetItemAt(this.context, this, _data[i], i));
+                    var _item = new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingIndexer(this.context, this, _data[i]));
 
                     _item.handleResult(_data[i]);
                     this.m__items.push(_item);
                 }
             }
+        };
+
+        ParagraphCollection.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return ParagraphCollection;
     })(OfficeExtension.ClientObject);
@@ -1379,6 +1633,17 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Range.prototype, "paragraphs", {
+            get: function () {
+                if (!this.m_paragraphs) {
+                    this.m_paragraphs = new Word.ParagraphCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Paragraphs", true, false));
+                }
+                return this.m_paragraphs;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         Object.defineProperty(Range.prototype, "parentContentControl", {
             get: function () {
                 if (!this.m_parentContentControl) {
@@ -1392,6 +1657,7 @@ var Word;
 
         Object.defineProperty(Range.prototype, "style", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("style", this.m_style);
                 return this.m_style;
             },
             set: function (value) {
@@ -1403,57 +1669,79 @@ var Word;
         });
 
 
-        Range.prototype.clearContent = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "ClearContent", 0 /* Default */, []);
+        Object.defineProperty(Range.prototype, "_Id", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_Id", this.m__Id);
+                return this.m__Id;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(Range.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Range.prototype.clear = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Clear", 0 /* Default */, []);
         };
 
-        Range.prototype.deleteElement = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteElement", 0 /* Default */, []);
+        Range.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         Range.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Range.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Range.prototype.getText = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 0 /* Default */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetText", 1 /* Read */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context.pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
 
         Range.prototype.insertContentControl = function () {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, false));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 1 /* Read */, [], false, true));
         };
 
         Range.prototype.insertFile = function (path, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 1 /* Read */, [path, loc], false, true));
         };
 
         Range.prototype.insertHtml = function (html, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 1 /* Read */, [html, loc], false, true));
         };
 
         Range.prototype.insertOoxml = function (ooxml, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 1 /* Read */, [ooxml, loc], false, true));
         };
 
         Range.prototype.insertText = function (txt, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [txt, loc], false, false));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 1 /* Read */, [txt, loc], false, true));
         };
 
         Range.prototype.select = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
+        };
+
+        Range.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         Range.prototype.handleResult = function (value) {
@@ -1465,6 +1753,14 @@ var Word;
                 this.m_style = obj["Style"];
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["_Id"])) {
+                this.m__Id = obj["_Id"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["ContentControls"])) {
                 this.contentControls.handleResult(obj["ContentControls"]);
             }
@@ -1473,74 +1769,22 @@ var Word;
                 this.font.handleResult(obj["Font"]);
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["Paragraphs"])) {
+                this.paragraphs.handleResult(obj["Paragraphs"]);
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["ParentContentControl"])) {
                 this.parentContentControl.handleResult(obj["ParentContentControl"]);
             }
         };
+
+        Range.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
+        };
         return Range;
     })(OfficeExtension.ClientObject);
     Word.Range = Range;
-
-    var RangeCollection = (function (_super) {
-        __extends(RangeCollection, _super);
-        function RangeCollection() {
-            _super.apply(this, arguments);
-        }
-        Object.defineProperty(RangeCollection.prototype, "items", {
-            get: function () {
-                return this.m__items;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(RangeCollection.prototype, "count", {
-            get: function () {
-                return this.m_count;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(RangeCollection.prototype, "_ReferenceId", {
-            get: function () {
-                return this.m__ReferenceId;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        RangeCollection.prototype.getItemAt = function (index) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
-        };
-
-        RangeCollection.prototype.handleResult = function (value) {
-            if (OfficeExtension.Utility.isNullOrUndefined(value))
-                return;
-            var obj = value;
-            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
-                this.m_count = obj["Count"];
-            }
-
-            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
-                this.m__ReferenceId = obj["_ReferenceId"];
-            }
-
-            if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
-                this.m__items = [];
-                var _data = obj[OfficeExtension.Constants.items];
-                for (var i = 0; i < _data.length; i++) {
-                    var _item = new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingGetItemAt(this.context, this, _data[i], i));
-
-                    _item.handleResult(_data[i]);
-                    this.m__items.push(_item);
-                }
-            }
-        };
-        return RangeCollection;
-    })(OfficeExtension.ClientObject);
-    Word.RangeCollection = RangeCollection;
 
     var SearchOptions = (function (_super) {
         __extends(SearchOptions, _super);
@@ -1549,6 +1793,7 @@ var Word;
         }
         Object.defineProperty(SearchOptions.prototype, "ignorePunct", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("ignorePunct", this.m_ignorePunct);
                 return this.m_ignorePunct;
             },
             set: function (value) {
@@ -1562,6 +1807,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "ignoreSpace", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("ignoreSpace", this.m_ignoreSpace);
                 return this.m_ignoreSpace;
             },
             set: function (value) {
@@ -1575,6 +1821,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchCase", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchCase", this.m_matchCase);
                 return this.m_matchCase;
             },
             set: function (value) {
@@ -1588,6 +1835,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchPrefix", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchPrefix", this.m_matchPrefix);
                 return this.m_matchPrefix;
             },
             set: function (value) {
@@ -1601,6 +1849,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchSoundsLike", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchSoundsLike", this.m_matchSoundsLike);
                 return this.m_matchSoundsLike;
             },
             set: function (value) {
@@ -1614,6 +1863,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchSuffix", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchSuffix", this.m_matchSuffix);
                 return this.m_matchSuffix;
             },
             set: function (value) {
@@ -1627,6 +1877,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchWholeWord", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchWholeWord", this.m_matchWholeWord);
                 return this.m_matchWholeWord;
             },
             set: function (value) {
@@ -1640,6 +1891,7 @@ var Word;
 
         Object.defineProperty(SearchOptions.prototype, "matchWildCards", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("matchWildCards", this.m_matchWildCards);
                 return this.m_matchWildCards;
             },
             set: function (value) {
@@ -1689,6 +1941,11 @@ var Word;
             }
         };
 
+        SearchOptions.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
+        };
+
         SearchOptions.newObject = function (context) {
             var ret = new Word.SearchOptions(context, OfficeExtension.ObjectPathFactory.createNewObjectObjectPath(context, "Microsoft.WordServices.SearchOptions", false));
             return ret;
@@ -1704,6 +1961,7 @@ var Word;
         }
         Object.defineProperty(SearchResultCollection.prototype, "items", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("items", this.m__items);
                 return this.m__items;
             },
             enumerable: true,
@@ -1712,14 +1970,19 @@ var Word;
 
         Object.defineProperty(SearchResultCollection.prototype, "_ReferenceId", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
                 return this.m__ReferenceId;
             },
             enumerable: true,
             configurable: true
         });
 
+        SearchResultCollection.prototype.getItem = function (index) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
+        };
+
         SearchResultCollection.prototype._KeepReference = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 0 /* Default */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         SearchResultCollection.prototype.handleResult = function (value) {
@@ -1735,12 +1998,17 @@ var Word;
                 this.m__items = [];
                 var _data = obj[OfficeExtension.Constants.items];
                 for (var i = 0; i < _data.length; i++) {
-                    var _item = new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingGetItemAt(this.context, this, _data[i], i));
+                    var _item = new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingIndexer(this.context, this, _data[i]));
 
                     _item.handleResult(_data[i]);
                     this.m__items.push(_item);
                 }
             }
+        };
+
+        SearchResultCollection.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return SearchResultCollection;
     })(OfficeExtension.ClientObject);
@@ -1762,12 +2030,34 @@ var Word;
             configurable: true
         });
 
+        Object.defineProperty(Section.prototype, "_Id", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_Id", this.m__Id);
+                return this.m__Id;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(Section.prototype, "_ReferenceId", {
+            get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         Section.prototype.getFooter = function (type) {
-            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetFooter", 0 /* Default */, [type], false, false));
+            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetFooter", 1 /* Read */, [type], false, true));
         };
 
         Section.prototype.getHeader = function (type) {
-            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetHeader", 0 /* Default */, [type], false, false));
+            return new Word.Body(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetHeader", 1 /* Read */, [type], false, true));
+        };
+
+        Section.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         Section.prototype.handleResult = function (value) {
@@ -1775,9 +2065,22 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["_Id"])) {
+                this.m__Id = obj["_Id"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["Body"])) {
                 this.body.handleResult(obj["Body"]);
             }
+        };
+
+        Section.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return Section;
     })(OfficeExtension.ClientObject);
@@ -1790,22 +2093,28 @@ var Word;
         }
         Object.defineProperty(SectionCollection.prototype, "items", {
             get: function () {
+                OfficeExtension.Utility.throwIfNotLoaded("items", this.m__items);
                 return this.m__items;
             },
             enumerable: true,
             configurable: true
         });
 
-        Object.defineProperty(SectionCollection.prototype, "count", {
+        Object.defineProperty(SectionCollection.prototype, "_ReferenceId", {
             get: function () {
-                return this.m_count;
+                OfficeExtension.Utility.throwIfNotLoaded("_ReferenceId", this.m__ReferenceId);
+                return this.m__ReferenceId;
             },
             enumerable: true,
             configurable: true
         });
 
-        SectionCollection.prototype.getItemAt = function (index) {
-            return new Word.Section(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
+        SectionCollection.prototype.getItem = function (index) {
+            return new Word.Section(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
+        };
+
+        SectionCollection.prototype._KeepReference = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         SectionCollection.prototype.handleResult = function (value) {
@@ -1813,20 +2122,25 @@ var Word;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
-                this.m_count = obj["Count"];
+            if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
+                this.m__ReferenceId = obj["_ReferenceId"];
             }
 
             if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
                 this.m__items = [];
                 var _data = obj[OfficeExtension.Constants.items];
                 for (var i = 0; i < _data.length; i++) {
-                    var _item = new Word.Section(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingGetItemAt(this.context, this, _data[i], i));
+                    var _item = new Word.Section(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingIndexer(this.context, this, _data[i]));
 
                     _item.handleResult(_data[i]);
                     this.m__items.push(_item);
                 }
             }
+        };
+
+        SectionCollection.prototype.load = function (option) {
+            OfficeExtension.Utility.load(this, option);
+            return this;
         };
         return SectionCollection;
     })(OfficeExtension.ClientObject);
@@ -1835,17 +2149,7 @@ var Word;
     var ContentControlType = (function () {
         function ContentControlType() {
         }
-        ContentControlType.unknown = "Unknown";
-
-        ContentControlType.inline = "Inline";
-
-        ContentControlType.paragraph = "Paragraph";
-
-        ContentControlType.cell = "Cell";
-
-        ContentControlType.row = "Row";
-
-        ContentControlType.count = "Count";
+        ContentControlType.richText = "RichText";
         return ContentControlType;
     })();
     Word.ContentControlType = ContentControlType;
