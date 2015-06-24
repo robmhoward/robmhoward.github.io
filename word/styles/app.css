@@ -1,0 +1,11 @@
+﻿.container {
+    background-color: lightgray;
+}
+
+.message-text {
+    color: black;
+}
+
+.debug-text {
+    color: blue;
+}

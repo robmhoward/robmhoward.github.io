@@ -1,6 +1,7 @@
 var ctx = new Excel.ExcelClientContext();
-var chart = ctx.workbook.worksheets.getItem("Sheet1").charts.getItem("Chart1");	
-ctx.load(chart);
+var title = ctx.workbook.worksheets.getItem("Sheet1").charts.getItemAt(0).title;	
+ctx.load(title);
 ctx.executeAsync().then(function () {
-		console.log(chart.title.text);
+		console.log(title.text);
+		console.log("done");
 });

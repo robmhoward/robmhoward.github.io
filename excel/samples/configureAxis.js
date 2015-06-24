@@ -1,5 +1,5 @@
 var ctx = new Excel.ExcelClientContext();
-var chart = ctx.workbook.worksheets.getItem("Sheet1").charts.getItem("Chart1");	
+var chart = ctx.workbook.worksheets.getItem("Sheet1").charts.getItemAt(0);	
 
 chart.axes.valueAxis.maximum = 5;
 chart.axes.valueAxis.minimum = 0;
