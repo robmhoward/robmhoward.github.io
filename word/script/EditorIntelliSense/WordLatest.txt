@@ -3,51 +3,65 @@
         private m_contentControls;
         private m_inlinePictures;
         private m_paragraphs;
+        private m_parentContentControl;
         public contentControls : ContentControlCollection;
         public inlinePictures : InlinePictureCollection;
         public paragraphs : ParagraphCollection;
+        public parentContentControl : ContentControl;
+        public getHtml(): OfficeExtension.ClientResult<string>;
+        public getOoxml(): OfficeExtension.ClientResult<string>;
         public insertContentControl(): ContentControl;
         public insertParagraph(paragraphText: string, loc: string): Paragraph;
+        public search(find: Find): SearchResultCollection;
+        public handleResult(value: any): void;
     }
     class ContentControl extends OfficeExtension.ClientObject {
         private m_appearance;
+        private m_cannotDelete;
+        private m_cannotEdit;
+        private m_color;
         private m_contentControls;
         private m_font;
-        private m_html;
         private m_id;
         private m_inlinePictures;
-        private m_ooxml;
         private m_paragraphs;
+        private m_parentContentControl;
+        private m_removeWhenEdited;
         private m_style;
         private m_tag;
-        private m_text;
         private m_title;
         private m_type;
         public contentControls : ContentControlCollection;
         public font : Font;
         public inlinePictures : InlinePictureCollection;
         public paragraphs : ParagraphCollection;
+        public parentContentControl : ContentControl;
         public appearance : string;
-        public html : string;
+        public cannotDelete : boolean;
+        public cannotEdit : boolean;
+        public color : string;
         public id : number;
-        public ooxml : string;
+        public removeWhenEdited : boolean;
         public style : string;
         public tag : string;
-        public text : string;
         public title : string;
         public type : string;
-        public clear(): void;
-        public delete(): void;
-        public deleteWhole(): void;
+        public clearContent(): void;
+        public deleteElement(): void;
+        public getHtml(): OfficeExtension.ClientResult<string>;
+        public getOoxml(): OfficeExtension.ClientResult<string>;
         public insertFile(path: string, loc: string): Range;
         public insertHtml(html: string, loc: string): Range;
         public insertOoxml(ooxml: string, loc: string): Range;
         public insertText(txt: string, loc: string): Range;
+        public remove(): void;
         public select(): void;
         public handleResult(value: any): void;
     }
     class ContentControlCollection extends OfficeExtension.ClientObject {
         private m_count;
+        private m__items;
+        public items : ContentControl[];
         public count : number;
         public getById(Id: number): ContentControl;
         public getByTag(Tag: string): ContentControlCollection;
@@ -57,17 +71,28 @@
     }
     class Document extends OfficeExtension.ClientObject {
         private m_body;
+        private m_contentControls;
         private m_properties;
         private m_saved;
         private m_sections;
         private m_selection;
         public body : Body;
+        public contentControls : ContentControlCollection;
         public sections : SectionCollection;
         public selection : Range;
         public properties : string;
         public saved : boolean;
         public save(): void;
+        public _GetObjectByReferenceId(referenceId: string): OfficeExtension.ClientResult<any>;
+        public _GetObjectTypeNameByReferenceId(referenceId: string): OfficeExtension.ClientResult<string>;
+        public _RemoveReference(referenceId: string): void;
         public handleResult(value: any): void;
+    }
+    class Find extends OfficeExtension.ClientObject {
+        private m_text;
+        public text : string;
+        public handleResult(value: any): void;
+        static newObject(context: OfficeExtension.ClientRequestContext): Find;
     }
     class Font extends OfficeExtension.ClientObject {
         private m_bold;
@@ -101,7 +126,9 @@
         private m_hyperlink;
         private m_id;
         private m_lockAspectRatio;
+        private m_parentContentControl;
         private m_width;
+        public parentContentControl : ContentControl;
         public altTextDescription : string;
         public altTextTitle : string;
         public height : number;
@@ -115,15 +142,37 @@
     }
     class InlinePictureCollection extends OfficeExtension.ClientObject {
         private m_count;
+        private m__items;
+        public items : InlinePicture[];
         public count : number;
         public getItem(index: any): InlinePicture;
         public getItemAt(index: number): InlinePicture;
         public handleResult(value: any): void;
     }
     class Paragraph extends OfficeExtension.ClientObject {
+        private m_contentControls;
         private m_font;
+        private m_parentContentControl;
+        private m_style;
+        public contentControls : ContentControlCollection;
         public font : Font;
-        public getPlainText(): OfficeExtension.ClientResult<string>;
+        public parentContentControl : ContentControl;
+        public style : string;
+        public clearContent(): void;
+        public deleteElement(): void;
+        public getAlignment(): OfficeExtension.ClientResult<string>;
+        public getFirstLineIndent(): OfficeExtension.ClientResult<number>;
+        public getHtml(): OfficeExtension.ClientResult<string>;
+        public getLeftIndent(): OfficeExtension.ClientResult<number>;
+        public getLineSpacing(): OfficeExtension.ClientResult<number>;
+        public getLineUnitAfter(): OfficeExtension.ClientResult<number>;
+        public getLineUnitBefore(): OfficeExtension.ClientResult<number>;
+        public getOoxml(): OfficeExtension.ClientResult<string>;
+        public getOutlineLevel(): OfficeExtension.ClientResult<number>;
+        public getRightIndent(): OfficeExtension.ClientResult<number>;
+        public getSpaceAfter(): OfficeExtension.ClientResult<number>;
+        public getSpaceBefore(): OfficeExtension.ClientResult<number>;
+        public getText(): OfficeExtension.ClientResult<string>;
         public insertBreak(bt: string, loc: string): void;
         public insertContentControl(): ContentControl;
         public insertFile(path: string, loc: string): Range;
@@ -133,27 +182,76 @@
         public insertOoxml(ooxml: string, loc: string): Range;
         public insertParagraph(paragraphText: string, loc: string): Paragraph;
         public insertText(txt: string, loc: string): Range;
+        public select(): void;
+        public setAlignment(alignment: string): void;
+        public setFirstLineIndent(points: number): void;
+        public setLeftIndent(points: number): void;
+        public setLineSpacing(points: number): void;
+        public setLineUnitAfter(lines: number): void;
+        public setLineUnitBefore(lines: number): void;
+        public setOutlineLevel(level: number): void;
+        public setRightIndent(points: number): void;
+        public setSpaceAfter(points: number): void;
+        public setSpaceBefore(points: number): void;
+        public handleResult(value: any): void;
     }
     class ParagraphCollection extends OfficeExtension.ClientObject {
         private m_count;
+        private m__items;
+        public items : Paragraph[];
         public count : number;
         public getItemAt(index: number): Paragraph;
         public handleResult(value: any): void;
     }
     class Range extends OfficeExtension.ClientObject {
-        public getPlainText(): OfficeExtension.ClientResult<string>;
+        private m_contentControls;
+        private m_font;
+        private m_parentContentControl;
+        private m_style;
+        public contentControls : ContentControlCollection;
+        public font : Font;
+        public parentContentControl : ContentControl;
+        public style : string;
+        public clearContent(): void;
+        public deleteElement(): void;
+        public getHtml(): OfficeExtension.ClientResult<string>;
+        public getOoxml(): OfficeExtension.ClientResult<string>;
+        public getText(): OfficeExtension.ClientResult<string>;
         public insertContentControl(): ContentControl;
         public insertFile(path: string, loc: string): Range;
         public insertHtml(html: string, loc: string): Range;
         public insertOoxml(ooxml: string, loc: string): Range;
         public insertText(txt: string, loc: string): Range;
+        public select(): void;
+        public handleResult(value: any): void;
+    }
+    class RangeCollection extends OfficeExtension.ClientObject {
+        private m_count;
+        private m__ReferenceId;
+        private m__items;
+        public items : Range[];
+        public count : number;
+        public _ReferenceId : string;
+        public getItemAt(index: number): Range;
+        public handleResult(value: any): void;
+    }
+    class SearchResultCollection extends OfficeExtension.ClientObject {
+        private m__ReferenceId;
+        private m__items;
+        public items : Range[];
+        public _ReferenceId : string;
+        public _KeepReference(): void;
+        public handleResult(value: any): void;
     }
     class Section extends OfficeExtension.ClientObject {
         private m_body;
         public body : Body;
+        public handleResult(value: any): void;
     }
     class SectionCollection extends OfficeExtension.ClientObject {
         private m_count;
+        private m__items;
+        public items : Section[];
         public count : number;
         public getItemAt(index: number): Section;
         public handleResult(value: any): void;
@@ -202,6 +300,18 @@
         static after: string;
         static start: string;
         static end: string;
+        static replace: string;
+    }
+    class Alignment {
+        static unknown: string;
+        static left: string;
+        static centered: string;
+        static right: string;
+        static justified: string;
+        static count: string;
+    }
+    class ErrorCodes {
+        static generalException: string;
     }
 }
 declare module Word {

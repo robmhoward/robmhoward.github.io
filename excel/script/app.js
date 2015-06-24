@@ -23,6 +23,11 @@ excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
 				controller: 'SamplesController',
 				templateUrl: 'partials/samples.html'
 			})
+		.when('/testAll',
+			{
+				controller: 'TestAllController',
+				templateUrl: 'partials/testAll.html'
+			})
 		.otherwise({redirectTo: '/samples' });
 }]);
 
@@ -85,7 +90,80 @@ excelSamplesApp.controller("SamplesController", function($scope, excelSamplesFac
 
 });
 
+
+excelSamplesApp.controller("TestAllController", function($scope, $q, excelSamplesFactory) {
+	$scope.insideOffice = insideOffice;
+
+	excelSamplesFactory.getSamples().then(function (response) {
+		$scope.samples = response.data.values;
+		$scope.groups = response.data.groups;
+	});
+
+	$scope.loadSampleCode = function() {
+		appInsights.trackEvent("SampleLoaded", {name:$scope.selectedSample.name});
+
+	};
+
+	$scope.runSamples = function() {
+		
+		var promiseProducingSampleFunctions = new Array();
+		
+		for (var i = 1; i < $scope.samples.length; i++) {
+			promiseProducingSampleFunctions.push(createRunSample(i));
+		}
+		
+		var result = createRunSample(0);
+		result = result();
+		promiseProducingSampleFunctions.forEach(function (f) {
+			result = result.then(f);
+		});
+		
+		function createRunSample(sampleIndex) {
+			
+			var sample = $scope.samples[sampleIndex];
+			
+			return function() {
+				var deferred = $q.defer();
+				//logComment("running next call");
+				sample.runStatus = "Loading";
+				excelSamplesFactory.getSampleCode(sample.filename).then(function (response) {
+					sample.code = addTestResults(addDeferredErrorHandling(response.data)).replace(/console.log/g, "logComment");
+					sample.runStatus = "Running";
+					try {
+						//logComment(sample.code);
+						eval(sample.code);
+					} catch (e) {
+						sample.runStatus = "Error: " + e.name + ": " + e.message;
+						deferred.resolve();
+					}
+				});
+				
+				
+				return deferred.promise;
+			}
+		}
+	}
+	
+	$scope.refreshResults = function() {
+		$scope.$apply();
+	}
+
+});
+
+function addTestResults(sampleCode) {
+	return sampleCode.replace("console.log(\"done\");", "sample.runStatus = \"Success\"; deferred.resolve();");
+}
+
+
+function addDeferredErrorHandling(sampleCode) {
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    sample.runStatus = \"Error: \" + error.errorCode + \":\" + error.errorMessage; deferred.resolve(); });");
+}
+
+function addErrorHandling(sampleCode) {
+	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.errorCode + \":\" + error.errorMessage);\r\n});");
+}
+
 function addErrorHandlingIfNeeded(sampleCode) {
 	if (!insideOffice) return sampleCode;
-	return sampleCode.replace("ctx.executeAsync().then();", "ctx.executeAsync().then(function() {\r\n    console.log(\"done\");\r\n}, function(error) {\r\n    console.log(\"An error occurred: \" + error.errorCode + \":\" + error.errorMessage);\r\n});");
+	return addErrorHandling(sampleCode);	
 }

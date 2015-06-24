@@ -15,6 +15,7 @@ var MonacoEditorIntegration;
             mode: editorMode,
             wrappingColumn: 0,
             tabSize: 4,
+            lineNumbers: false,
             insertSpaces: false
         });
         document.getElementById(textAreaId).addEventListener('keyup', function () {

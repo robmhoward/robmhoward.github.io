@@ -205,6 +205,12 @@ declare module OfficeExtension {
         Skip?: number;
         Top?: number;
     }
+    interface QueryInfo {
+        Select?: string[];
+        Expand?: string[];
+        Skip?: number;
+        Top?: number;
+    }
     interface ActionInfo {
         Id: number;
         ActionType: ActionType;

@@ -30,7 +30,6 @@ declare module Excel {
          Collection of Worksheets associated with the workbook    
         */
         public worksheets : WorksheetCollection;
-        public getActiveWorksheet(): Worksheet;
         public getSelectedRange(): Range;
     }
     class Worksheet extends OfficeExtension.ClientObject {
@@ -84,6 +83,7 @@ declare module Excel {
         public add(name: string): Worksheet;
         public getItem(index: string): Worksheet;
         public getItemAt(index: number): Worksheet;
+        public getActiveWorksheet(): Worksheet;
     }
     class Range extends OfficeExtension.ClientObject {
         private m_address;
@@ -442,8 +442,7 @@ declare module Excel {
         private m_minorUnit;
         private m_title;
         /**
-         Represents the font attributes (font name, font size, color, and so on) for an object. 
-        */
+         Represents the font attributes (font name, font size, color, and so on) for an object.         */
         public font : ChartFont;
         public lineFormat : ChartLineFormat;
         /**
@@ -474,8 +473,7 @@ declare module Excel {
         private m_text;
         private m_visible;
         /**
-         Represents the font attributes (font name, font size, color, and so on) for an object. 
-        */
+         Represents the font attributes (font name, font size, color, and so on) for an object.         */
         public font : ChartFont;
         /**
         A String value that represents the title of a Axis. 
@@ -498,12 +496,10 @@ declare module Excel {
         private m_showSeriesName;
         private m_showValue;
         /**
-         Represents the fill format of an object, which includes interior/background formating information. 
-        */
+         Represents the fill format of an object, which includes interior/background formating information.         */
         public fillFormat : ChartFill;
         /**
-         Represents the font attributes (font name, font size, color, and so on) for an object. 
-        */
+         Represents the font attributes (font name, font size, color, and so on) for an object.         */
         public font : ChartFont;
         /**
         Returns or sets a DataLabelPosition value that represents the position of the data label.  
@@ -539,8 +535,7 @@ declare module Excel {
         private m_lineFormat;
         private m_visible;
         /**
-         Represents line and arrowhead formatting.
-        */
+         Represents line and arrowhead formatting.        */
        public lineFormat : ChartLineFormat;
         public visible : boolean;
     }
@@ -551,12 +546,10 @@ declare module Excel {
         private m_position;
         private m_visible;
         /**
-         Represents the fill format of an object, which includes interior/background formating information. 
-        */
+         Represents the fill format of an object, which includes interior/background formating information.         */
         public fillFormat : ChartFill;
         /**
-         Represents the font attributes (font name, font size, color, and so on) for an object. 
-        */
+         Represents the font attributes (font name, font size, color, and so on) for an object.         */
         public font : ChartFont;
         /**
         True if the legend with be overlapping with the chart. 
@@ -578,12 +571,10 @@ declare module Excel {
         private m_text;
         private m_visible;
         /**
-         Represents the fill format of an object, which includes interior/background formating information. 
-        */
+         Represents the fill format of an object, which includes interior/background formating information.         */
         public fillFormat : ChartFill;
         /**
-         Represents the font attributes (font name, font size, color, and so on) for an object. 
-        */
+         Represents the font attributes (font name, font size, color, and so on) for an object.         */
         public font : ChartFont;
         /**
         True if the title overlays the chart. 
