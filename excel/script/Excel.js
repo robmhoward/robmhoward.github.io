@@ -66,7 +66,7 @@ var Excel;
         Object.defineProperty(Workbook.prototype, "names", {
             get: function () {
                 if (!this.m_names) {
-                    this.m_names = new Excel.NamedItemCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Names", false, false));
+                    this.m_names = new Excel.NamedItemCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Names", true, false));
                 }
                 return this.m_names;
             },
@@ -115,7 +115,7 @@ var Excel;
         };
 
         Workbook.prototype._RemoveReference = function (bstrReferenceId) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_RemoveReference", 0 /* Default */, [bstrReferenceId]);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_RemoveReference", 1 /* Read */, [bstrReferenceId]);
         };
 
         Workbook.prototype.handleResult = function (value) {
@@ -123,6 +123,25 @@ var Excel;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Application"])) {
+                this.application.handleResult(obj["Application"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Bindings"])) {
+                this.bindings.handleResult(obj["Bindings"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Names"])) {
+                this.names.handleResult(obj["Names"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Tables"])) {
+                this.tables.handleResult(obj["Tables"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Worksheets"])) {
+                this.worksheets.handleResult(obj["Worksheets"]);
+            }
         };
         return Workbook;
     })(OfficeExtension.ClientObject);
@@ -163,6 +182,14 @@ var Excel;
             configurable: true
         });
 
+        Object.defineProperty(Worksheet.prototype, "index", {
+            get: function () {
+                return this.m_index;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         Object.defineProperty(Worksheet.prototype, "name", {
             get: function () {
                 return this.m_name;
@@ -175,8 +202,8 @@ var Excel;
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Activate", 0 /* Default */, []);
         };
 
-        Worksheet.prototype.deleteObject = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteObject", 0 /* Default */, []);
+        Worksheet.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         Worksheet.prototype.getCell = function (row, column) {
@@ -204,8 +231,20 @@ var Excel;
                 this.m_id = obj["Id"];
             }
 
+            if (!OfficeExtension.Utility.isUndefined(obj["Index"])) {
+                this.m_index = obj["Index"];
+            }
+
             if (!OfficeExtension.Utility.isUndefined(obj["Name"])) {
                 this.m_name = obj["Name"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Charts"])) {
+                this.charts.handleResult(obj["Charts"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Tables"])) {
+                this.tables.handleResult(obj["Tables"]);
             }
         };
         return Worksheet;
@@ -225,14 +264,6 @@ var Excel;
             configurable: true
         });
 
-        Object.defineProperty(WorksheetCollection.prototype, "count", {
-            get: function () {
-                return this.m_count;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
         WorksheetCollection.prototype.add = function (name) {
             return new Excel.Worksheet(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Add", 0 /* Default */, [name], false, true));
         };
@@ -245,19 +276,11 @@ var Excel;
             return new Excel.Worksheet(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
 
-        WorksheetCollection.prototype.getItemAt = function (index) {
-            return new Excel.Worksheet(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
-        };
-
         WorksheetCollection.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
-                this.m_count = obj["Count"];
-            }
-
             if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
                 this.m__items = [];
                 var _data = obj[OfficeExtension.Constants.items];
@@ -281,7 +304,7 @@ var Excel;
         Object.defineProperty(Range.prototype, "format", {
             get: function () {
                 if (!this.m_format) {
-                    this.m_format = new Excel.Format(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
+                    this.m_format = new Excel.RangeFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
                 return this.m_format;
             },
@@ -457,7 +480,7 @@ var Excel;
         };
 
         Range.prototype._KeepReference = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 0 /* Default */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
         };
 
         Range.prototype.handleResult = function (value) {
@@ -516,6 +539,14 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["_ReferenceId"])) {
                 this.m__ReferenceId = obj["_ReferenceId"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Worksheet"])) {
+                this.worksheet.handleResult(obj["Worksheet"]);
+            }
         };
         return Range;
     })(OfficeExtension.ClientObject);
@@ -526,8 +557,16 @@ var Excel;
         function NamedItemCollection() {
             _super.apply(this, arguments);
         }
-        NamedItemCollection.prototype.getItem = function (index) {
-            return new Excel.NamedItem(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
+        Object.defineProperty(NamedItemCollection.prototype, "items", {
+            get: function () {
+                return this.m__items;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        NamedItemCollection.prototype.getItem = function (name) {
+            return new Excel.NamedItem(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [name]));
         };
 
         NamedItemCollection.prototype.handleResult = function (value) {
@@ -535,6 +574,16 @@ var Excel;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+                this.m__items = [];
+                var _data = obj[OfficeExtension.Constants.items];
+                for (var i = 0; i < _data.length; i++) {
+                    var _item = new Excel.NamedItem(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingIndexer(this.context, this, _data[i]));
+
+                    _item.handleResult(_data[i]);
+                    this.m__items.push(_item);
+                }
+            }
         };
         return NamedItemCollection;
     })(OfficeExtension.ClientObject);
@@ -582,6 +631,14 @@ var Excel;
         });
 
 
+        Object.defineProperty(NamedItem.prototype, "_Id", {
+            get: function () {
+                return this.m__Id;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         NamedItem.prototype.getRange = function () {
             return new Excel.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetRange", 1 /* Read */, [], false, true));
         };
@@ -605,6 +662,10 @@ var Excel;
 
             if (!OfficeExtension.Utility.isUndefined(obj["Visible"])) {
                 this.m_visible = obj["Visible"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_Id"])) {
+                this.m__Id = obj["_Id"];
             }
         };
         return NamedItem;
@@ -738,8 +799,8 @@ var Excel;
             configurable: true
         });
 
-        TableCollection.prototype.add = function (name, address, showHeaders, showTotals, tableStyle) {
-            return new Excel.Table(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Add", 0 /* Default */, [name, address, showHeaders, showTotals, tableStyle], false, true));
+        TableCollection.prototype.add = function (address, hasHeaders) {
+            return new Excel.Table(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Add", 0 /* Default */, [address, hasHeaders], false, true));
         };
 
         TableCollection.prototype.getItem = function (id) {
@@ -779,23 +840,23 @@ var Excel;
         function Table() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(Table.prototype, "tableColumns", {
+        Object.defineProperty(Table.prototype, "columns", {
             get: function () {
-                if (!this.m_tableColumns) {
-                    this.m_tableColumns = new Excel.TableColumnCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "TableColumns", true, false));
+                if (!this.m_columns) {
+                    this.m_columns = new Excel.TableColumnCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Columns", true, false));
                 }
-                return this.m_tableColumns;
+                return this.m_columns;
             },
             enumerable: true,
             configurable: true
         });
 
-        Object.defineProperty(Table.prototype, "tableRows", {
+        Object.defineProperty(Table.prototype, "rows", {
             get: function () {
-                if (!this.m_tableRows) {
-                    this.m_tableRows = new Excel.TableRowCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "TableRows", true, false));
+                if (!this.m_rows) {
+                    this.m_rows = new Excel.TableRowCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Rows", true, false));
                 }
-                return this.m_tableRows;
+                return this.m_rows;
             },
             enumerable: true,
             configurable: true
@@ -813,41 +874,56 @@ var Excel;
             get: function () {
                 return this.m_name;
             },
+            set: function (value) {
+                this.m_name = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Name", value);
+            },
             enumerable: true,
             configurable: true
         });
+
 
         Object.defineProperty(Table.prototype, "showHeaders", {
             get: function () {
                 return this.m_showHeaders;
             },
+            set: function (value) {
+                this.m_showHeaders = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "ShowHeaders", value);
+            },
             enumerable: true,
             configurable: true
         });
+
 
         Object.defineProperty(Table.prototype, "showTotals", {
             get: function () {
                 return this.m_showTotals;
             },
+            set: function (value) {
+                this.m_showTotals = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "ShowTotals", value);
+            },
             enumerable: true,
             configurable: true
         });
 
-        Object.defineProperty(Table.prototype, "tableStyle", {
+
+        Object.defineProperty(Table.prototype, "style", {
             get: function () {
-                return this.m_tableStyle;
+                return this.m_style;
             },
             set: function (value) {
-                this.m_tableStyle = value;
-                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "TableStyle", value);
+                this.m_style = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Style", value);
             },
             enumerable: true,
             configurable: true
         });
 
 
-        Table.prototype.deleteObject = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteObject", 0 /* Default */, []);
+        Table.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         Table.prototype.getDataBodyRange = function () {
@@ -887,8 +963,16 @@ var Excel;
                 this.m_showTotals = obj["ShowTotals"];
             }
 
-            if (!OfficeExtension.Utility.isUndefined(obj["TableStyle"])) {
-                this.m_tableStyle = obj["TableStyle"];
+            if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
+                this.m_style = obj["Style"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Columns"])) {
+                this.columns.handleResult(obj["Columns"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Rows"])) {
+                this.rows.handleResult(obj["Rows"]);
             }
         };
         return Table;
@@ -994,8 +1078,8 @@ var Excel;
         });
 
 
-        TableColumn.prototype.deleteObject = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteObject", 0 /* Default */, []);
+        TableColumn.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         TableColumn.prototype.getDataBodyRange = function () {
@@ -1118,8 +1202,8 @@ var Excel;
         });
 
 
-        TableRow.prototype.deleteObject = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteObject", 0 /* Default */, []);
+        TableRow.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         TableRow.prototype.getRange = function () {
@@ -1143,26 +1227,15 @@ var Excel;
     })(OfficeExtension.ClientObject);
     Excel.TableRow = TableRow;
 
-    var Format = (function (_super) {
-        __extends(Format, _super);
-        function Format() {
+    var RangeFormat = (function (_super) {
+        __extends(RangeFormat, _super);
+        function RangeFormat() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(Format.prototype, "background", {
-            get: function () {
-                if (!this.m_background) {
-                    this.m_background = new Excel.Background(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Background", false, false));
-                }
-                return this.m_background;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(Format.prototype, "borders", {
+        Object.defineProperty(RangeFormat.prototype, "borders", {
             get: function () {
                 if (!this.m_borders) {
-                    this.m_borders = new Excel.BorderCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Borders", false, false));
+                    this.m_borders = new Excel.RangeBorderCollection(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Borders", true, false));
                 }
                 return this.m_borders;
             },
@@ -1170,10 +1243,21 @@ var Excel;
             configurable: true
         });
 
-        Object.defineProperty(Format.prototype, "font", {
+        Object.defineProperty(RangeFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.RangeFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(RangeFormat.prototype, "font", {
             get: function () {
                 if (!this.m_font) {
-                    this.m_font = new Excel.Font(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                    this.m_font = new Excel.RangeFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
                 }
                 return this.m_font;
             },
@@ -1181,7 +1265,7 @@ var Excel;
             configurable: true
         });
 
-        Object.defineProperty(Format.prototype, "horizontalAlignment", {
+        Object.defineProperty(RangeFormat.prototype, "horizontalAlignment", {
             get: function () {
                 return this.m_horizontalAlignment;
             },
@@ -1194,7 +1278,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Format.prototype, "verticalAlignment", {
+        Object.defineProperty(RangeFormat.prototype, "verticalAlignment", {
             get: function () {
                 return this.m_verticalAlignment;
             },
@@ -1207,7 +1291,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Format.prototype, "wrapText", {
+        Object.defineProperty(RangeFormat.prototype, "wrapText", {
             get: function () {
                 return this.m_wrapText;
             },
@@ -1220,7 +1304,7 @@ var Excel;
         });
 
 
-        Format.prototype.handleResult = function (value) {
+        RangeFormat.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
@@ -1236,17 +1320,29 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["WrapText"])) {
                 this.m_wrapText = obj["WrapText"];
             }
-        };
-        return Format;
-    })(OfficeExtension.ClientObject);
-    Excel.Format = Format;
 
-    var Background = (function (_super) {
-        __extends(Background, _super);
-        function Background() {
+            if (!OfficeExtension.Utility.isUndefined(obj["Borders"])) {
+                this.borders.handleResult(obj["Borders"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return RangeFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.RangeFormat = RangeFormat;
+
+    var RangeFill = (function (_super) {
+        __extends(RangeFill, _super);
+        function RangeFill() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(Background.prototype, "color", {
+        Object.defineProperty(RangeFill.prototype, "color", {
             get: function () {
                 return this.m_color;
             },
@@ -1259,7 +1355,7 @@ var Excel;
         });
 
 
-        Background.prototype.handleResult = function (value) {
+        RangeFill.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
@@ -1268,16 +1364,16 @@ var Excel;
                 this.m_color = obj["Color"];
             }
         };
-        return Background;
+        return RangeFill;
     })(OfficeExtension.ClientObject);
-    Excel.Background = Background;
+    Excel.RangeFill = RangeFill;
 
-    var Border = (function (_super) {
-        __extends(Border, _super);
-        function Border() {
+    var RangeBorder = (function (_super) {
+        __extends(RangeBorder, _super);
+        function RangeBorder() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(Border.prototype, "color", {
+        Object.defineProperty(RangeBorder.prototype, "color", {
             get: function () {
                 return this.m_color;
             },
@@ -1290,20 +1386,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Border.prototype, "lineStyle", {
-            get: function () {
-                return this.m_lineStyle;
-            },
-            set: function (value) {
-                this.m_lineStyle = value;
-                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "LineStyle", value);
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-
-        Object.defineProperty(Border.prototype, "sideIndex", {
+        Object.defineProperty(RangeBorder.prototype, "sideIndex", {
             get: function () {
                 return this.m_sideIndex;
             },
@@ -1311,7 +1394,20 @@ var Excel;
             configurable: true
         });
 
-        Object.defineProperty(Border.prototype, "weight", {
+        Object.defineProperty(RangeBorder.prototype, "style", {
+            get: function () {
+                return this.m_style;
+            },
+            set: function (value) {
+                this.m_style = value;
+                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "Style", value);
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+
+        Object.defineProperty(RangeBorder.prototype, "weight", {
             get: function () {
                 return this.m_weight;
             },
@@ -1324,7 +1420,7 @@ var Excel;
         });
 
 
-        Border.prototype.handleResult = function (value) {
+        RangeBorder.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
@@ -1333,47 +1429,81 @@ var Excel;
                 this.m_color = obj["Color"];
             }
 
-            if (!OfficeExtension.Utility.isUndefined(obj["LineStyle"])) {
-                this.m_lineStyle = obj["LineStyle"];
-            }
-
             if (!OfficeExtension.Utility.isUndefined(obj["SideIndex"])) {
                 this.m_sideIndex = obj["SideIndex"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Style"])) {
+                this.m_style = obj["Style"];
             }
 
             if (!OfficeExtension.Utility.isUndefined(obj["Weight"])) {
                 this.m_weight = obj["Weight"];
             }
         };
-        return Border;
+        return RangeBorder;
     })(OfficeExtension.ClientObject);
-    Excel.Border = Border;
+    Excel.RangeBorder = RangeBorder;
 
-    var BorderCollection = (function (_super) {
-        __extends(BorderCollection, _super);
-        function BorderCollection() {
+    var RangeBorderCollection = (function (_super) {
+        __extends(RangeBorderCollection, _super);
+        function RangeBorderCollection() {
             _super.apply(this, arguments);
         }
-        BorderCollection.prototype.getItem = function (index) {
-            return new Excel.Border(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
+        Object.defineProperty(RangeBorderCollection.prototype, "items", {
+            get: function () {
+                return this.m__items;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(RangeBorderCollection.prototype, "count", {
+            get: function () {
+                return this.m_count;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        RangeBorderCollection.prototype.getItem = function (index) {
+            return new Excel.RangeBorder(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
 
-        BorderCollection.prototype.handleResult = function (value) {
+        RangeBorderCollection.prototype.getItemAt = function (index) {
+            return new Excel.RangeBorder(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
+        };
+
+        RangeBorderCollection.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
-        };
-        return BorderCollection;
-    })(OfficeExtension.ClientObject);
-    Excel.BorderCollection = BorderCollection;
+            if (!OfficeExtension.Utility.isUndefined(obj["Count"])) {
+                this.m_count = obj["Count"];
+            }
 
-    var Font = (function (_super) {
-        __extends(Font, _super);
-        function Font() {
+            if (!OfficeExtension.Utility.isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+                this.m__items = [];
+                var _data = obj[OfficeExtension.Constants.items];
+                for (var i = 0; i < _data.length; i++) {
+                    var _item = new Excel.RangeBorder(this.context, OfficeExtension.ObjectPathFactory.createChildItemObjectPathUsingGetItemAt(this.context, this, _data[i], i));
+
+                    _item.handleResult(_data[i]);
+                    this.m__items.push(_item);
+                }
+            }
+        };
+        return RangeBorderCollection;
+    })(OfficeExtension.ClientObject);
+    Excel.RangeBorderCollection = RangeBorderCollection;
+
+    var RangeFont = (function (_super) {
+        __extends(RangeFont, _super);
+        function RangeFont() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(Font.prototype, "bold", {
+        Object.defineProperty(RangeFont.prototype, "bold", {
             get: function () {
                 return this.m_bold;
             },
@@ -1386,7 +1516,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Font.prototype, "color", {
+        Object.defineProperty(RangeFont.prototype, "color", {
             get: function () {
                 return this.m_color;
             },
@@ -1399,7 +1529,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Font.prototype, "italic", {
+        Object.defineProperty(RangeFont.prototype, "italic", {
             get: function () {
                 return this.m_italic;
             },
@@ -1412,7 +1542,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Font.prototype, "name", {
+        Object.defineProperty(RangeFont.prototype, "name", {
             get: function () {
                 return this.m_name;
             },
@@ -1425,7 +1555,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Font.prototype, "size", {
+        Object.defineProperty(RangeFont.prototype, "size", {
             get: function () {
                 return this.m_size;
             },
@@ -1438,7 +1568,7 @@ var Excel;
         });
 
 
-        Object.defineProperty(Font.prototype, "underline", {
+        Object.defineProperty(RangeFont.prototype, "underline", {
             get: function () {
                 return this.m_underline;
             },
@@ -1451,7 +1581,7 @@ var Excel;
         });
 
 
-        Font.prototype.handleResult = function (value) {
+        RangeFont.prototype.handleResult = function (value) {
             if (OfficeExtension.Utility.isNullOrUndefined(value))
                 return;
             var obj = value;
@@ -1480,9 +1610,9 @@ var Excel;
                 this.m_underline = obj["Underline"];
             }
         };
-        return Font;
+        return RangeFont;
     })(OfficeExtension.ClientObject);
-    Excel.Font = Font;
+    Excel.RangeFont = RangeFont;
 
     var ChartCollection = (function (_super) {
         __extends(ChartCollection, _super);
@@ -1509,16 +1639,16 @@ var Excel;
             return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Add", 0 /* Default */, [type, sourceData, seriesBy], false, true));
         };
 
-        ChartCollection.prototype.getByName = function (Name) {
-            return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetByName", 0 /* Default */, [Name], false, false));
-        };
-
-        ChartCollection.prototype.getItem = function (id) {
-            return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [id]));
+        ChartCollection.prototype.getItem = function (name) {
+            return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItem", 0 /* Default */, [name], false, false));
         };
 
         ChartCollection.prototype.getItemAt = function (index) {
             return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "GetItemAt", 1 /* Read */, [index], false, false));
+        };
+
+        ChartCollection.prototype._GetItem = function (id) {
+            return new Excel.Chart(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [id]));
         };
 
         ChartCollection.prototype.handleResult = function (value) {
@@ -1572,23 +1702,12 @@ var Excel;
             configurable: true
         });
 
-        Object.defineProperty(Chart.prototype, "fillFormat", {
+        Object.defineProperty(Chart.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartAreaFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(Chart.prototype, "font", {
-            get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
-                }
-                return this.m_font;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -1639,14 +1758,6 @@ var Excel;
             configurable: true
         });
 
-
-        Object.defineProperty(Chart.prototype, "id", {
-            get: function () {
-                return this.m_id;
-            },
-            enumerable: true,
-            configurable: true
-        });
 
         Object.defineProperty(Chart.prototype, "left", {
             get: function () {
@@ -1700,8 +1811,16 @@ var Excel;
         });
 
 
-        Chart.prototype.deleteObject = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "DeleteObject", 0 /* Default */, []);
+        Object.defineProperty(Chart.prototype, "_Id", {
+            get: function () {
+                return this.m__Id;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Chart.prototype.delete = function () {
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
 
         Chart.prototype.setData = function (sourceData, seriesBy) {
@@ -1715,10 +1834,6 @@ var Excel;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
             if (!OfficeExtension.Utility.isUndefined(obj["Height"])) {
                 this.m_height = obj["Height"];
-            }
-
-            if (!OfficeExtension.Utility.isUndefined(obj["Id"])) {
-                this.m_id = obj["Id"];
             }
 
             if (!OfficeExtension.Utility.isUndefined(obj["Left"])) {
@@ -1736,10 +1851,82 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Width"])) {
                 this.m_width = obj["Width"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["_Id"])) {
+                this.m__Id = obj["_Id"];
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Axes"])) {
+                this.axes.handleResult(obj["Axes"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["DataLabels"])) {
+                this.dataLabels.handleResult(obj["DataLabels"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Legend"])) {
+                this.legend.handleResult(obj["Legend"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Series"])) {
+                this.series.handleResult(obj["Series"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Title"])) {
+                this.title.handleResult(obj["Title"]);
+            }
         };
         return Chart;
     })(OfficeExtension.ClientObject);
     Excel.Chart = Chart;
+
+    var ChartAreaFormat = (function (_super) {
+        __extends(ChartAreaFormat, _super);
+        function ChartAreaFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartAreaFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartAreaFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartAreaFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return ChartAreaFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartAreaFormat = ChartAreaFormat;
 
     var ChartSeriesCollection = (function (_super) {
         __extends(ChartSeriesCollection, _super);
@@ -1795,23 +1982,12 @@ var Excel;
         function ChartSeries() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartSeries.prototype, "fillFormat", {
+        Object.defineProperty(ChartSeries.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartSeriesFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(ChartSeries.prototype, "lineFormat", {
-            get: function () {
-                if (!this.m_lineFormat) {
-                    this.m_lineFormat = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "LineFormat", false, false));
-                }
-                return this.m_lineFormat;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -1849,10 +2025,62 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Name"])) {
                 this.m_name = obj["Name"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Points"])) {
+                this.points.handleResult(obj["Points"]);
+            }
         };
         return ChartSeries;
     })(OfficeExtension.ClientObject);
     Excel.ChartSeries = ChartSeries;
+
+    var ChartSeriesFormat = (function (_super) {
+        __extends(ChartSeriesFormat, _super);
+        function ChartSeriesFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartSeriesFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartSeriesFormat.prototype, "line", {
+            get: function () {
+                if (!this.m_line) {
+                    this.m_line = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Line", false, false));
+                }
+                return this.m_line;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartSeriesFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Line"])) {
+                this.line.handleResult(obj["Line"]);
+            }
+        };
+        return ChartSeriesFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartSeriesFormat = ChartSeriesFormat;
 
     var ChartPointsCollection = (function (_super) {
         __extends(ChartPointsCollection, _super);
@@ -1908,12 +2136,12 @@ var Excel;
         function ChartPoint() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartPoint.prototype, "fillFormat", {
+        Object.defineProperty(ChartPoint.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartPointFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -1924,10 +2152,42 @@ var Excel;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartPoint;
     })(OfficeExtension.ClientObject);
     Excel.ChartPoint = ChartPoint;
+
+    var ChartPointFormat = (function (_super) {
+        __extends(ChartPointFormat, _super);
+        function ChartPointFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartPointFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartPointFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+        };
+        return ChartPointFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartPointFormat = ChartPointFormat;
 
     var ChartAxes = (function (_super) {
         __extends(ChartAxes, _super);
@@ -1972,6 +2232,17 @@ var Excel;
                 return;
             var obj = value;
             OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["CategoryAxis"])) {
+                this.categoryAxis.handleResult(obj["CategoryAxis"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["SeriesAxis"])) {
+                this.seriesAxis.handleResult(obj["SeriesAxis"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["ValueAxis"])) {
+                this.valueAxis.handleResult(obj["ValueAxis"]);
+            }
         };
         return ChartAxes;
     })(OfficeExtension.ClientObject);
@@ -1982,23 +2253,12 @@ var Excel;
         function ChartAxis() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartAxis.prototype, "font", {
+        Object.defineProperty(ChartAxis.prototype, "format", {
             get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartAxisFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_font;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(ChartAxis.prototype, "lineFormat", {
-            get: function () {
-                if (!this.m_lineFormat) {
-                    this.m_lineFormat = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "LineFormat", false, false));
-                }
-                return this.m_lineFormat;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2109,22 +2369,82 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["MinorUnit"])) {
                 this.m_minorUnit = obj["MinorUnit"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MajorGridlines"])) {
+                this.majorGridlines.handleResult(obj["MajorGridlines"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["MinorGridlines"])) {
+                this.minorGridlines.handleResult(obj["MinorGridlines"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Title"])) {
+                this.title.handleResult(obj["Title"]);
+            }
         };
         return ChartAxis;
     })(OfficeExtension.ClientObject);
     Excel.ChartAxis = ChartAxis;
+
+    var ChartAxisFormat = (function (_super) {
+        __extends(ChartAxisFormat, _super);
+        function ChartAxisFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartAxisFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartAxisFormat.prototype, "line", {
+            get: function () {
+                if (!this.m_line) {
+                    this.m_line = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Line", false, false));
+                }
+                return this.m_line;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartAxisFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Line"])) {
+                this.line.handleResult(obj["Line"]);
+            }
+        };
+        return ChartAxisFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartAxisFormat = ChartAxisFormat;
 
     var ChartAxisTitle = (function (_super) {
         __extends(ChartAxisTitle, _super);
         function ChartAxisTitle() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartAxisTitle.prototype, "font", {
+        Object.defineProperty(ChartAxisTitle.prototype, "format", {
             get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartAxisTitleFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_font;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2168,33 +2488,55 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Visible"])) {
                 this.m_visible = obj["Visible"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartAxisTitle;
     })(OfficeExtension.ClientObject);
     Excel.ChartAxisTitle = ChartAxisTitle;
+
+    var ChartAxisTitleFormat = (function (_super) {
+        __extends(ChartAxisTitleFormat, _super);
+        function ChartAxisTitleFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartAxisTitleFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartAxisTitleFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return ChartAxisTitleFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartAxisTitleFormat = ChartAxisTitleFormat;
 
     var ChartDataLabels = (function (_super) {
         __extends(ChartDataLabels, _super);
         function ChartDataLabels() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartDataLabels.prototype, "fillFormat", {
+        Object.defineProperty(ChartDataLabels.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartDataLabelFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(ChartDataLabels.prototype, "font", {
-            get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
-                }
-                return this.m_font;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2340,22 +2682,70 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["ShowValue"])) {
                 this.m_showValue = obj["ShowValue"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartDataLabels;
     })(OfficeExtension.ClientObject);
     Excel.ChartDataLabels = ChartDataLabels;
+
+    var ChartDataLabelFormat = (function (_super) {
+        __extends(ChartDataLabelFormat, _super);
+        function ChartDataLabelFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartDataLabelFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartDataLabelFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartDataLabelFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return ChartDataLabelFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartDataLabelFormat = ChartDataLabelFormat;
 
     var ChartGridlines = (function (_super) {
         __extends(ChartGridlines, _super);
         function ChartGridlines() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartGridlines.prototype, "lineFormat", {
+        Object.defineProperty(ChartGridlines.prototype, "format", {
             get: function () {
-                if (!this.m_lineFormat) {
-                    this.m_lineFormat = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "LineFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartGridlinesFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_lineFormat;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2382,33 +2772,55 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Visible"])) {
                 this.m_visible = obj["Visible"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartGridlines;
     })(OfficeExtension.ClientObject);
     Excel.ChartGridlines = ChartGridlines;
+
+    var ChartGridlinesFormat = (function (_super) {
+        __extends(ChartGridlinesFormat, _super);
+        function ChartGridlinesFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartGridlinesFormat.prototype, "line", {
+            get: function () {
+                if (!this.m_line) {
+                    this.m_line = new Excel.ChartLineFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Line", false, false));
+                }
+                return this.m_line;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartGridlinesFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Line"])) {
+                this.line.handleResult(obj["Line"]);
+            }
+        };
+        return ChartGridlinesFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartGridlinesFormat = ChartGridlinesFormat;
 
     var ChartLegend = (function (_super) {
         __extends(ChartLegend, _super);
         function ChartLegend() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartLegend.prototype, "fillFormat", {
+        Object.defineProperty(ChartLegend.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartLegendFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(ChartLegend.prototype, "font", {
-            get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
-                }
-                return this.m_font;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2469,33 +2881,70 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Visible"])) {
                 this.m_visible = obj["Visible"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartLegend;
     })(OfficeExtension.ClientObject);
     Excel.ChartLegend = ChartLegend;
+
+    var ChartLegendFormat = (function (_super) {
+        __extends(ChartLegendFormat, _super);
+        function ChartLegendFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartLegendFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartLegendFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartLegendFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return ChartLegendFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartLegendFormat = ChartLegendFormat;
 
     var ChartTitle = (function (_super) {
         __extends(ChartTitle, _super);
         function ChartTitle() {
             _super.apply(this, arguments);
         }
-        Object.defineProperty(ChartTitle.prototype, "fillFormat", {
+        Object.defineProperty(ChartTitle.prototype, "format", {
             get: function () {
-                if (!this.m_fillFormat) {
-                    this.m_fillFormat = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "FillFormat", false, false));
+                if (!this.m_format) {
+                    this.m_format = new Excel.ChartTitleFormat(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Format", false, false));
                 }
-                return this.m_fillFormat;
-            },
-            enumerable: true,
-            configurable: true
-        });
-
-        Object.defineProperty(ChartTitle.prototype, "font", {
-            get: function () {
-                if (!this.m_font) {
-                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
-                }
-                return this.m_font;
+                return this.m_format;
             },
             enumerable: true,
             configurable: true
@@ -2556,10 +3005,58 @@ var Excel;
             if (!OfficeExtension.Utility.isUndefined(obj["Visible"])) {
                 this.m_visible = obj["Visible"];
             }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Format"])) {
+                this.format.handleResult(obj["Format"]);
+            }
         };
         return ChartTitle;
     })(OfficeExtension.ClientObject);
     Excel.ChartTitle = ChartTitle;
+
+    var ChartTitleFormat = (function (_super) {
+        __extends(ChartTitleFormat, _super);
+        function ChartTitleFormat() {
+            _super.apply(this, arguments);
+        }
+        Object.defineProperty(ChartTitleFormat.prototype, "fill", {
+            get: function () {
+                if (!this.m_fill) {
+                    this.m_fill = new Excel.ChartFill(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Fill", false, false));
+                }
+                return this.m_fill;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        Object.defineProperty(ChartTitleFormat.prototype, "font", {
+            get: function () {
+                if (!this.m_font) {
+                    this.m_font = new Excel.ChartFont(this.context, OfficeExtension.ObjectPathFactory.createPropertyObjectPath(this.context, this, "Font", false, false));
+                }
+                return this.m_font;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
+        ChartTitleFormat.prototype.handleResult = function (value) {
+            if (OfficeExtension.Utility.isNullOrUndefined(value))
+                return;
+            var obj = value;
+            OfficeExtension.Utility.fixObjectPathIfNecessary(this, obj);
+            if (!OfficeExtension.Utility.isUndefined(obj["Fill"])) {
+                this.fill.handleResult(obj["Fill"]);
+            }
+
+            if (!OfficeExtension.Utility.isUndefined(obj["Font"])) {
+                this.font.handleResult(obj["Font"]);
+            }
+        };
+        return ChartTitleFormat;
+    })(OfficeExtension.ClientObject);
+    Excel.ChartTitleFormat = ChartTitleFormat;
 
     var ChartFill = (function (_super) {
         __extends(ChartFill, _super);
@@ -2739,7 +3236,9 @@ var Excel;
         function BindingType() {
         }
         BindingType.range = "Range";
+
         BindingType.table = "Table";
+
         BindingType.text = "Text";
         return BindingType;
     })();
@@ -2749,12 +3248,19 @@ var Excel;
         function BorderIndex() {
         }
         BorderIndex.edgeTop = "EdgeTop";
+
         BorderIndex.edgeBottom = "EdgeBottom";
+
         BorderIndex.edgeLeft = "EdgeLeft";
+
         BorderIndex.edgeRight = "EdgeRight";
+
         BorderIndex.insideVertical = "InsideVertical";
+
         BorderIndex.insideHorizontal = "InsideHorizontal";
+
         BorderIndex.diagonalDown = "DiagonalDown";
+
         BorderIndex.diagonalUp = "DiagonalUp";
         return BorderIndex;
     })();
@@ -2764,12 +3270,19 @@ var Excel;
         function BorderLineStyle() {
         }
         BorderLineStyle.none = "None";
+
         BorderLineStyle.continuous = "Continuous";
+
         BorderLineStyle.dash = "Dash";
+
         BorderLineStyle.dashDot = "DashDot";
+
         BorderLineStyle.dashDotDot = "DashDotDot";
+
         BorderLineStyle.dot = "Dot";
+
         BorderLineStyle.double = "Double";
+
         BorderLineStyle.slantDashDot = "SlantDashDot";
         return BorderLineStyle;
     })();
@@ -2779,8 +3292,11 @@ var Excel;
         function BorderWeight() {
         }
         BorderWeight.hairline = "Hairline";
+
         BorderWeight.thin = "Thin";
+
         BorderWeight.medium = "Medium";
+
         BorderWeight.thick = "Thick";
         return BorderWeight;
     })();
@@ -2790,7 +3306,9 @@ var Excel;
         function CalculationMode() {
         }
         CalculationMode.automatic = "Automatic";
+
         CalculationMode.automaticExceptTables = "AutomaticExceptTables";
+
         CalculationMode.manual = "Manual";
         return CalculationMode;
     })();
@@ -2800,7 +3318,9 @@ var Excel;
         function CalculationType() {
         }
         CalculationType.recalculate = "Recalculate";
+
         CalculationType.full = "Full";
+
         CalculationType.fullRebuild = "FullRebuild";
         return CalculationType;
     })();
@@ -2810,7 +3330,9 @@ var Excel;
         function ClearApplyTo() {
         }
         ClearApplyTo.all = "All";
+
         ClearApplyTo.formats = "Formats";
+
         ClearApplyTo.contents = "Contents";
         return ClearApplyTo;
     })();
@@ -2820,16 +3342,27 @@ var Excel;
         function ChartDataLabelPosition() {
         }
         ChartDataLabelPosition.invalid = "Invalid";
+
         ChartDataLabelPosition.none = "None";
+
         ChartDataLabelPosition.center = "Center";
+
         ChartDataLabelPosition.insideEnd = "InsideEnd";
+
         ChartDataLabelPosition.insideBase = "InsideBase";
+
         ChartDataLabelPosition.outsideEnd = "OutsideEnd";
+
         ChartDataLabelPosition.left = "Left";
+
         ChartDataLabelPosition.right = "Right";
+
         ChartDataLabelPosition.top = "Top";
+
         ChartDataLabelPosition.bottom = "Bottom";
+
         ChartDataLabelPosition.bestFit = "BestFit";
+
         ChartDataLabelPosition.callout = "Callout";
         return ChartDataLabelPosition;
     })();
@@ -2839,11 +3372,17 @@ var Excel;
         function ChartLegendPosition() {
         }
         ChartLegendPosition.invalid = "Invalid";
+
         ChartLegendPosition.top = "Top";
+
         ChartLegendPosition.bottom = "Bottom";
+
         ChartLegendPosition.left = "Left";
+
         ChartLegendPosition.right = "Right";
+
         ChartLegendPosition.corner = "Corner";
+
         ChartLegendPosition.custom = "Custom";
         return ChartLegendPosition;
     })();
@@ -2853,7 +3392,9 @@ var Excel;
         function ChartSeriesBy() {
         }
         ChartSeriesBy.auto = "Auto";
+
         ChartSeriesBy.columns = "Columns";
+
         ChartSeriesBy.rows = "Rows";
         return ChartSeriesBy;
     })();
@@ -2863,87 +3404,171 @@ var Excel;
         function ChartType() {
         }
         ChartType.invalid = "Invalid";
+
         ChartType.columnClustered = "ColumnClustered";
+
         ChartType.columnStacked = "ColumnStacked";
+
         ChartType.columnStacked100 = "ColumnStacked100";
+
         ChartType._3DColumnClustered = "3DColumnClustered";
+
         ChartType._3DColumnStacked = "3DColumnStacked";
+
         ChartType._3DColumnStacked100 = "3DColumnStacked100";
+
         ChartType.barClustered = "BarClustered";
+
         ChartType.barStacked = "BarStacked";
+
         ChartType.barStacked100 = "BarStacked100";
+
         ChartType._3DBarClustered = "3DBarClustered";
+
         ChartType._3DBarStacked = "3DBarStacked";
+
         ChartType._3DBarStacked100 = "3DBarStacked100";
+
         ChartType.lineStacked = "LineStacked";
+
         ChartType.lineStacked100 = "LineStacked100";
+
         ChartType.lineMarkers = "LineMarkers";
+
         ChartType.lineMarkersStacked = "LineMarkersStacked";
+
         ChartType.lineMarkersStacked100 = "LineMarkersStacked100";
+
         ChartType.pieOfPie = "PieOfPie";
+
         ChartType.pieExploded = "PieExploded";
+
         ChartType._3DPieExploded = "3DPieExploded";
+
         ChartType.barOfPie = "BarOfPie";
+
         ChartType.xyscatterSmooth = "XYScatterSmooth";
+
         ChartType.xyscatterSmoothNoMarkers = "XYScatterSmoothNoMarkers";
+
         ChartType.xyscatterLines = "XYScatterLines";
+
         ChartType.xyscatterLinesNoMarkers = "XYScatterLinesNoMarkers";
+
         ChartType.areaStacked = "AreaStacked";
+
         ChartType.areaStacked100 = "AreaStacked100";
+
         ChartType._3DAreaStacked = "3DAreaStacked";
+
         ChartType._3DAreaStacked100 = "3DAreaStacked100";
+
         ChartType.doughnutExploded = "DoughnutExploded";
+
         ChartType.radarMarkers = "RadarMarkers";
+
         ChartType.radarFilled = "RadarFilled";
+
         ChartType.surface = "Surface";
+
         ChartType.surfaceWireframe = "SurfaceWireframe";
+
         ChartType.surfaceTopView = "SurfaceTopView";
+
         ChartType.surfaceTopViewWireframe = "SurfaceTopViewWireframe";
+
         ChartType.bubble = "Bubble";
+
         ChartType.bubble3DEffect = "Bubble3DEffect";
+
         ChartType.stockHLC = "StockHLC";
+
         ChartType.stockOHLC = "StockOHLC";
+
         ChartType.stockVHLC = "StockVHLC";
+
         ChartType.stockVOHLC = "StockVOHLC";
+
         ChartType.cylinderColClustered = "CylinderColClustered";
+
         ChartType.cylinderColStacked = "CylinderColStacked";
+
         ChartType.cylinderColStacked100 = "CylinderColStacked100";
+
         ChartType.cylinderBarClustered = "CylinderBarClustered";
+
         ChartType.cylinderBarStacked = "CylinderBarStacked";
+
         ChartType.cylinderBarStacked100 = "CylinderBarStacked100";
+
         ChartType.cylinderCol = "CylinderCol";
+
         ChartType.coneColClustered = "ConeColClustered";
+
         ChartType.coneColStacked = "ConeColStacked";
+
         ChartType.coneColStacked100 = "ConeColStacked100";
+
         ChartType.coneBarClustered = "ConeBarClustered";
+
         ChartType.coneBarStacked = "ConeBarStacked";
+
         ChartType.coneBarStacked100 = "ConeBarStacked100";
+
         ChartType.coneCol = "ConeCol";
+
         ChartType.pyramidColClustered = "PyramidColClustered";
+
         ChartType.pyramidColStacked = "PyramidColStacked";
+
         ChartType.pyramidColStacked100 = "PyramidColStacked100";
+
         ChartType.pyramidBarClustered = "PyramidBarClustered";
+
         ChartType.pyramidBarStacked = "PyramidBarStacked";
+
         ChartType.pyramidBarStacked100 = "PyramidBarStacked100";
+
         ChartType.pyramidCol = "PyramidCol";
+
         ChartType._3DColumn = "3DColumn";
+
         ChartType.line = "Line";
+
         ChartType._3DLine = "3DLine";
+
         ChartType._3DPie = "3DPie";
+
         ChartType.pie = "Pie";
+
         ChartType.xyscatter = "XYScatter";
+
         ChartType._3DArea = "3DArea";
+
         ChartType.area = "Area";
+
         ChartType.doughnut = "Doughnut";
+
         ChartType.radar = "Radar";
         return ChartType;
     })();
     Excel.ChartType = ChartType;
 
+    var ChartUnderlineStyle = (function () {
+        function ChartUnderlineStyle() {
+        }
+        ChartUnderlineStyle.none = "None";
+
+        ChartUnderlineStyle.single = "Single";
+        return ChartUnderlineStyle;
+    })();
+    Excel.ChartUnderlineStyle = ChartUnderlineStyle;
+
     var DeleteShiftDirection = (function () {
         function DeleteShiftDirection() {
         }
         DeleteShiftDirection.up = "Up";
+
         DeleteShiftDirection.left = "Left";
         return DeleteShiftDirection;
     })();
@@ -2953,12 +3578,19 @@ var Excel;
         function HorizontalAlignment() {
         }
         HorizontalAlignment.general = "General";
+
         HorizontalAlignment.left = "Left";
+
         HorizontalAlignment.center = "Center";
+
         HorizontalAlignment.right = "Right";
+
         HorizontalAlignment.fill = "Fill";
+
         HorizontalAlignment.justify = "Justify";
+
         HorizontalAlignment.centerAcrossSelection = "CenterAcrossSelection";
+
         HorizontalAlignment.distributed = "Distributed";
         return HorizontalAlignment;
     })();
@@ -2968,38 +3600,64 @@ var Excel;
         function InsertShiftDirection() {
         }
         InsertShiftDirection.down = "Down";
+
         InsertShiftDirection.right = "Right";
         return InsertShiftDirection;
     })();
     Excel.InsertShiftDirection = InsertShiftDirection;
 
+    var NamedItemType = (function () {
+        function NamedItemType() {
+        }
+        NamedItemType.string = "String";
+
+        NamedItemType.integer = "Integer";
+
+        NamedItemType.double = "Double";
+
+        NamedItemType.boolean = "Boolean";
+
+        NamedItemType.range = "Range";
+        return NamedItemType;
+    })();
+    Excel.NamedItemType = NamedItemType;
+
+    var RangeUnderlineStyle = (function () {
+        function RangeUnderlineStyle() {
+        }
+        RangeUnderlineStyle.none = "None";
+
+        RangeUnderlineStyle.single = "Single";
+
+        RangeUnderlineStyle.double = "Double";
+
+        RangeUnderlineStyle.singleAccountant = "SingleAccountant";
+
+        RangeUnderlineStyle.doubleAccountant = "DoubleAccountant";
+        return RangeUnderlineStyle;
+    })();
+    Excel.RangeUnderlineStyle = RangeUnderlineStyle;
+
     var VerticalAlignment = (function () {
         function VerticalAlignment() {
         }
         VerticalAlignment.top = "Top";
+
         VerticalAlignment.center = "Center";
+
         VerticalAlignment.bottom = "Bottom";
+
         VerticalAlignment.justify = "Justify";
+
         VerticalAlignment.distributed = "Distributed";
         return VerticalAlignment;
     })();
     Excel.VerticalAlignment = VerticalAlignment;
 
-    var UnderlineStyle = (function () {
-        function UnderlineStyle() {
-        }
-        UnderlineStyle.none = "None";
-        UnderlineStyle.single = "Single";
-        UnderlineStyle.double = "Double";
-        UnderlineStyle.singleAccountant = "SingleAccountant";
-        UnderlineStyle.doubleAccountant = "DoubleAccountant";
-        return UnderlineStyle;
-    })();
-    Excel.UnderlineStyle = UnderlineStyle;
-
     var ErrorCodes = (function () {
         function ErrorCodes() {
         }
+        ErrorCodes.accessDenied = "AccessDenied";
         ErrorCodes.generalException = "GeneralException";
         ErrorCodes.insertDeleteConflict = "InsertDeleteConflict";
         ErrorCodes.invalidArgument = "InvalidArgument";
@@ -3009,6 +3667,7 @@ var Excel;
         ErrorCodes.invalidSelection = "InvalidSelection";
         ErrorCodes.itemNotFound = "ItemNotFound";
         ErrorCodes.notImplemented = "NotImplemented";
+        ErrorCodes.unsupportedOperation = "UnsupportedOperation";
         return ErrorCodes;
     })();
     Excel.ErrorCodes = ErrorCodes;
@@ -3020,7 +3679,7 @@ var Excel;
         function ExcelClientContext(url) {
             _super.call(this, url);
             this.m_requestExecutor = new OfficeExtension.OfficeJsRequestExecutor();
-            //this.customData = OfficeExtension.Constants.iterativeExecutor;
+            this.customData = OfficeExtension.Constants.iterativeExecutor;
             this.m_workbook = new Excel.Workbook(this, OfficeExtension.ObjectPathFactory.createGlobalObjectObjectPath(this));
             this.rootObject = this.m_workbook;
         }
