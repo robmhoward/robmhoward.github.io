@@ -14,6 +14,13 @@ Office.initialize = function (reason) {
 	console.log('Add-in initialized, redirecting console.log() to console textArea');
 	consoleErrorFunction = console.error;
 	console.error = logComment;
+	// get Angular scope from the known DOM element
+    var e = document.getElementById('samplesContainer');
+    var scope = angular.element(e).scope();
+    // update the model with a wrap in $apply(fn) which will refresh the view for us
+    scope.$apply(function() {
+        scope.insideOffice = true;
+    }); 
 };
 
 excelSamplesApp.config(['$routeProvider', function ($routeProvider) {
