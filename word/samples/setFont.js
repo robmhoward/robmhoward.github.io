@@ -1,15 +1,22 @@
 var ctx = new Word.WordClientContext();
-var para = ctx.document.body.paragraphs.getItemAt(0);
-var font = para.font;
-
-font.size = 32;
-font.bold = true;
-font.color = "#0000ff";
-font.highlightColor = "#ffff00";
+var paras = ctx.document.body.paragraphs;
+ctx.load(paras);
+ctx.references.add(paras);
 
 ctx.executeAsync().then(
     function () {
-        console.log("Success");
+        var font = paras.getItem(0).font;
+        font.size = 32;
+        font.bold = true;
+        font.color = "#0000ff";
+        font.highlightColor = "#ffff00";
+
+        ctx.references.remove(paras);
+        ctx.executeAsync().then(
+            function () {
+                console.log("Success");
+            }
+        );
     },
     function (result) {
         console.log("Failed: ErrorCode=" + result.errorCode + ", ErrorMessage=" + result.errorMessage);

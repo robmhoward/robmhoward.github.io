@@ -1,8 +1,8 @@
 var ctx = new Word.WordClientContext();
-ctx.customData = OfficeExtension.Constants.iterativeExecutor;
 var paras = ctx.document.body.paragraphs;
+ctx.load(paras);
 
-var pic = paras.getItemAt(0).insertInlinePictureUrl("http://dev.office.com/Media/Default/App%20Awards/AppAwards.png", Word.InsertLocation.end, false, true);
+var pic = paras.getItem(0).insertInlinePictureFromUrl("http://dev.office.com/Media/Default/App%20Awards/AppAwards.png", Word.InsertLocation.end, false, true);
 var pics = ctx.document.body.inlinePictures
 ctx.load(pics);
 
