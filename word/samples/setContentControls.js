@@ -1,12 +1,10 @@
 var ctx = new Word.WordClientContext();
-ctx.customData = OfficeExtension.Constants.iterativeExecutor;
-
 var paras = ctx.document.body.paragraphs;
 ctx.load(paras);
 
 ctx.executeAsync().then(
     function () {
-        for (var i = 0; i < paras.count; i++) {
+        for (var i = 0; i < paras.items.length; i++) {
             paras.items[i].insertContentControl();
         }
         ctx.executeAsync().then(

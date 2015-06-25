@@ -1,5 +1,5 @@
 var ctx = new Word.WordClientContext();
-var range = ctx.document.selection;
+var range = ctx.document.getSelection();
 
 var htmlText =
     "<h1><strong>Insert Html</strong></h1>" +

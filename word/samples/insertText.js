@@ -1,5 +1,5 @@
 var ctx = new Word.WordClientContext();
-var range = ctx.document.selection;
+var range = ctx.document.getSelection();
 
 var textSample =
     "Hello, world! This is an example of the insert text method. This is a method which allows users to insert text into a given selection. It can insert text into a relative location or it can overwrite the current selection.";
