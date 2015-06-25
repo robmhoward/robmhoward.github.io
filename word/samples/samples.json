@@ -1,7 +1,8 @@
 {
     "values": [
         { "done": true, "filename": "getContentControls.js", "name": "Get Content Controls", "group": "ContentControl", "description": "Get all Content Controls and print out the length of individual CC text." },
-        { "done": true, "filename": "setContentControl.js", "name": "Set Content Control", "group": "ContentControl", "description": "Set content control around selection." },
+        { "done": true, "filename": "getContentControlByTag.js", "name": "Get Content Control By Tag", "group": "ContentControl", "description": "Get Content Control by tag and print its value." },
+        { "done": true, "filename": "setContentControl.js", "name": "Set Content Control", "group": "ContentControl", "description": "Set content control around selection and change the content and properties." },
         { "done": true, "filename": "setContentControls.js", "name": "Set Content Control around Paragraph", "group": "ContentControl", "description": "Turn all paragraphs into content controls." },
         { "done": true, "filename": "getParagraphs.js", "name": "Get Paragraphs", "group": "Paragraph", "description": "Get all paragraphs and print out the length of individual paragraphs." },
         { "done": true, "filename": "getParagraphsFromSections.js", "name": "Get Paragraphs from Section", "group": "Section", "description": "Get paragraphs from section." },
