@@ -8,7 +8,7 @@ ctx.load(pics);
 
 ctx.executeAsync().then(
 	function () {
-		console.log("Picture Count=" + pics.count);
+		console.log("Picture Count: " + pics.items.length);
 		console.log("Success");
 	},
 	function (result) {
