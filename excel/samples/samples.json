@@ -61,7 +61,6 @@
 		{ "name": "Complex" }
 	],
 	"suggestions": [
-		{ "missing": false, "done": false, "filename": "getSelectedRangeAddress.js", "name": "Get Address of Selected Range", "description": "" },
 		{ "missing": false, "done": false, "filename": "enumerateWorksheetBindings.js", "name": "Enumerate Worksheet Bindings", "description": "" },
 		{ "missing": false, "done": false, "filename": "updateValueInBinding.js", "name": "Update Value in Bound Range", "description": "" },
 		{ "missing": true, "done": false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
