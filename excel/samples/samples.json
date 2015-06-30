@@ -7,7 +7,8 @@
 		{ "done": true, "filename": "setFormulasInRange.js", "name": "Set Multiple Formulas in Range", "group": "Range", "description": "Set the formulas in the range A1:B2 to an array of different formulas"},
 		{ "done": true, "filename": "getFormulasInRange.js", "name": "Get Formulas in Range", "group": "Range", "description": "Retrieve the formulas in the range A1:C3"},
 		{ "done": true, "filename": "clearRange.js", "name": "Clear Range Content", "group": "Range", "description": "Clear content from the range A1:C1"},
-		{ "done": true, "filename": "insertRange.js", "name": "Insert Range", "group": "Range", "description": "Insert a 3x3 range at A1, shifting cells to the right"},
+        { "done": true, "filename": "insertRange.js", "name": "Insert Range", "group": "Range", "description": "Insert a 3x3 range at A1, shifting cells to the right" },
+        { "done": true, "filename": "selectNamedRange.js", "name": "Select a Named Range",  "group": "Range", "description": "Select the range named myData" },
 		{ "done": true, "filename": "createTableFromRange.js", "name": "Create a Table", "group": "Table", "description": "Create a table from the data in range A1:E7"},
 		{ "done": true, "filename": "enumerateTableRows.js", "name": "Enumerate Table Rows", "group": "Table", "description": "Output the values in every row in the table at index 0"},
 		{ "done": true, "filename": "addTableRow.js", "name": "Add Table Row", "group": "Table", "description": "Add a new row with values [1, 2, 3, 4, 5] to a table called 'MyTable' at index 3"},
@@ -60,7 +61,6 @@
 	"suggestions": [
 		{ "missing": false, "done": false, "filename": "getWorksheetFromRange.js", "name": "Get Worksheet from Range", "description": "" },
 		{ "missing": false, "done": false, "filename": "getSelectedRangeAddress.js", "name": "Get Address of Selected Range", "description": "" },
-		{ "missing": false, "done": false, "filename": "selectNamedRange.js", "name": "Select a Named Range", "description": "" },
 		{ "missing": false, "done": false, "filename": "enumerateWorksheetBindings.js", "name": "Enumerate Worksheet Bindings", "description": "" },
 		{ "missing": false, "done": false, "filename": "updateValueInBinding.js", "name": "Update Value in Bound Range", "description": "" },
 		{ "missing": true, "done": false, "filename": "setApplicationCalc.js", "name": "Set Application Calculation", "description": "" },
