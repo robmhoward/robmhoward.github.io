@@ -58,30 +58,10 @@
 	border-bottom: 4px double #E47777;
 	opacity: 0.8;
 }
-.monaco-editor.hc-black .glyph-error {
-	background: none;
-}
-.monaco-editor.hc-black .glyph-error:before {
-	content: url("error-glyph.png");
-	position: relative;
-	display: inline-block;
-	top: 2px;
-	left: 2px;
-}
 .monaco-editor.hc-black .greensquiggly {
 	background: none;
 	border-bottom: 4px double #71B771;
 	opacity: 0.8;
-}
-.monaco-editor.hc-black .glyph-warning {
-	background: none;
-}
-.monaco-editor.hc-black .glyph-warning:before {
-	content: url("warning-glyph.png");
-	position: relative;
-	display: inline-block;
-	top: 2px;
-	left: 2px;
 }
 .monaco-editor.hc-black .linked-editing {
 	box-shadow:	inset 0 0 0 1px #B9B9B9;
@@ -89,6 +69,10 @@
 .monaco-editor.hc-black .glyph-margin {
 	background: #000;
 	border-right: 1px solid #6FC3DF;
+}
+.monaco-workbench-container .monaco-editor.hc-black .glyph-margin {
+	background: #000;
+	border: 0;
 }
 .monaco-editor.hc-black .line-numbers {
 	color: #FFF;

@@ -39,7 +39,7 @@ var MonacoEditorIntegration;
             'vs/editor/modes/modesExtensions'
         ], function (Platform, ModesExt) {
             Platform.Registry.as(ModesExt.Extensions.EditorModes).configureMode(editorMode, {
-                "validationSettings": {
+                "validate": {
                     "extraLibs": intellisensePaths
                 }
             });
@@ -58,9 +58,14 @@ var MonacoEditorIntegration;
 
     function setJavaScriptText(text) {
         require(["vs/editor/contrib/snippet/snippet"], function (snippet) {
-            jsMonacoEditor.setSelection(jsMonacoEditor.getModel().getFullModelRange(), false);
-            snippet.InsertSnippetHelper.run(jsMonacoEditor, jsMonacoEditor.getHandlerService(), new snippet.CodeSnippet(text));
-            jsMonacoEditor.setSelection({ startColumn: 0, endColumn: 0, startLineNumber: 0, endLineNumber: 0 }, true);
+            //jsMonacoEditor.setSelection(jsMonacoEditor.getModel().getFullModelRange(), false);
+            //snippet.InsertSnippetHelper.run(jsMonacoEditor, jsMonacoEditor.getHandlerService(), new snippet.CodeSnippet(text));
+            //jsMonacoEditor.setSelection({ startColumn: 0, endColumn: 0, startLineNumber: 0, endLineNumber: 0 }, true);
+            //jsMonacoEditor.focus();
+            
+            jsMonacoEditor.setSelection(jsMonacoEditor.getModel().getFullModelRange());
+            snippet.get(jsMonacoEditor).run(new snippet.CodeSnippet(text), 0, 0);
+            jsMonacoEditor.setPosition({ lineNumber: 0, column: 0 });
             jsMonacoEditor.focus();
         });
     }
