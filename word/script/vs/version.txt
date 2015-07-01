@@ -1,0 +1,3 @@
+Sprint 83 (2015-05-27) minified
+Note that extraneous files (extra languages, plugins) have been removed.
+3f5618c9a4e6a2c75330cac6c20eecf7af7c439b

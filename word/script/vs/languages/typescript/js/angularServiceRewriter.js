@@ -1,0 +1,4 @@
+/*---------------------------------------------------------
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------*/
+"use strict";define("vs/languages/typescript/js/angularServiceRewriter",["require","exports","vs/languages/typescript/lib/typescriptServices"],function(e,t,r){var n=function(){function e(){}return e.prototype.computeEdits=function(e){for(var t=0,n=e.sourceFile.getFullText();-1!==(t=n.indexOf("$",t));){var o=r.getTokenAtPosition(e.sourceFile,t);if(o&&(t+=o.getFullWidth(),o.kind===r.SyntaxKind.Identifier&&o.parent&&o.parent.kind===r.SyntaxKind.Parameter)){var i=o.parent,s=i.name.text,a=" :angular.I"+s[1].toUpperCase()+s.substr(2)+"Service";e.newInsert(i.name.end,a)}}},e}();t.AngularServiceRewriter=n});
