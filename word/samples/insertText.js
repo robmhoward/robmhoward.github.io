@@ -1,4 +1,4 @@
-var ctx = new Word.WordClientContext();
+var ctx = new Word.RequestContext();
 var range = ctx.document.getSelection();
 
 var textSample =

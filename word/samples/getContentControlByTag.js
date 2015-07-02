@@ -1,4 +1,4 @@
-var ctx = new Word.WordClientContext();
+var ctx = new Word.RequestContext();
 var ccs = ctx.document.contentControls.getByTag("Customer-Address");
 ctx.load(ccs);
 ccs.getItemAt(0).font.italic = true;

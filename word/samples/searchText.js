@@ -1,4 +1,4 @@
-var ctx = new Word.WordClientContext();
+var ctx = new Word.RequestContext();
 var options = Word.SearchOptions.newObject(ctx);
 
 options.matchCase = false
