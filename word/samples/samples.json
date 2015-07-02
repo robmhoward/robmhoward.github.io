@@ -13,7 +13,6 @@
         { "done": true, "filename": "insertText.js", "name": "Insert Text", "group": "Document", "description": "Insert text into current selection." },
         { "done": true, "filename": "insertTextDocument.js", "name": "Insert Text into Document", "group": "Document", "description": "Insert text at the end of the document." },
         { "done": true, "filename": "insertTextHeader.js", "name": "Insert Text into Header", "group": "Section", "description": "Insert text into header." },
-        { "done": true, "filename": "insertPictureFromURL.js", "name": "Insert Picture from URL", "group": "Picture", "description": "Insert picture into the first paragraph." },
         { "done": true, "filename": "insertPictureFromBase64.js", "name": "Insert Picture from Base64", "group": "Picture", "description": "Insert picture into the first paragraph." },
         { "done": true, "filename": "setFont.js", "name": "Set Paragraph Font", "group": "Formatting", "description": "Set paragraph font properties." },
         { "done": true, "filename": "setParagraphProperties.js", "name": "Set Paragraph Properties", "group": "Paragraph", "description": "Set paragraph properties." },
