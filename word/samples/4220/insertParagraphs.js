@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 
 var myPar = ctx.document.body.insertParagraph("Bibliography", "end");
 myPar.style = "Heading 1";

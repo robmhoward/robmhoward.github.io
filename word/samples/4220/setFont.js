@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 var paras = ctx.document.body.paragraphs;
 ctx.load(paras);
 ctx.references.add(paras);

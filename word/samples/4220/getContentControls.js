@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 var cCtrls = ctx.document.body.contentControls;
 ctx.load(cCtrls);
 

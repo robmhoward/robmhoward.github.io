@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 ctx.document.body.clear();
 
 ctx.executeAsync().then(

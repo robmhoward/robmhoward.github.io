@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 var range = ctx.document.getSelection();
 
 var htmlText =

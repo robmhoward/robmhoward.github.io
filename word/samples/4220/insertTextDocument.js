@@ -1,4 +1,4 @@
-var ctx = new Word.RequestContext();
+var ctx = new Word.WordClientContext();
 
 var textSample =
     "Hello, world! This is an example of the insert text method. This is a method which allows users to insert text at the end of the document. It also can insert text into a relative location.";
