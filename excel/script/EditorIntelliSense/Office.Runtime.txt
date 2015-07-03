@@ -22,8 +22,8 @@ declare module OfficeExtension {
         private m_objectPath;
         constructor(context: ClientRequestContext, objectPath: ObjectPath);
         context: ClientRequestContext;
-        private _objectPath: ObjectPath;
-        private _handleResult(value: any): void;
+        _objectPath: ObjectPath;
+        _handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
@@ -65,14 +65,10 @@ declare module OfficeExtension {
         _rootObject: ClientObject;
         _customData: string;
         _processingResult: boolean;
-        rootObject: ClientObject;
-        customData: string;
-        m_requestExecutor: IRequestExecutor;
         constructor(url?: string);
         _pendingRequest: ClientRequest;
-        pendingRequest: ClientRequest;
         references: References;
-        load(clientObj: ClientObject, option?: any): void;
+        load(clientObj: ClientObject, option?: string | LoadOption): void;
         trace(message: string): void;
         private parseSelectExpand(select);
         private executeAsyncPrivate(doneCallback, failCallback);
@@ -90,8 +86,8 @@ declare module OfficeExtension {
     class ClientRequestResult {
         errorCode: string;
         errorMessage: string;
-        errorLocation: string;
         traceMessages: Array<string>;
+        constructor(traceMessages: Array<string>);
     }
 }
 declare module OfficeExtension {
@@ -112,6 +108,26 @@ declare module OfficeExtension {
         static localDocument: string;
         static localDocumentApiPrefix: string;
         static referenceId: string;
+    }
+}
+declare module OfficeExtension {
+    class Error {
+        name: string;
+        message: string;
+        stack: string;
+        constructor(message?: string);
+    }
+    class RuntimeError extends Error {
+        traceMessages: Array<string>;
+        debugInfo: {
+            errorLocation?: string;
+        };
+        constructor(name: string, message: string, traceMessages: Array<string>, debugInfo: {
+            errorLocation?: string;
+        });
+        errorCode: string;
+        errorMessage: string;
+        toString(): string;
     }
 }
 declare module OfficeExtension {
@@ -202,12 +218,6 @@ declare module OfficeExtension {
     interface QueryInfo {
         Select?: Array<string>;
         Expand?: Array<string>;
-        Skip?: number;
-        Top?: number;
-    }
-    interface QueryInfo {
-        Select?: string[];
-        Expand?: string[];
         Skip?: number;
         Top?: number;
     }
@@ -379,10 +389,10 @@ declare module OfficeExtension {
         static validateObjectPath(clientObject: ClientObject): void;
         static validateReferencedObjectPaths(objectPaths: Array<ObjectPath>): void;
         static validateContext(context: ClientRequestContext, obj: ClientObject): void;
-        static getResourceString(resourceId: string, arg?: string): string;
         static log(message: string): void;
-        static load(clientObj: ClientObject, option?: any): void;
+        static load(clientObj: ClientObject, option?: string | LoadOption): void;
         private static s_underscoreCharCode;
+        static throwError(resourceId: string, arg?: string): void;
         static throwIfNotLoaded(propertyName: string, fieldValue: any): void;
         static getObjectPathExpression(objectPath: ObjectPath): string;
         private static normalizeName(name);

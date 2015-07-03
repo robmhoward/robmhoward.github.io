@@ -137,10 +137,6 @@ var OfficeExtension;
             configurable: true
         });
         ClientObject.prototype._handleResult = function (value) {
-            var thisObj = this;
-            if (thisObj.handleResult) {
-                thisObj.handleResult(value);
-            }
         };
         return ClientObject;
     })();
@@ -185,8 +181,7 @@ var OfficeExtension;
                 return;
             }
             if (!objectPath.isValid) {
-                var pathExpression = OfficeExtension.Utility.getObjectPathExpression(objectPath);
-                throw Error(OfficeExtension.Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
+                OfficeExtension.Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, OfficeExtension.Utility.getObjectPathExpression(objectPath));
             }
             while (objectPath) {
                 if (objectPath.isWriteOperation) {
@@ -258,6 +253,7 @@ var OfficeExtension;
             this._processingResult = false;
             this._customData = OfficeExtension.Constants.iterativeExecutor;
             this._requestExecutor = new OfficeExtension.OfficeJsRequestExecutor();
+            this.executeAsync = this.executeAsync.bind(this);
         }
         Object.defineProperty(ClientRequestContext.prototype, "_pendingRequest", {
             get: function () {
@@ -265,13 +261,6 @@ var OfficeExtension;
                     this.m_pendingRequest = new OfficeExtension.ClientRequest(this);
                 }
                 return this.m_pendingRequest;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ClientRequestContext.prototype, "pendingRequest", {
-            get: function () {
-                return this._pendingRequest;
             },
             enumerable: true,
             configurable: true
@@ -343,31 +332,26 @@ var OfficeExtension;
             req.invalidatePendingInvalidObjectPaths();
             var thisObj = this;
             requestExecutor.executeAsync(this._customData, requestFlags, requestExecutorRequestMessage, function (response) {
-                var hasError = false;
-                var result = new OfficeExtension.ClientRequestResult();
-                result.traceMessages = new Array();
+                var error;
+                var traceMessages = new Array();
                 if (!OfficeExtension.Utility.isNullOrEmptyString(response.ErrorCode)) {
-                    result.errorCode = response.ErrorCode;
-                    result.errorMessage = response.ErrorMessage;
-                    hasError = true;
+                    error = new OfficeExtension.RuntimeError(response.ErrorCode, response.ErrorMessage, traceMessages, {});
                 }
                 else if (response.Body && response.Body.Error) {
-                    result.errorCode = response.Body.Error.Code;
-                    result.errorMessage = response.Body.Error.Message;
-                    result.errorLocation = response.Body.Error.Location;
-                    hasError = true;
+                    error = new OfficeExtension.RuntimeError(response.Body.Error.Code, response.Body.Error.Message, traceMessages, {
+                        errorLocation: response.Body.Error.Location
+                    });
                 }
                 if (response.Body && response.Body.TraceIds) {
                     var traceMessageMap = req.traceInfos;
                     for (var i = 0; i < response.Body.TraceIds.length; i++) {
                         var traceId = response.Body.TraceIds[i];
                         var message = traceMessageMap[traceId];
-                        result.traceMessages.push(message);
+                        traceMessages.push(message);
                     }
                 }
-                if (hasError) {
-                    result.toString = function () { return result.errorCode + ': ' + result.errorMessage; };
-                    failCallback(result);
+                if (error) {
+                    failCallback(error);
                 }
                 else {
                     thisObj._processingResult = true;
@@ -377,7 +361,7 @@ var OfficeExtension;
                     finally {
                         thisObj._processingResult = false;
                     }
-                    doneCallback(result);
+                    doneCallback(new OfficeExtension.ClientRequestResult(traceMessages));
                 }
             });
         };
@@ -412,7 +396,8 @@ var OfficeExtension;
 var OfficeExtension;
 (function (OfficeExtension) {
     var ClientRequestResult = (function () {
-        function ClientRequestResult() {
+        function ClientRequestResult(traceMessages) {
+            this.traceMessages = traceMessages;
         }
         return ClientRequestResult;
     })();
@@ -454,6 +439,44 @@ var OfficeExtension;
         return Constants;
     })();
     OfficeExtension.Constants = Constants;
+})(OfficeExtension || (OfficeExtension = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var OfficeExtension;
+(function (OfficeExtension) {
+    var RuntimeError = (function (_super) {
+        __extends(RuntimeError, _super);
+        function RuntimeError(name, message, traceMessages, debugInfo) {
+            _super.call(this, message);
+            this.name = name;
+            this.message = message;
+            this.traceMessages = traceMessages;
+            this.debugInfo = debugInfo;
+        }
+        Object.defineProperty(RuntimeError.prototype, "errorCode", {
+            get: function () {
+                return this.name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(RuntimeError.prototype, "errorMessage", {
+            get: function () {
+                return this.message;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        RuntimeError.prototype.toString = function () {
+            return this.name + ': ' + this.message;
+        };
+        return RuntimeError;
+    })(Error);
+    OfficeExtension.RuntimeError = RuntimeError;
 })(OfficeExtension || (OfficeExtension = {}));
 var OfficeExtension;
 (function (OfficeExtension) {
@@ -1274,7 +1297,7 @@ var OfficeExtension;
                     return lib$es6$promise$utils$$isArray(input);
                 };
                 lib$es6$promise$enumerator$$Enumerator.prototype._validationError = function () {
-                    return new Error('Array Methods must be provided an Array');
+                    return new OfficeExtension.Error('Array Methods must be provided an Array');
                 };
                 lib$es6$promise$enumerator$$Enumerator.prototype._init = function () {
                     this._result = new Array(this.length);
@@ -1636,7 +1659,7 @@ var OfficeExtension;
             while (objectPath) {
                 if (!objectPath.isValid) {
                     var pathExpression = Utility.getObjectPathExpression(objectPath);
-                    throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
+                    Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression);
                 }
                 objectPath = objectPath.parentObjectPath;
             }
@@ -1648,7 +1671,7 @@ var OfficeExtension;
                     while (objectPath) {
                         if (!objectPath.isValid) {
                             var pathExpression = Utility.getObjectPathExpression(objectPath);
-                            throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression));
+                            Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression);
                         }
                         objectPath = objectPath.parentObjectPath;
                     }
@@ -1657,22 +1680,8 @@ var OfficeExtension;
         };
         Utility.validateContext = function (context, obj) {
             if (obj && obj.context !== context) {
-                throw new Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidRequestContext));
+                Utility.throwError(OfficeExtension.ResourceStrings.invalidRequestContext);
             }
-        };
-        Utility.getResourceString = function (resourceId, arg) {
-            var ret = resourceId;
-            if (window.Strings && window.Strings.OfficeOM) {
-                var stringName = "L_" + resourceId;
-                var stringValue = window.Strings.OfficeOM[stringName];
-                if (stringValue) {
-                    ret = stringValue;
-                }
-            }
-            if (!Utility.isNullOrUndefined(arg)) {
-                ret = ret.replace("{0}", arg);
-            }
-            return ret;
         };
         Utility.log = function (message) {
             if (window.console && window.console.log) {
@@ -1682,9 +1691,26 @@ var OfficeExtension;
         Utility.load = function (clientObj, option) {
             clientObj.context.load(clientObj, option);
         };
+        Utility.throwError = function (resourceId, arg) {
+            throw new OfficeExtension.RuntimeError(resourceId, getResourceString(resourceId, arg), new Array(), {});
+            function getResourceString(resourceId, arg) {
+                var ret = resourceId;
+                if (window.Strings && window.Strings.OfficeOM) {
+                    var stringName = "L_" + resourceId;
+                    var stringValue = window.Strings.OfficeOM[stringName];
+                    if (stringValue) {
+                        ret = stringValue;
+                    }
+                }
+                if (!Utility.isNullOrUndefined(arg)) {
+                    ret = ret.replace("{0}", arg);
+                }
+                return ret;
+            }
+        };
         Utility.throwIfNotLoaded = function (propertyName, fieldValue) {
             if (Utility.isUndefined(fieldValue) && propertyName.charCodeAt(0) != Utility.s_underscoreCharCode) {
-                throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.propertyNotLoaded, propertyName));
+                Utility.throwError(OfficeExtension.ResourceStrings.propertyNotLoaded, propertyName);
             }
         };
         Utility.getObjectPathExpression = function (objectPath) {
