@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var sheet = ctx.workbook.worksheets.getItem("Sheet1");
 
 var categoriesRange = sheet.getRange("A2:A5");
