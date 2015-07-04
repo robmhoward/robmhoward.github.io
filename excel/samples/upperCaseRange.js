@@ -2,10 +2,9 @@ var sheetName = "Sheet1";
 var rangeAddress = "E1:E5";
 
 var ctx = new Excel.RequestContext();
-var range = ctx.workbook.worksheets.getItem(sheetName).getRange(rangeAddress);
+var range = ctx.workbook.worksheets.getItem(sheetName).getRange(rangeAddress).load();
 
 ctx.references.add(range);
-ctx.load(range);
 ctx.executeAsync().then(function () {
 	var vals = range.values;
 	for(var i=0; i<vals.length;i++){
