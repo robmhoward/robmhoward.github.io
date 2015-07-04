@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var tableRows = ctx.workbook.tables.getItemAt(0).tableRows;
 ctx.load(tableRows);
 ctx.executeAsync().then(function () {

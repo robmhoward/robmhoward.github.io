@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var application = ctx.workbook.application;
 ctx.load(application);
 ctx.executeAsync().then(function() {

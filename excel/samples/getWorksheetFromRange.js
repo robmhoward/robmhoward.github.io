@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var selectedRange = ctx.workbook.getSelectedRange();
 ctx.load(selectedRange.worksheet);
 ctx.executeAsync().then(function () {

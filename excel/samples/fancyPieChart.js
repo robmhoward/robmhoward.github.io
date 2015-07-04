@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var sheet = ctx.workbook.worksheets.getItem("Sheet1");
  
 var range = sheet.getRange("A1:B3");

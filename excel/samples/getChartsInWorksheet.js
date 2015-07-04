@@ -1,4 +1,4 @@
-var ctx = new Excel.ExcelClientContext();
+var ctx = new Excel.RequestContext();
 var charts = ctx.workbook.worksheets.getItem("Sheet1").charts;
 ctx.load(charts);
 ctx.executeAsync().then(function () {
