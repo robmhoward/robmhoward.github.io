@@ -450,16 +450,29 @@ var OfficeExtension;
 (function (OfficeExtension) {
     var RuntimeError = (function (_super) {
         __extends(RuntimeError, _super);
-        function RuntimeError(code, message, traceMessages, debugInfo) {
+        function RuntimeError(name, message, traceMessages, debugInfo) {
             _super.call(this, message);
-            this.name = "OfficeExtension.RuntimeError";
-            this.code = code;
+            this.name = name;
             this.message = message;
             this.traceMessages = traceMessages;
             this.debugInfo = debugInfo;
         }
+        Object.defineProperty(RuntimeError.prototype, "errorCode", {
+            get: function () {
+                return this.name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(RuntimeError.prototype, "errorMessage", {
+            get: function () {
+                return this.message;
+            },
+            enumerable: true,
+            configurable: true
+        });
         RuntimeError.prototype.toString = function () {
-            return this.code + ': ' + this.message;
+            return this.name + ': ' + this.message;
         };
         return RuntimeError;
     })(Error);

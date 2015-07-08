@@ -114,8 +114,8 @@ var Word;
         Body.prototype.insertContentControl = function () {
             return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
         };
-        Body.prototype.insertFileFromBase64 = function (base64File, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 0 /* Default */, [base64File, loc], false, true));
+        Body.prototype.insertFile = function (path, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
         Body.prototype.insertHtml = function (html, loc) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
@@ -131,9 +131,6 @@ var Word;
         };
         Body.prototype.search = function (searchText, searchOptions) {
             return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
-        };
-        Body.prototype.select = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
         Body.prototype._KeepReference = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
@@ -311,18 +308,6 @@ var Word;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ContentControl.prototype, "placeholderText", {
-            get: function () {
-                OfficeExtension.Utility.throwIfNotLoaded("placeholderText", this.m_placeholderText);
-                return this.m_placeholderText;
-            },
-            set: function (value) {
-                this.m_placeholderText = value;
-                OfficeExtension.ActionFactory.createSetPropertyAction(this.context, this, "PlaceholderText", value);
-            },
-            enumerable: true,
-            configurable: true
-        });
         Object.defineProperty(ContentControl.prototype, "removeWhenEdited", {
             get: function () {
                 OfficeExtension.Utility.throwIfNotLoaded("removeWhenEdited", this.m_removeWhenEdited);
@@ -404,8 +389,8 @@ var Word;
         ContentControl.prototype.insertBreak = function (bt, loc) {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "InsertBreak", 0 /* Default */, [bt, loc]);
         };
-        ContentControl.prototype.insertFileFromBase64 = function (base64File, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 0 /* Default */, [base64File, loc], false, true));
+        ContentControl.prototype.insertFile = function (path, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
         ContentControl.prototype.insertHtml = function (html, loc) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
@@ -450,9 +435,6 @@ var Word;
             }
             if (!OfficeExtension.Utility.isUndefined(obj["Ooxml"])) {
                 this.m_ooxml = obj["Ooxml"];
-            }
-            if (!OfficeExtension.Utility.isUndefined(obj["PlaceholderText"])) {
-                this.m_placeholderText = obj["PlaceholderText"];
             }
             if (!OfficeExtension.Utility.isUndefined(obj["RemoveWhenEdited"])) {
                 this.m_removeWhenEdited = obj["RemoveWhenEdited"];
@@ -1299,8 +1281,8 @@ var Word;
         Paragraph.prototype.insertContentControl = function () {
             return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
         };
-        Paragraph.prototype.insertFileFromBase64 = function (base64File, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 0 /* Default */, [base64File, loc], false, true));
+        Paragraph.prototype.insertFile = function (path, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 0 /* Default */, [path, loc], false, true));
         };
         Paragraph.prototype.insertHtml = function (html, loc) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, loc], false, true));
@@ -1563,8 +1545,8 @@ var Word;
         Range.prototype.insertContentControl = function () {
             return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 1 /* Read */, [], false, true));
         };
-        Range.prototype.insertFileFromBase64 = function (base64File, loc) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 1 /* Read */, [base64File, loc], false, true));
+        Range.prototype.insertFile = function (path, loc) {
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFile", 1 /* Read */, [path, loc], false, true));
         };
         Range.prototype.insertHtml = function (html, loc) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 1 /* Read */, [html, loc], false, true));
