@@ -1,7 +1,7 @@
 var wordSamplesApp = angular.module("wordSamplesApp", ['ngRoute']);
 var insideOffice = false;
 var debugOption = false;
-var officeVersion = "4229.1000";
+var officeVersion;
 
 var logComment = function (message) {
     var span = document.createElement('span');
@@ -96,8 +96,9 @@ wordSamplesApp.factory("wordSamplesFactory", ['$http', function ($http) {
 
 wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFactory) {
     $scope.samples = [{ name: "Loading..." }];
+    $scope.builds = [{ name: "4229.1002"}, { name: "4229.1001"}, { name: "4229.1000"}, { name: "4220"}, { name : "4201"}];
     $scope.selectedSample = { description: "No sample loaded" };
-	$scope.selectedBuild = officeVersion;
+    $scope.selectedBuild = $scope.builds[0];
     $scope.debugOption = { value: false };
     $scope.insideOffice = insideOffice;
 
