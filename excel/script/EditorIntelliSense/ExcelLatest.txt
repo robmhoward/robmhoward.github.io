@@ -336,16 +336,10 @@ declare module Excel {
          */
         insert(shift: string): void;
         select(): void;
-        _KeepReference(): void;
-        /** Handle results returned from the document
-         * @private
-         */
-        _handleResult(value: any): void;
         /**
          * Load properties
          */
         load(option?: OfficeExtension.LoadOption): Excel.Range;
-        _initReferenceId(value: string): void;
     }
     /**
      *
@@ -663,10 +657,6 @@ declare module Excel {
         getHeaderRowRange(): Excel.Range;
         getRange(): Excel.Range;
         getTotalRowRange(): Excel.Range;
-        /** Handle results returned from the document
-         * @private
-         */
-        _handleResult(value: any): void;
         /**
          * Load properties
          */

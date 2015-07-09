@@ -22,8 +22,6 @@ declare module OfficeExtension {
         private m_objectPath;
         constructor(context: ClientRequestContext, objectPath: ObjectPath);
         context: ClientRequestContext;
-        _objectPath: ObjectPath;
-        _handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
