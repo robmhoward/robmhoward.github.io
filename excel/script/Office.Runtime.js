@@ -1,4 +1,4 @@
-﻿var OfficeExtension;
+var OfficeExtension;
 (function (OfficeExtension) {
     var Action = (function () {
         function Action(actionInfo, isWriteOperation) {
@@ -12,7 +12,6 @@
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(Action.prototype, "isWriteOperation", {
             get: function () {
                 return this.m_isWriteOperation;
@@ -32,82 +31,77 @@ var OfficeExtension;
         ActionFactory.createSetPropertyAction = function (context, parent, propertyName, value) {
             OfficeExtension.Utility.validateObjectPath(parent);
             var actionInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ActionType: 4 /* SetProperty */,
                 Name: propertyName,
-                ObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
             var args = [value];
-            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(actionInfo.ArgumentInfo, args);
+            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, actionInfo.ArgumentInfo, args);
             OfficeExtension.Utility.validateReferencedObjectPaths(referencedArgumentObjectPaths);
             var ret = new OfficeExtension.Action(actionInfo, true);
-            context.pendingRequest.addAction(ret);
-            context.pendingRequest.addReferencedObjectPath(parent.objectPath);
-            context.pendingRequest.addReferencedObjectPaths(referencedArgumentObjectPaths);
-
+            context._pendingRequest.addAction(ret);
+            context._pendingRequest.addReferencedObjectPath(parent._objectPath);
+            context._pendingRequest.addReferencedObjectPaths(referencedArgumentObjectPaths);
             return ret;
         };
-
         ActionFactory.createMethodAction = function (context, parent, methodName, operationType, args) {
             OfficeExtension.Utility.validateObjectPath(parent);
             var actionInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ActionType: 3 /* Method */,
                 Name: methodName,
-                ObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
-            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(actionInfo.ArgumentInfo, args);
+            var referencedArgumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, actionInfo.ArgumentInfo, args);
             OfficeExtension.Utility.validateReferencedObjectPaths(referencedArgumentObjectPaths);
             var isWriteOperation = operationType != 1 /* Read */;
             var ret = new OfficeExtension.Action(actionInfo, isWriteOperation);
-            context.pendingRequest.addAction(ret);
-            context.pendingRequest.addReferencedObjectPath(parent.objectPath);
-            context.pendingRequest.addReferencedObjectPaths(referencedArgumentObjectPaths);
+            context._pendingRequest.addAction(ret);
+            context._pendingRequest.addReferencedObjectPath(parent._objectPath);
+            context._pendingRequest.addReferencedObjectPaths(referencedArgumentObjectPaths);
             return ret;
         };
-
         ActionFactory.createQueryAction = function (context, parent, queryOption) {
             OfficeExtension.Utility.validateObjectPath(parent);
             var actionInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ActionType: 2 /* Query */,
                 Name: "",
-                ObjectPathId: parent.objectPath.objectPathInfo.Id
+                ObjectPathId: parent._objectPath.objectPathInfo.Id,
             };
             actionInfo.QueryInfo = queryOption;
             var ret = new OfficeExtension.Action(actionInfo, false);
-            context.pendingRequest.addAction(ret);
-            context.pendingRequest.addReferencedObjectPath(parent.objectPath);
+            context._pendingRequest.addAction(ret);
+            context._pendingRequest.addReferencedObjectPath(parent._objectPath);
             return ret;
         };
-
         ActionFactory.createInstantiateAction = function (context, obj) {
             OfficeExtension.Utility.validateObjectPath(obj);
             var actionInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ActionType: 1 /* Instantiate */,
                 Name: "",
-                ObjectPathId: obj.objectPath.objectPathInfo.Id
+                ObjectPathId: obj._objectPath.objectPathInfo.Id
             };
             var ret = new OfficeExtension.Action(actionInfo, false);
-            context.pendingRequest.addAction(ret);
-            context.pendingRequest.addReferencedObjectPath(obj.objectPath);
-            context.pendingRequest.addActionResultHandler(ret, new OfficeExtension.InstantiateActionResultHandler(obj));
+            context._pendingRequest.addAction(ret);
+            context._pendingRequest.addReferencedObjectPath(obj._objectPath);
+            context._pendingRequest.addActionResultHandler(ret, new OfficeExtension.InstantiateActionResultHandler(obj));
             return ret;
         };
-
         ActionFactory.createTraceAction = function (context, message) {
             var actionInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ActionType: 5 /* Trace */,
                 Name: "Trace",
                 ObjectPathId: 0
             };
             var ret = new OfficeExtension.Action(actionInfo, false);
-            context.pendingRequest.addAction(ret);
-            context.pendingRequest.addTrace(actionInfo.Id, message);
+            context._pendingRequest.addAction(ret);
+            context._pendingRequest.addTrace(actionInfo.Id, message);
             return ret;
         };
         return ActionFactory;
@@ -121,7 +115,7 @@ var OfficeExtension;
             OfficeExtension.Utility.checkArgumentNull(context, "context");
             this.m_context = context;
             this.m_objectPath = objectPath;
-            if (this.m_objectPath) {
+            if (!context._processingResult && this.m_objectPath) {
                 OfficeExtension.ActionFactory.createInstantiateAction(context, this);
             }
         }
@@ -132,8 +126,7 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-        Object.defineProperty(ClientObject.prototype, "objectPath", {
+        Object.defineProperty(ClientObject.prototype, "_objectPath", {
             get: function () {
                 return this.m_objectPath;
             },
@@ -143,9 +136,7 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-
-        ClientObject.prototype.handleResult = function (value) {
+        ClientObject.prototype._handleResult = function (value) {
         };
         return ClientObject;
     })();
@@ -169,7 +160,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ClientRequest.prototype, "traceInfos", {
             get: function () {
                 return this.m_traceInfos;
@@ -177,42 +167,33 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         ClientRequest.prototype.addAction = function (action) {
             if (action.isWriteOperation) {
                 this.m_flags = this.m_flags | 1 /* WriteOperation */;
             }
             this.m_actions.push(action);
         };
-
         ClientRequest.prototype.addTrace = function (actionId, message) {
             this.m_traceInfos[actionId] = message;
         };
-
         ClientRequest.prototype.addReferencedObjectPath = function (objectPath) {
             if (this.m_referencedObjectPaths[objectPath.objectPathInfo.Id]) {
                 return;
             }
-
             if (!objectPath.isValid) {
-                throw Error(OfficeExtension.Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                OfficeExtension.Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, OfficeExtension.Utility.getObjectPathExpression(objectPath));
             }
-
             while (objectPath) {
                 if (objectPath.isWriteOperation) {
                     this.m_flags = this.m_flags | 1 /* WriteOperation */;
                 }
-
                 this.m_referencedObjectPaths[objectPath.objectPathInfo.Id] = objectPath;
-
                 if (objectPath.objectPathInfo.ObjectPathType == 3 /* Method */) {
                     this.addReferencedObjectPaths(objectPath.argumentObjectPaths);
                 }
-
                 objectPath = objectPath.parentObjectPath;
             }
         };
-
         ClientRequest.prototype.addReferencedObjectPaths = function (objectPaths) {
             if (objectPaths) {
                 for (var i = 0; i < objectPaths.length; i++) {
@@ -220,42 +201,35 @@ var OfficeExtension;
                 }
             }
         };
-
         ClientRequest.prototype.addActionResultHandler = function (action, resultHandler) {
             this.m_actionResultHandler[action.actionInfo.Id] = resultHandler;
         };
-
         ClientRequest.prototype.buildRequestMessageBody = function () {
             var objectPaths = {};
             for (var i in this.m_referencedObjectPaths) {
                 objectPaths[i] = this.m_referencedObjectPaths[i].objectPathInfo;
             }
-
             var actions = [];
             for (var index = 0; index < this.m_actions.length; index++) {
                 actions.push(this.m_actions[index].actionInfo);
             }
-
             var ret = {
                 Actions: actions,
                 ObjectPaths: objectPaths
             };
-
             return ret;
         };
-
         ClientRequest.prototype.processResponse = function (msg) {
             if (msg && msg.Results) {
                 for (var i = 0; i < msg.Results.length; i++) {
                     var actionResult = msg.Results[i];
                     var handler = this.m_actionResultHandler[actionResult.ActionId];
                     if (handler) {
-                        handler.handleResult(actionResult.Value);
+                        handler._handleResult(actionResult.Value);
                     }
                 }
             }
         };
-
         ClientRequest.prototype.invalidatePendingInvalidObjectPaths = function () {
             for (var i in this.m_referencedObjectPaths) {
                 if (this.m_referencedObjectPaths[i].isInvalidAfterRequest) {
@@ -276,8 +250,12 @@ var OfficeExtension;
             if (OfficeExtension.Utility.isNullOrEmptyString(this.m_url)) {
                 this.m_url = OfficeExtension.Constants.localDocument;
             }
+            this._processingResult = false;
+            this._customData = OfficeExtension.Constants.iterativeExecutor;
+            this._requestExecutor = new OfficeExtension.OfficeJsRequestExecutor();
+            this.executeAsync = this.executeAsync.bind(this);
         }
-        Object.defineProperty(ClientRequestContext.prototype, "pendingRequest", {
+        Object.defineProperty(ClientRequestContext.prototype, "_pendingRequest", {
             get: function () {
                 if (this.m_pendingRequest == null) {
                     this.m_pendingRequest = new OfficeExtension.ClientRequest(this);
@@ -287,7 +265,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ClientRequestContext.prototype, "references", {
             get: function () {
                 if (!this.m_references) {
@@ -298,14 +275,14 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         ClientRequestContext.prototype.load = function (clientObj, option) {
+            OfficeExtension.Utility.validateContext(this, clientObj);
             var queryOption = {};
-
             if (typeof (option) == "string") {
                 var select = option;
                 queryOption.Select = this.parseSelectExpand(select);
-            } else if (typeof (option) == "object") {
+            }
+            else if (typeof (option) == "object") {
                 var loadOption = option;
                 if (typeof (loadOption.select) == "string") {
                     queryOption.Select = this.parseSelectExpand(loadOption.select);
@@ -320,15 +297,12 @@ var OfficeExtension;
                     queryOption.Skip = loadOption.skip;
                 }
             }
-
             var action = OfficeExtension.ActionFactory.createQueryAction(this, clientObj, queryOption);
-            this.pendingRequest.addActionResultHandler(action, clientObj);
+            this._pendingRequest.addActionResultHandler(action, clientObj);
         };
-
         ClientRequestContext.prototype.trace = function (message) {
             OfficeExtension.ActionFactory.createTraceAction(this, message);
         };
-
         ClientRequestContext.prototype.parseSelectExpand = function (select) {
             var args = [];
             if (!OfficeExtension.Utility.isNullOrEmptyString(select)) {
@@ -341,70 +315,70 @@ var OfficeExtension;
             }
             return args;
         };
-
         ClientRequestContext.prototype.executeAsyncPrivate = function (doneCallback, failCallback) {
-            var req = this.pendingRequest;
+            var req = this._pendingRequest;
             this.m_pendingRequest = null;
             var msgBody = req.buildRequestMessageBody();
             var requestFlags = req.flags;
-            var requestExecutor = this.m_requestExecutor;
+            var requestExecutor = this._requestExecutor;
             if (!requestExecutor) {
                 requestExecutor = new OfficeExtension.OfficeJsRequestExecutor();
             }
-
             var requestExecutorRequestMessage = {
                 Url: this.m_url,
                 Headers: null,
                 Body: msgBody
             };
-
             req.invalidatePendingInvalidObjectPaths();
-
-            requestExecutor.executeAsync(this.customData, requestFlags, requestExecutorRequestMessage, function (response) {
-                var hasError = false;
-                var result = new OfficeExtension.ClientRequestResult();
+            var thisObj = this;
+            requestExecutor.executeAsync(this._customData, requestFlags, requestExecutorRequestMessage, function (response) {
+                var error;
+                var traceMessages = new Array();
                 if (!OfficeExtension.Utility.isNullOrEmptyString(response.ErrorCode)) {
-                    result.errorCode = response.ErrorCode;
-                    result.errorMessage = response.ErrorMessage;
-                    hasError = true;
-                } else if (response.Body && response.Body.Error) {
-                    result.errorCode = response.Body.Error.Code;
-                    result.errorMessage = response.Body.Error.Message;
-                    hasError = true;
+                    error = new OfficeExtension.RuntimeError(response.ErrorCode, response.ErrorMessage, traceMessages, {});
                 }
-
+                else if (response.Body && response.Body.Error) {
+                    error = new OfficeExtension.RuntimeError(response.Body.Error.Code, response.Body.Error.Message, traceMessages, {
+                        errorLocation: response.Body.Error.Location
+                    });
+                }
                 if (response.Body && response.Body.TraceIds) {
-                    result.traceMessages = new Array();
                     var traceMessageMap = req.traceInfos;
                     for (var i = 0; i < response.Body.TraceIds.length; i++) {
                         var traceId = response.Body.TraceIds[i];
                         var message = traceMessageMap[traceId];
-                        result.traceMessages.push(message);
+                        traceMessages.push(message);
                     }
                 }
-
-                if (hasError) {
-                    if (failCallback) {
-                        failCallback(result);
+                if (error) {
+                    failCallback(error);
+                }
+                else {
+                    thisObj._processingResult = true;
+                    try {
+                        req.processResponse(response.Body);
                     }
-                } else {
-                    req.processResponse(response.Body);
-                    if (doneCallback) {
-                        doneCallback(result);
+                    finally {
+                        thisObj._processingResult = false;
                     }
+                    doneCallback(new OfficeExtension.ClientRequestResult(traceMessages));
                 }
             });
         };
-
         ClientRequestContext.prototype.executeAsync = function () {
-            var thisObj = this;
-            var ret = new OfficeExtension.Promise(function (doneCallback, failCallback) {
-                thisObj.executeAsyncPrivate(doneCallback, failCallback);
+            var _this = this;
+            if (!OfficeExtension["Promise"]) {
+                OfficeExtension._EnsurePromise();
+            }
+            return new OfficeExtension['Promise'](function (resolve, reject) {
+                _this.executeAsyncPrivate(function (result) {
+                    resolve(result);
+                }, function (error) {
+                    reject(error);
+                });
             });
-            return ret;
         };
-
-        ClientRequestContext.prototype.nextId = function () {
+        ClientRequestContext.prototype._nextId = function () {
             return ++this.m_nextId;
         };
         return ClientRequestContext;
@@ -422,7 +396,8 @@ var OfficeExtension;
 var OfficeExtension;
 (function (OfficeExtension) {
     var ClientRequestResult = (function () {
-        function ClientRequestResult() {
+        function ClientRequestResult(traceMessages) {
+            this.traceMessages = traceMessages;
         }
         return ClientRequestResult;
     })();
@@ -440,8 +415,7 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-        ClientResult.prototype.handleResult = function (value) {
+        ClientResult.prototype._handleResult = function (value) {
             this.m_value = value;
         };
         return ClientResult;
@@ -466,14 +440,66 @@ var OfficeExtension;
     })();
     OfficeExtension.Constants = Constants;
 })(OfficeExtension || (OfficeExtension = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var OfficeExtension;
+(function (OfficeExtension) {
+    var RuntimeError = (function (_super) {
+        __extends(RuntimeError, _super);
+        function RuntimeError(name, message, traceMessages, debugInfo) {
+            _super.call(this, message);
+            this.name = name;
+            this.message = message;
+            this.traceMessages = traceMessages;
+            this.debugInfo = debugInfo;
+        }
+        Object.defineProperty(RuntimeError.prototype, "errorCode", {
+            get: function () {
+                return this.name;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(RuntimeError.prototype, "errorMessage", {
+            get: function () {
+                return this.message;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        RuntimeError.prototype.toString = function () {
+            return this.name + ': ' + this.message;
+        };
+        return RuntimeError;
+    })(Error);
+    OfficeExtension.RuntimeError = RuntimeError;
+})(OfficeExtension || (OfficeExtension = {}));
+var OfficeExtension;
+(function (OfficeExtension) {
+    var ErrorCodes = (function () {
+        function ErrorCodes() {
+        }
+        ErrorCodes.accessDenied = "AccessDenied";
+        ErrorCodes.generalException = "GeneralException";
+        return ErrorCodes;
+    })();
+    OfficeExtension.ErrorCodes = ErrorCodes;
+})(OfficeExtension || (OfficeExtension = {}));
 var OfficeExtension;
 (function (OfficeExtension) {
     var InstantiateActionResultHandler = (function () {
         function InstantiateActionResultHandler(clientObject) {
             this.m_clientObject = clientObject;
         }
-        InstantiateActionResultHandler.prototype.handleResult = function (value) {
+        InstantiateActionResultHandler.prototype._handleResult = function (value) {
             OfficeExtension.Utility.fixObjectPathIfNecessary(this.m_clientObject, value);
+            if (value && !OfficeExtension.Utility.isNullOrUndefined(value[OfficeExtension.Constants.referenceId]) && this.m_clientObject._initReferenceId) {
+                this.m_clientObject._initReferenceId(value[OfficeExtension.Constants.referenceId]);
+            }
         };
         return InstantiateActionResultHandler;
     })();
@@ -491,7 +517,6 @@ var OfficeExtension;
         RichApiRequestMessageIndex[RichApiRequestMessageIndex["RequestFlags"] = 6] = "RequestFlags";
     })(OfficeExtension.RichApiRequestMessageIndex || (OfficeExtension.RichApiRequestMessageIndex = {}));
     var RichApiRequestMessageIndex = OfficeExtension.RichApiRequestMessageIndex;
-
     (function (RichApiResponseMessageIndex) {
         RichApiResponseMessageIndex[RichApiResponseMessageIndex["StatusCode"] = 0] = "StatusCode";
         RichApiResponseMessageIndex[RichApiResponseMessageIndex["Headers"] = 1] = "Headers";
@@ -499,7 +524,6 @@ var OfficeExtension;
     })(OfficeExtension.RichApiResponseMessageIndex || (OfficeExtension.RichApiResponseMessageIndex = {}));
     var RichApiResponseMessageIndex = OfficeExtension.RichApiResponseMessageIndex;
     ;
-
     (function (ActionType) {
         ActionType[ActionType["Instantiate"] = 1] = "Instantiate";
         ActionType[ActionType["Query"] = 2] = "Query";
@@ -508,7 +532,6 @@ var OfficeExtension;
         ActionType[ActionType["Trace"] = 5] = "Trace";
     })(OfficeExtension.ActionType || (OfficeExtension.ActionType = {}));
     var ActionType = OfficeExtension.ActionType;
-
     (function (ObjectPathType) {
         ObjectPathType[ObjectPathType["GlobalObject"] = 1] = "GlobalObject";
         ObjectPathType[ObjectPathType["NewObject"] = 2] = "NewObject";
@@ -537,7 +560,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ObjectPath.prototype, "isWriteOperation", {
             get: function () {
                 return this.m_isWriteOperation;
@@ -548,8 +570,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-
         Object.defineProperty(ObjectPath.prototype, "isCollection", {
             get: function () {
                 return this.m_isCollection;
@@ -557,7 +577,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ObjectPath.prototype, "isInvalidAfterRequest", {
             get: function () {
                 return this.m_isInvalidAfterRequest;
@@ -565,7 +584,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ObjectPath.prototype, "parentObjectPath", {
             get: function () {
                 return this.m_parentObjectPath;
@@ -573,7 +591,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
         Object.defineProperty(ObjectPath.prototype, "argumentObjectPaths", {
             get: function () {
                 return this.m_argumentObjectPaths;
@@ -584,8 +601,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-
         Object.defineProperty(ObjectPath.prototype, "isValid", {
             get: function () {
                 return this.m_isValid;
@@ -596,8 +611,6 @@ var OfficeExtension;
             enumerable: true,
             configurable: true
         });
-
-
         ObjectPath.prototype.updateUsingObjectData = function (value) {
             var referenceId = value[OfficeExtension.Constants.referenceId];
             if (!OfficeExtension.Utility.isNullOrEmptyString(referenceId)) {
@@ -610,13 +623,11 @@ var OfficeExtension;
                 this.m_argumentObjectPaths = null;
                 return;
             }
-
             if (this.parentObjectPath && this.parentObjectPath.isCollection) {
                 var id = value[OfficeExtension.Constants.id];
                 if (OfficeExtension.Utility.isNullOrUndefined(id)) {
                     id = value[OfficeExtension.Constants.idPrivate];
                 }
-
                 if (!OfficeExtension.Utility.isNullOrUndefined(id)) {
                     this.m_isInvalidAfterRequest = false;
                     this.m_isValid = true;
@@ -639,40 +650,36 @@ var OfficeExtension;
         function ObjectPathFactory() {
         }
         ObjectPathFactory.createGlobalObjectObjectPath = function (context) {
-            var objectPathInfo = { Id: context.nextId(), ObjectPathType: 1 /* GlobalObject */, Name: "" };
+            var objectPathInfo = { Id: context._nextId(), ObjectPathType: 1 /* GlobalObject */, Name: "" };
             return new OfficeExtension.ObjectPath(objectPathInfo, null, false, false);
         };
-
         ObjectPathFactory.createNewObjectObjectPath = function (context, typeName, isCollection) {
-            var objectPathInfo = { Id: context.nextId(), ObjectPathType: 2 /* NewObject */, Name: typeName };
+            var objectPathInfo = { Id: context._nextId(), ObjectPathType: 2 /* NewObject */, Name: typeName };
             return new OfficeExtension.ObjectPath(objectPathInfo, null, isCollection, false);
         };
-
         ObjectPathFactory.createPropertyObjectPath = function (context, parent, propertyName, isCollection, isInvalidAfterRequest) {
             var objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 4 /* Property */,
                 Name: propertyName,
-                ParentObjectPathId: parent.objectPath.objectPathInfo.Id
+                ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
             };
-            return new OfficeExtension.ObjectPath(objectPathInfo, parent.objectPath, isCollection, isInvalidAfterRequest);
+            return new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, isCollection, isInvalidAfterRequest);
         };
-
         ObjectPathFactory.createIndexerObjectPath = function (context, parent, args) {
             var objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 5 /* Indexer */,
                 Name: "",
-                ParentObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
             objectPathInfo.ArgumentInfo.Arguments = args;
-            return new OfficeExtension.ObjectPath(objectPathInfo, parent.objectPath, false, false);
+            return new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, false, false);
         };
-
         ObjectPathFactory.createIndexerObjectPathUsingParentPath = function (context, parentObjectPath, args) {
             var objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 5 /* Indexer */,
                 Name: "",
                 ParentObjectPathId: parentObjectPath.objectPathInfo.Id,
@@ -681,58 +688,52 @@ var OfficeExtension;
             objectPathInfo.ArgumentInfo.Arguments = args;
             return new OfficeExtension.ObjectPath(objectPathInfo, parentObjectPath, false, false);
         };
-
         ObjectPathFactory.createMethodObjectPath = function (context, parent, methodName, operationType, args, isCollection, isInvalidAfterRequest) {
             var objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 3 /* Method */,
                 Name: methodName,
-                ParentObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
-            var argumentObjectPaths = OfficeExtension.Utility.setMethodArguments(objectPathInfo.ArgumentInfo, args);
-            var ret = new OfficeExtension.ObjectPath(objectPathInfo, parent.objectPath, isCollection, isInvalidAfterRequest);
+            var argumentObjectPaths = OfficeExtension.Utility.setMethodArguments(context, objectPathInfo.ArgumentInfo, args);
+            var ret = new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, isCollection, isInvalidAfterRequest);
             ret.argumentObjectPaths = argumentObjectPaths;
             ret.isWriteOperation = (operationType != 1 /* Read */);
             return ret;
         };
-
         ObjectPathFactory.createChildItemObjectPathUsingIndexer = function (context, parent, childItem) {
             var id = childItem[OfficeExtension.Constants.id];
             if (OfficeExtension.Utility.isNullOrUndefined(id)) {
                 id = childItem[OfficeExtension.Constants.idPrivate];
             }
-
             var objectPathInfo = objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 5 /* Indexer */,
                 Name: "",
-                ParentObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
             objectPathInfo.ArgumentInfo.Arguments = [id];
-            return new OfficeExtension.ObjectPath(objectPathInfo, parent.objectPath, false, false);
+            return new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, false, false);
         };
-
         ObjectPathFactory.createChildItemObjectPathUsingGetItemAt = function (context, parent, childItem, index) {
             var indexFromServer = childItem[OfficeExtension.Constants.index];
             if (indexFromServer) {
                 index = indexFromServer;
             }
-
             var objectPathInfo = {
-                Id: context.nextId(),
+                Id: context._nextId(),
                 ObjectPathType: 3 /* Method */,
                 Name: OfficeExtension.Constants.getItemAt,
-                ParentObjectPathId: parent.objectPath.objectPathInfo.Id,
+                ParentObjectPathId: parent._objectPath.objectPathInfo.Id,
                 ArgumentInfo: {}
             };
             objectPathInfo.ArgumentInfo.Arguments = [index];
-            return new OfficeExtension.ObjectPath(objectPathInfo, parent.objectPath, false, false);
+            return new OfficeExtension.ObjectPath(objectPathInfo, parent._objectPath, false, false);
         };
-
         ObjectPathFactory.createReferenceIdObjectPath = function (context, referenceId) {
-            var objectPathInfo = { Id: context.nextId(), ObjectPathType: 6 /* ReferenceId */, Name: referenceId };
+            var objectPathInfo = { Id: context._nextId(), ObjectPathType: 6 /* ReferenceId */, Name: referenceId };
             return new OfficeExtension.ObjectPath(objectPathInfo, null, false, false);
         };
         return ObjectPathFactory;
@@ -746,6 +747,8 @@ var OfficeExtension;
         }
         OfficeJsRequestExecutor.prototype.executeAsync = function (customData, requestFlags, requestMessage, callback) {
             var requestMessageText = JSON.stringify(requestMessage.Body);
+            OfficeExtension.Utility.log("Request:");
+            OfficeExtension.Utility.log(requestMessageText);
             var messageSafearray = OfficeExtension.RichApiMessageUtility.buildRequestMessageSafeArray(customData, requestFlags, "POST", "ProcessQuery", null, requestMessageText);
             OSF.DDA.RichApi.executeRichApiRequestAsync(messageSafearray, function (result) {
                 OfficeExtension.Utility.log("Response:");
@@ -756,13 +759,18 @@ var OfficeExtension;
                     response.Body = JSON.parse(bodyText);
                     response.Headers = OfficeExtension.RichApiMessageUtility.getResponseHeaders(result);
                     callback(response);
-                } else {
-                    response.ErrorCode = result.error.code.toString();
+                }
+                else {
+                    response.ErrorCode = OfficeExtension.ErrorCodes.generalException;
+                    if (result.error.code == OfficeJsRequestExecutor.OfficeJsErrorCode_ooeNoCapability) {
+                        response.ErrorCode = OfficeExtension.ErrorCodes.accessDenied;
+                    }
                     response.ErrorMessage = result.error.message;
                     callback(response);
                 }
             });
         };
+        OfficeJsRequestExecutor.OfficeJsErrorCode_ooeNoCapability = 7000;
         return OfficeJsRequestExecutor;
     })();
     OfficeExtension.OfficeJsRequestExecutor = OfficeJsRequestExecutor;
@@ -775,28 +783,25 @@ var OfficeExtension;
         return OfficeXHRSettings;
     })();
     OfficeExtension.OfficeXHRSettings = OfficeXHRSettings;
-
     function resetXHRFactory(oldFactory) {
         OfficeXHR.settings.oldxhr = oldFactory;
         return officeXHRFactory;
     }
     OfficeExtension.resetXHRFactory = resetXHRFactory;
-
     function officeXHRFactory() {
         return new OfficeXHR;
     }
     OfficeExtension.officeXHRFactory = officeXHRFactory;
-
     var OfficeXHR = (function () {
         function OfficeXHR() {
         }
         OfficeXHR.prototype.open = function (method, url) {
             this.m_method = method;
             this.m_url = url;
-
             if (this.m_url.toLowerCase().indexOf(OfficeExtension.Constants.localDocumentApiPrefix) == 0) {
                 this.m_url = this.m_url.substr(OfficeExtension.Constants.localDocumentApiPrefix.length);
-            } else {
+            }
+            else {
                 this.m_innerXhr = OfficeXHR.settings.oldxhr();
                 var thisObj = this;
                 this.m_innerXhr.onreadystatechange = function () {
@@ -805,63 +810,55 @@ var OfficeExtension;
                 this.m_innerXhr.open(method, this.m_url);
             }
         };
-
         OfficeXHR.prototype.abort = function () {
             if (this.m_innerXhr) {
                 this.m_innerXhr.abort();
             }
         };
-
         OfficeXHR.prototype.send = function (body) {
             if (this.m_innerXhr) {
                 this.m_innerXhr.send(body);
-            } else {
+            }
+            else {
                 var thisObj = this;
                 var requestFlags = 0 /* None */;
                 if (!OfficeExtension.Utility.isReadonlyRestRequest(this.m_method)) {
                     requestFlags = 1 /* WriteOperation */;
                 }
-
                 var execFunction = OfficeXHR.settings.executeRichApiRequestAsync;
                 if (!execFunction) {
                     execFunction = OSF.DDA.RichApi.executeRichApiRequestAsync;
                 }
-
                 execFunction(OfficeExtension.RichApiMessageUtility.buildRequestMessageSafeArray('', requestFlags, this.m_method, this.m_url, this.m_requestHeaders, body), function (asyncResult) {
                     thisObj.officeContextRequestCallback(asyncResult);
                 });
             }
         };
-
         OfficeXHR.prototype.setRequestHeader = function (header, value) {
             if (this.m_innerXhr) {
                 this.m_innerXhr.setRequestHeader(header, value);
-            } else {
+            }
+            else {
                 if (!this.m_requestHeaders) {
                     this.m_requestHeaders = {};
                 }
-
                 this.m_requestHeaders[header] = value;
             }
         };
-
         OfficeXHR.prototype.getResponseHeader = function (header) {
             if (this.m_responseHeaders) {
                 return this.m_responseHeaders[header.toUpperCase()];
             }
             return null;
         };
-
         OfficeXHR.prototype.getAllResponseHeaders = function () {
             return this.m_allResponseHeaders;
         };
-
         OfficeXHR.prototype.overrideMimeType = function (mimeType) {
             if (this.m_innerXhr) {
                 this.m_innerXhr.overrideMimeType(mimeType);
             }
         };
-
         OfficeXHR.prototype.innerXhrOnreadystatechage = function () {
             this.readyState = this.m_innerXhr.readyState;
             if (this.readyState == OfficeXHR.DONE) {
@@ -872,12 +869,10 @@ var OfficeExtension;
                 this.responseType = this.m_innerXhr.responseType;
                 this.setAllResponseHeaders(this.m_innerXhr.getAllResponseHeaders());
             }
-
             if (this.onreadystatechange) {
                 this.onreadystatechange();
             }
         };
-
         OfficeXHR.prototype.officeContextRequestCallback = function (result) {
             this.readyState = OfficeXHR.DONE;
             if (result.status == "succeeded") {
@@ -887,16 +882,15 @@ var OfficeExtension;
                 this.responseText = OfficeExtension.RichApiMessageUtility.getResponseBody(result);
                 console.debug("ResponseText=" + this.responseText);
                 this.response = this.responseText;
-            } else {
+            }
+            else {
                 this.status = 500;
                 this.statusText = "Internal Error";
             }
-
             if (this.onreadystatechange) {
                 this.onreadystatechange();
             }
         };
-
         OfficeXHR.prototype.setAllResponseHeaders = function (allResponseHeaders) {
             this.m_allResponseHeaders = allResponseHeaders;
             this.m_responseHeaders = {};
@@ -928,24 +922,546 @@ var OfficeExtension;
 })(OfficeExtension || (OfficeExtension = {}));
 var OfficeExtension;
 (function (OfficeExtension) {
+    function _EnsurePromise() {
+        PromiseImpl.Init();
+    }
+    OfficeExtension._EnsurePromise = _EnsurePromise;
+    var PromiseImpl;
+    (function (PromiseImpl) {
+        function Init() {
+            (function () {
+                "use strict";
+                function lib$es6$promise$utils$$objectOrFunction(x) {
+                    return typeof x === 'function' || (typeof x === 'object' && x !== null);
+                }
+                function lib$es6$promise$utils$$isFunction(x) {
+                    return typeof x === 'function';
+                }
+                function lib$es6$promise$utils$$isMaybeThenable(x) {
+                    return typeof x === 'object' && x !== null;
+                }
+                var lib$es6$promise$utils$$_isArray;
+                if (!Array.isArray) {
+                    lib$es6$promise$utils$$_isArray = function (x) {
+                        return Object.prototype.toString.call(x) === '[object Array]';
+                    };
+                }
+                else {
+                    lib$es6$promise$utils$$_isArray = Array.isArray;
+                }
+                var lib$es6$promise$utils$$isArray = lib$es6$promise$utils$$_isArray;
+                var lib$es6$promise$asap$$len = 0;
+                var lib$es6$promise$asap$$toString = {}.toString;
+                var lib$es6$promise$asap$$vertxNext;
+                var lib$es6$promise$asap$$customSchedulerFn;
+                var lib$es6$promise$asap$$asap = function asap(callback, arg) {
+                    lib$es6$promise$asap$$queue[lib$es6$promise$asap$$len] = callback;
+                    lib$es6$promise$asap$$queue[lib$es6$promise$asap$$len + 1] = arg;
+                    lib$es6$promise$asap$$len += 2;
+                    if (lib$es6$promise$asap$$len === 2) {
+                        if (lib$es6$promise$asap$$customSchedulerFn) {
+                            lib$es6$promise$asap$$customSchedulerFn(lib$es6$promise$asap$$flush);
+                        }
+                        else {
+                            lib$es6$promise$asap$$scheduleFlush();
+                        }
+                    }
+                };
+                function lib$es6$promise$asap$$setScheduler(scheduleFn) {
+                    lib$es6$promise$asap$$customSchedulerFn = scheduleFn;
+                }
+                function lib$es6$promise$asap$$setAsap(asapFn) {
+                    lib$es6$promise$asap$$asap = asapFn;
+                }
+                var lib$es6$promise$asap$$browserWindow = (typeof window !== 'undefined') ? window : undefined;
+                var lib$es6$promise$asap$$browserGlobal = lib$es6$promise$asap$$browserWindow || {};
+                var lib$es6$promise$asap$$BrowserMutationObserver = lib$es6$promise$asap$$browserGlobal.MutationObserver || lib$es6$promise$asap$$browserGlobal.WebKitMutationObserver;
+                var lib$es6$promise$asap$$isNode = typeof process !== 'undefined' && {}.toString.call(process) === '[object process]';
+                var lib$es6$promise$asap$$isWorker = typeof Uint8ClampedArray !== 'undefined' && typeof importScripts !== 'undefined' && typeof MessageChannel !== 'undefined';
+                function lib$es6$promise$asap$$useNextTick() {
+                    var nextTick = process.nextTick;
+                    var version = process.versions.node.match(/^(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)$/);
+                    if (Array.isArray(version) && version[1] === '0' && version[2] === '10') {
+                        nextTick = setImmediate;
+                    }
+                    return function () {
+                        nextTick(lib$es6$promise$asap$$flush);
+                    };
+                }
+                function lib$es6$promise$asap$$useVertxTimer() {
+                    return function () {
+                        lib$es6$promise$asap$$vertxNext(lib$es6$promise$asap$$flush);
+                    };
+                }
+                function lib$es6$promise$asap$$useMutationObserver() {
+                    var iterations = 0;
+                    var observer = new lib$es6$promise$asap$$BrowserMutationObserver(lib$es6$promise$asap$$flush);
+                    var node = document.createTextNode('');
+                    observer.observe(node, { characterData: true });
+                    return function () {
+                        node.data = (iterations = ++iterations % 2);
+                    };
+                }
+                function lib$es6$promise$asap$$useMessageChannel() {
+                    var channel = new MessageChannel();
+                    channel.port1.onmessage = lib$es6$promise$asap$$flush;
+                    return function () {
+                        channel.port2.postMessage(0);
+                    };
+                }
+                function lib$es6$promise$asap$$useSetTimeout() {
+                    return function () {
+                        setTimeout(lib$es6$promise$asap$$flush, 1);
+                    };
+                }
+                var lib$es6$promise$asap$$queue = new Array(1000);
+                function lib$es6$promise$asap$$flush() {
+                    for (var i = 0; i < lib$es6$promise$asap$$len; i += 2) {
+                        var callback = lib$es6$promise$asap$$queue[i];
+                        var arg = lib$es6$promise$asap$$queue[i + 1];
+                        callback(arg);
+                        lib$es6$promise$asap$$queue[i] = undefined;
+                        lib$es6$promise$asap$$queue[i + 1] = undefined;
+                    }
+                    lib$es6$promise$asap$$len = 0;
+                }
+                function lib$es6$promise$asap$$attemptVertex() {
+                    try {
+                        var r = require;
+                        var vertx = r('vertx');
+                        lib$es6$promise$asap$$vertxNext = vertx.runOnLoop || vertx.runOnContext;
+                        return lib$es6$promise$asap$$useVertxTimer();
+                    }
+                    catch (e) {
+                        return lib$es6$promise$asap$$useSetTimeout();
+                    }
+                }
+                var lib$es6$promise$asap$$scheduleFlush;
+                if (lib$es6$promise$asap$$isNode) {
+                    lib$es6$promise$asap$$scheduleFlush = lib$es6$promise$asap$$useNextTick();
+                }
+                else if (lib$es6$promise$asap$$BrowserMutationObserver) {
+                    lib$es6$promise$asap$$scheduleFlush = lib$es6$promise$asap$$useMutationObserver();
+                }
+                else if (lib$es6$promise$asap$$isWorker) {
+                    lib$es6$promise$asap$$scheduleFlush = lib$es6$promise$asap$$useMessageChannel();
+                }
+                else if (lib$es6$promise$asap$$browserWindow === undefined && typeof require === 'function') {
+                    lib$es6$promise$asap$$scheduleFlush = lib$es6$promise$asap$$attemptVertex();
+                }
+                else {
+                    lib$es6$promise$asap$$scheduleFlush = lib$es6$promise$asap$$useSetTimeout();
+                }
+                function lib$es6$promise$$internal$$noop() {
+                }
+                var lib$es6$promise$$internal$$PENDING = void 0;
+                var lib$es6$promise$$internal$$FULFILLED = 1;
+                var lib$es6$promise$$internal$$REJECTED = 2;
+                var lib$es6$promise$$internal$$GET_THEN_ERROR = new lib$es6$promise$$internal$$ErrorObject();
+                function lib$es6$promise$$internal$$selfFullfillment() {
+                    return new TypeError("You cannot resolve a promise with itself");
+                }
+                function lib$es6$promise$$internal$$cannotReturnOwn() {
+                    return new TypeError('A promises callback cannot return that same promise.');
+                }
+                function lib$es6$promise$$internal$$getThen(promise) {
+                    try {
+                        return promise.then;
+                    }
+                    catch (error) {
+                        lib$es6$promise$$internal$$GET_THEN_ERROR.error = error;
+                        return lib$es6$promise$$internal$$GET_THEN_ERROR;
+                    }
+                }
+                function lib$es6$promise$$internal$$tryThen(then, value, fulfillmentHandler, rejectionHandler) {
+                    try {
+                        then.call(value, fulfillmentHandler, rejectionHandler);
+                    }
+                    catch (e) {
+                        return e;
+                    }
+                }
+                function lib$es6$promise$$internal$$handleForeignThenable(promise, thenable, then) {
+                    lib$es6$promise$asap$$asap(function (promise) {
+                        var sealed = false;
+                        var error = lib$es6$promise$$internal$$tryThen(then, thenable, function (value) {
+                            if (sealed) {
+                                return;
+                            }
+                            sealed = true;
+                            if (thenable !== value) {
+                                lib$es6$promise$$internal$$resolve(promise, value);
+                            }
+                            else {
+                                lib$es6$promise$$internal$$fulfill(promise, value);
+                            }
+                        }, function (reason) {
+                            if (sealed) {
+                                return;
+                            }
+                            sealed = true;
+                            lib$es6$promise$$internal$$reject(promise, reason);
+                        }, 'Settle: ' + (promise._label || ' unknown promise'));
+                        if (!sealed && error) {
+                            sealed = true;
+                            lib$es6$promise$$internal$$reject(promise, error);
+                        }
+                    }, promise);
+                }
+                function lib$es6$promise$$internal$$handleOwnThenable(promise, thenable) {
+                    if (thenable._state === lib$es6$promise$$internal$$FULFILLED) {
+                        lib$es6$promise$$internal$$fulfill(promise, thenable._result);
+                    }
+                    else if (thenable._state === lib$es6$promise$$internal$$REJECTED) {
+                        lib$es6$promise$$internal$$reject(promise, thenable._result);
+                    }
+                    else {
+                        lib$es6$promise$$internal$$subscribe(thenable, undefined, function (value) {
+                            lib$es6$promise$$internal$$resolve(promise, value);
+                        }, function (reason) {
+                            lib$es6$promise$$internal$$reject(promise, reason);
+                        });
+                    }
+                }
+                function lib$es6$promise$$internal$$handleMaybeThenable(promise, maybeThenable) {
+                    if (maybeThenable.constructor === promise.constructor) {
+                        lib$es6$promise$$internal$$handleOwnThenable(promise, maybeThenable);
+                    }
+                    else {
+                        var then = lib$es6$promise$$internal$$getThen(maybeThenable);
+                        if (then === lib$es6$promise$$internal$$GET_THEN_ERROR) {
+                            lib$es6$promise$$internal$$reject(promise, lib$es6$promise$$internal$$GET_THEN_ERROR.error);
+                        }
+                        else if (then === undefined) {
+                            lib$es6$promise$$internal$$fulfill(promise, maybeThenable);
+                        }
+                        else if (lib$es6$promise$utils$$isFunction(then)) {
+                            lib$es6$promise$$internal$$handleForeignThenable(promise, maybeThenable, then);
+                        }
+                        else {
+                            lib$es6$promise$$internal$$fulfill(promise, maybeThenable);
+                        }
+                    }
+                }
+                function lib$es6$promise$$internal$$resolve(promise, value) {
+                    if (promise === value) {
+                        lib$es6$promise$$internal$$reject(promise, lib$es6$promise$$internal$$selfFullfillment());
+                    }
+                    else if (lib$es6$promise$utils$$objectOrFunction(value)) {
+                        lib$es6$promise$$internal$$handleMaybeThenable(promise, value);
+                    }
+                    else {
+                        lib$es6$promise$$internal$$fulfill(promise, value);
+                    }
+                }
+                function lib$es6$promise$$internal$$publishRejection(promise) {
+                    if (promise._onerror) {
+                        promise._onerror(promise._result);
+                    }
+                    lib$es6$promise$$internal$$publish(promise);
+                }
+                function lib$es6$promise$$internal$$fulfill(promise, value) {
+                    if (promise._state !== lib$es6$promise$$internal$$PENDING) {
+                        return;
+                    }
+                    promise._result = value;
+                    promise._state = lib$es6$promise$$internal$$FULFILLED;
+                    if (promise._subscribers.length !== 0) {
+                        lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publish, promise);
+                    }
+                }
+                function lib$es6$promise$$internal$$reject(promise, reason) {
+                    if (promise._state !== lib$es6$promise$$internal$$PENDING) {
+                        return;
+                    }
+                    promise._state = lib$es6$promise$$internal$$REJECTED;
+                    promise._result = reason;
+                    lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publishRejection, promise);
+                }
+                function lib$es6$promise$$internal$$subscribe(parent, child, onFulfillment, onRejection) {
+                    var subscribers = parent._subscribers;
+                    var length = subscribers.length;
+                    parent._onerror = null;
+                    subscribers[length] = child;
+                    subscribers[length + lib$es6$promise$$internal$$FULFILLED] = onFulfillment;
+                    subscribers[length + lib$es6$promise$$internal$$REJECTED] = onRejection;
+                    if (length === 0 && parent._state) {
+                        lib$es6$promise$asap$$asap(lib$es6$promise$$internal$$publish, parent);
+                    }
+                }
+                function lib$es6$promise$$internal$$publish(promise) {
+                    var subscribers = promise._subscribers;
+                    var settled = promise._state;
+                    if (subscribers.length === 0) {
+                        return;
+                    }
+                    var child, callback, detail = promise._result;
+                    for (var i = 0; i < subscribers.length; i += 3) {
+                        child = subscribers[i];
+                        callback = subscribers[i + settled];
+                        if (child) {
+                            lib$es6$promise$$internal$$invokeCallback(settled, child, callback, detail);
+                        }
+                        else {
+                            callback(detail);
+                        }
+                    }
+                    promise._subscribers.length = 0;
+                }
+                function lib$es6$promise$$internal$$ErrorObject() {
+                    this.error = null;
+                }
+                var lib$es6$promise$$internal$$TRY_CATCH_ERROR = new lib$es6$promise$$internal$$ErrorObject();
+                function lib$es6$promise$$internal$$tryCatch(callback, detail) {
+                    try {
+                        return callback(detail);
+                    }
+                    catch (e) {
+                        lib$es6$promise$$internal$$TRY_CATCH_ERROR.error = e;
+                        return lib$es6$promise$$internal$$TRY_CATCH_ERROR;
+                    }
+                }
+                function lib$es6$promise$$internal$$invokeCallback(settled, promise, callback, detail) {
+                    var hasCallback = lib$es6$promise$utils$$isFunction(callback), value, error, succeeded, failed;
+                    if (hasCallback) {
+                        value = lib$es6$promise$$internal$$tryCatch(callback, detail);
+                        if (value === lib$es6$promise$$internal$$TRY_CATCH_ERROR) {
+                            failed = true;
+                            error = value.error;
+                            value = null;
+                        }
+                        else {
+                            succeeded = true;
+                        }
+                        if (promise === value) {
+                            lib$es6$promise$$internal$$reject(promise, lib$es6$promise$$internal$$cannotReturnOwn());
+                            return;
+                        }
+                    }
+                    else {
+                        value = detail;
+                        succeeded = true;
+                    }
+                    if (promise._state !== lib$es6$promise$$internal$$PENDING) {
+                    }
+                    else if (hasCallback && succeeded) {
+                        lib$es6$promise$$internal$$resolve(promise, value);
+                    }
+                    else if (failed) {
+                        lib$es6$promise$$internal$$reject(promise, error);
+                    }
+                    else if (settled === lib$es6$promise$$internal$$FULFILLED) {
+                        lib$es6$promise$$internal$$fulfill(promise, value);
+                    }
+                    else if (settled === lib$es6$promise$$internal$$REJECTED) {
+                        lib$es6$promise$$internal$$reject(promise, value);
+                    }
+                }
+                function lib$es6$promise$$internal$$initializePromise(promise, resolver) {
+                    try {
+                        resolver(function resolvePromise(value) {
+                            lib$es6$promise$$internal$$resolve(promise, value);
+                        }, function rejectPromise(reason) {
+                            lib$es6$promise$$internal$$reject(promise, reason);
+                        });
+                    }
+                    catch (e) {
+                        lib$es6$promise$$internal$$reject(promise, e);
+                    }
+                }
+                function lib$es6$promise$enumerator$$Enumerator(Constructor, input) {
+                    var enumerator = this;
+                    enumerator._instanceConstructor = Constructor;
+                    enumerator.promise = new Constructor(lib$es6$promise$$internal$$noop);
+                    if (enumerator._validateInput(input)) {
+                        enumerator._input = input;
+                        enumerator.length = input.length;
+                        enumerator._remaining = input.length;
+                        enumerator._init();
+                        if (enumerator.length === 0) {
+                            lib$es6$promise$$internal$$fulfill(enumerator.promise, enumerator._result);
+                        }
+                        else {
+                            enumerator.length = enumerator.length || 0;
+                            enumerator._enumerate();
+                            if (enumerator._remaining === 0) {
+                                lib$es6$promise$$internal$$fulfill(enumerator.promise, enumerator._result);
+                            }
+                        }
+                    }
+                    else {
+                        lib$es6$promise$$internal$$reject(enumerator.promise, enumerator._validationError());
+                    }
+                }
+                lib$es6$promise$enumerator$$Enumerator.prototype._validateInput = function (input) {
+                    return lib$es6$promise$utils$$isArray(input);
+                };
+                lib$es6$promise$enumerator$$Enumerator.prototype._validationError = function () {
+                    return new OfficeExtension.Error('Array Methods must be provided an Array');
+                };
+                lib$es6$promise$enumerator$$Enumerator.prototype._init = function () {
+                    this._result = new Array(this.length);
+                };
+                var lib$es6$promise$enumerator$$default = lib$es6$promise$enumerator$$Enumerator;
+                lib$es6$promise$enumerator$$Enumerator.prototype._enumerate = function () {
+                    var enumerator = this;
+                    var length = enumerator.length;
+                    var promise = enumerator.promise;
+                    var input = enumerator._input;
+                    for (var i = 0; promise._state === lib$es6$promise$$internal$$PENDING && i < length; i++) {
+                        enumerator._eachEntry(input[i], i);
+                    }
+                };
+                lib$es6$promise$enumerator$$Enumerator.prototype._eachEntry = function (entry, i) {
+                    var enumerator = this;
+                    var c = enumerator._instanceConstructor;
+                    if (lib$es6$promise$utils$$isMaybeThenable(entry)) {
+                        if (entry.constructor === c && entry._state !== lib$es6$promise$$internal$$PENDING) {
+                            entry._onerror = null;
+                            enumerator._settledAt(entry._state, i, entry._result);
+                        }
+                        else {
+                            enumerator._willSettleAt(c.resolve(entry), i);
+                        }
+                    }
+                    else {
+                        enumerator._remaining--;
+                        enumerator._result[i] = entry;
+                    }
+                };
+                lib$es6$promise$enumerator$$Enumerator.prototype._settledAt = function (state, i, value) {
+                    var enumerator = this;
+                    var promise = enumerator.promise;
+                    if (promise._state === lib$es6$promise$$internal$$PENDING) {
+                        enumerator._remaining--;
+                        if (state === lib$es6$promise$$internal$$REJECTED) {
+                            lib$es6$promise$$internal$$reject(promise, value);
+                        }
+                        else {
+                            enumerator._result[i] = value;
+                        }
+                    }
+                    if (enumerator._remaining === 0) {
+                        lib$es6$promise$$internal$$fulfill(promise, enumerator._result);
+                    }
+                };
+                lib$es6$promise$enumerator$$Enumerator.prototype._willSettleAt = function (promise, i) {
+                    var enumerator = this;
+                    lib$es6$promise$$internal$$subscribe(promise, undefined, function (value) {
+                        enumerator._settledAt(lib$es6$promise$$internal$$FULFILLED, i, value);
+                    }, function (reason) {
+                        enumerator._settledAt(lib$es6$promise$$internal$$REJECTED, i, reason);
+                    });
+                };
+                function lib$es6$promise$promise$all$$all(entries) {
+                    return new lib$es6$promise$enumerator$$default(this, entries).promise;
+                }
+                var lib$es6$promise$promise$all$$default = lib$es6$promise$promise$all$$all;
+                function lib$es6$promise$promise$race$$race(entries) {
+                    var Constructor = this;
+                    var promise = new Constructor(lib$es6$promise$$internal$$noop);
+                    if (!lib$es6$promise$utils$$isArray(entries)) {
+                        lib$es6$promise$$internal$$reject(promise, new TypeError('You must pass an array to race.'));
+                        return promise;
+                    }
+                    var length = entries.length;
+                    function onFulfillment(value) {
+                        lib$es6$promise$$internal$$resolve(promise, value);
+                    }
+                    function onRejection(reason) {
+                        lib$es6$promise$$internal$$reject(promise, reason);
+                    }
+                    for (var i = 0; promise._state === lib$es6$promise$$internal$$PENDING && i < length; i++) {
+                        lib$es6$promise$$internal$$subscribe(Constructor.resolve(entries[i]), undefined, onFulfillment, onRejection);
+                    }
+                    return promise;
+                }
+                var lib$es6$promise$promise$race$$default = lib$es6$promise$promise$race$$race;
+                function lib$es6$promise$promise$resolve$$resolve(object) {
+                    var Constructor = this;
+                    if (object && typeof object === 'object' && object.constructor === Constructor) {
+                        return object;
+                    }
+                    var promise = new Constructor(lib$es6$promise$$internal$$noop);
+                    lib$es6$promise$$internal$$resolve(promise, object);
+                    return promise;
+                }
+                var lib$es6$promise$promise$resolve$$default = lib$es6$promise$promise$resolve$$resolve;
+                function lib$es6$promise$promise$reject$$reject(reason) {
+                    var Constructor = this;
+                    var promise = new Constructor(lib$es6$promise$$internal$$noop);
+                    lib$es6$promise$$internal$$reject(promise, reason);
+                    return promise;
+                }
+                var lib$es6$promise$promise$reject$$default = lib$es6$promise$promise$reject$$reject;
+                var lib$es6$promise$promise$$counter = 0;
+                function lib$es6$promise$promise$$needsResolver() {
+                    throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
+                }
+                function lib$es6$promise$promise$$needsNew() {
+                    throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
+                }
+                var lib$es6$promise$promise$$default = lib$es6$promise$promise$$Promise;
+                function lib$es6$promise$promise$$Promise(resolver) {
+                    this._id = lib$es6$promise$promise$$counter++;
+                    this._state = undefined;
+                    this._result = undefined;
+                    this._subscribers = [];
+                    if (lib$es6$promise$$internal$$noop !== resolver) {
+                        if (!lib$es6$promise$utils$$isFunction(resolver)) {
+                            lib$es6$promise$promise$$needsResolver();
+                        }
+                        if (!(this instanceof lib$es6$promise$promise$$Promise)) {
+                            lib$es6$promise$promise$$needsNew();
+                        }
+                        lib$es6$promise$$internal$$initializePromise(this, resolver);
+                    }
+                }
+                lib$es6$promise$promise$$Promise.all = lib$es6$promise$promise$all$$default;
+                lib$es6$promise$promise$$Promise.race = lib$es6$promise$promise$race$$default;
+                lib$es6$promise$promise$$Promise.resolve = lib$es6$promise$promise$resolve$$default;
+                lib$es6$promise$promise$$Promise.reject = lib$es6$promise$promise$reject$$default;
+                lib$es6$promise$promise$$Promise._setScheduler = lib$es6$promise$asap$$setScheduler;
+                lib$es6$promise$promise$$Promise._setAsap = lib$es6$promise$asap$$setAsap;
+                lib$es6$promise$promise$$Promise._asap = lib$es6$promise$asap$$asap;
+                lib$es6$promise$promise$$Promise.prototype = {
+                    constructor: lib$es6$promise$promise$$Promise,
+                    then: function (onFulfillment, onRejection) {
+                        var parent = this;
+                        var state = parent._state;
+                        if (state === lib$es6$promise$$internal$$FULFILLED && !onFulfillment || state === lib$es6$promise$$internal$$REJECTED && !onRejection) {
+                            return this;
+                        }
+                        var child = new this.constructor(lib$es6$promise$$internal$$noop);
+                        var result = parent._result;
+                        if (state) {
+                            var callback = arguments[state - 1];
+                            lib$es6$promise$asap$$asap(function () {
+                                lib$es6$promise$$internal$$invokeCallback(state, child, callback, result);
+                            });
+                        }
+                        else {
+                            lib$es6$promise$$internal$$subscribe(parent, child, onFulfillment, onRejection);
+                        }
+                        return child;
+                    },
+                    'catch': function (onRejection) {
+                        return this.then(null, onRejection);
+                    }
+                };
+                OfficeExtension["Promise"] = lib$es6$promise$promise$$default;
+            }).call(this);
+        }
+        PromiseImpl.Init = Init;
+    })(PromiseImpl || (PromiseImpl = {}));
+})(OfficeExtension || (OfficeExtension = {}));
+var OfficeExtension;
+(function (OfficeExtension) {
     (function (OperationType) {
         OperationType[OperationType["Default"] = 0] = "Default";
         OperationType[OperationType["Read"] = 1] = "Read";
     })(OfficeExtension.OperationType || (OfficeExtension.OperationType = {}));
     var OperationType = OfficeExtension.OperationType;
-})(OfficeExtension || (OfficeExtension = {}));
-var OfficeExtension;
-(function (OfficeExtension) {
-    var Promise = (function () {
-        function Promise(init) {
-            this.m_init = init;
-        }
-        Promise.prototype.then = function (doneCallback, failCallback) {
-            this.m_init(doneCallback, failCallback);
-        };
-        return Promise;
-    })();
-    OfficeExtension.Promise = Promise;
 })(OfficeExtension || (OfficeExtension = {}));
 var OfficeExtension;
 (function (OfficeExtension) {
@@ -960,12 +1476,22 @@ var OfficeExtension;
                 OfficeExtension.ActionFactory.createInstantiateAction(this.m_context, clientObject);
             }
         };
-
         References.prototype.remove = function (clientObject) {
             var referenceId = clientObject[OfficeExtension.Constants.referenceId];
             if (!OfficeExtension.Utility.isNullOrEmptyString(referenceId)) {
-                this.m_context.rootObject._RemoveReference(referenceId);
+                var rootObject = this.m_context._rootObject;
+                if (!rootObject) {
+                    rootObject = this.m_context.rootObject;
+                }
+                rootObject._RemoveReference(referenceId);
             }
+        };
+        References.prototype.removeAll = function () {
+            var rootObject = this.m_context._rootObject;
+            if (!rootObject) {
+                rootObject = this.m_context.rootObject;
+            }
+            rootObject._RemoveAllReferences();
         };
         return References;
     })();
@@ -977,6 +1503,8 @@ var OfficeExtension;
         function ResourceStrings() {
         }
         ResourceStrings.invalidObjectPath = "InvalidObjectPath";
+        ResourceStrings.propertyNotLoaded = "PropertyNotLoaded";
+        ResourceStrings.invalidRequestContext = "InvalidRequestContext";
         return ResourceStrings;
     })();
     OfficeExtension.ResourceStrings = ResourceStrings;
@@ -994,42 +1522,46 @@ var OfficeExtension;
                     headerArray.push(headers[headerName]);
                 }
             }
-
             var appPermission = 0;
-
-            return [customData, method, path, headerArray, body, appPermission, requestFlags];
+            var solutionId = "";
+            var instanceId = "";
+            var marketplaceType = "";
+            return [
+                customData,
+                method,
+                path,
+                headerArray,
+                body,
+                appPermission,
+                requestFlags,
+                solutionId,
+                instanceId,
+                marketplaceType
+            ];
         };
-
         RichApiMessageUtility.getResponseBody = function (result) {
             return RichApiMessageUtility.getResponseBodyFromSafeArray(result.value.data);
         };
-
         RichApiMessageUtility.getResponseHeaders = function (result) {
             return RichApiMessageUtility.getResponseHeadersFromSafeArray(result.value.data);
         };
-
         RichApiMessageUtility.getResponseBodyFromSafeArray = function (data) {
             return data[2 /* Body */];
         };
-
         RichApiMessageUtility.getResponseHeadersFromSafeArray = function (data) {
             var arrayHeader = data[1 /* Headers */];
             if (!arrayHeader) {
                 return null;
             }
-
             var headers = {};
             for (var i = 0; i < arrayHeader.length - 1; i += 2) {
                 headers[arrayHeader[i]] = arrayHeader[i + 1];
             }
-
             return headers;
         };
-
         RichApiMessageUtility.getResponseStatusCode = function (result) {
             return RichApiMessageUtility.getResponseStatusCodeFromSafeArray(result.value.data);
         };
-
         RichApiMessageUtility.getResponseStatusCodeFromSafeArray = function (data) {
             return data[0 /* StatusCode */];
         };
@@ -1044,131 +1576,174 @@ var OfficeExtension;
         }
         Utility.checkArgumentNull = function (value, name) {
         };
-
         Utility.isNullOrUndefined = function (value) {
             if (value === null) {
                 return true;
             }
-
             if (typeof (value) === "undefined") {
                 return true;
             }
-
             return false;
         };
-
         Utility.isUndefined = function (value) {
             if (typeof (value) === "undefined") {
                 return true;
             }
-
             return false;
         };
-
         Utility.isNullOrEmptyString = function (value) {
             if (value === null) {
                 return true;
             }
-
             if (typeof (value) === "undefined") {
                 return true;
             }
-
             if (value.length == 0) {
                 return true;
             }
-
             return false;
         };
-
         Utility.trim = function (str) {
             return str.replace(new RegExp("^\\s+|\\s+$", "g"), "");
         };
-
         Utility.caseInsensitiveCompareString = function (str1, str2) {
             if (Utility.isNullOrUndefined(str1)) {
                 return Utility.isNullOrUndefined(str2);
-            } else {
+            }
+            else {
                 if (Utility.isNullOrUndefined(str2)) {
                     return false;
-                } else {
+                }
+                else {
                     return str1.toUpperCase() == str2.toUpperCase();
                 }
             }
         };
-
         Utility.isReadonlyRestRequest = function (method) {
             return Utility.caseInsensitiveCompareString(method, "GET");
         };
-
-        Utility.setMethodArguments = function (argumentInfo, args) {
+        Utility.setMethodArguments = function (context, argumentInfo, args) {
             if (Utility.isNullOrUndefined(args)) {
                 return null;
             }
-
             var referencedObjectPaths = new Array();
             var referencedObjectPathIds = new Array();
             var hasOne = false;
             for (var i = 0; i < args.length; i++) {
                 if (args[i] instanceof OfficeExtension.ClientObject) {
                     var clientObject = args[i];
-                    args[i] = clientObject.objectPath.objectPathInfo.Id;
-                    referencedObjectPathIds.push(clientObject.objectPath.objectPathInfo.Id);
-                    referencedObjectPaths.push(clientObject.objectPath);
+                    Utility.validateContext(context, clientObject);
+                    args[i] = clientObject._objectPath.objectPathInfo.Id;
+                    referencedObjectPathIds.push(clientObject._objectPath.objectPathInfo.Id);
+                    referencedObjectPaths.push(clientObject._objectPath);
                     hasOne = true;
-                } else {
+                }
+                else {
                     referencedObjectPathIds.push(0);
                 }
             }
-
             argumentInfo.Arguments = args;
             if (hasOne) {
                 argumentInfo.ReferencedObjectPathIds = referencedObjectPathIds;
                 return referencedObjectPaths;
             }
-
             return null;
         };
-
         Utility.fixObjectPathIfNecessary = function (clientObject, value) {
-            if (clientObject && clientObject.objectPath && value) {
-                clientObject.objectPath.updateUsingObjectData(value);
+            if (clientObject && clientObject._objectPath && value) {
+                clientObject._objectPath.updateUsingObjectData(value);
             }
         };
-
         Utility.validateObjectPath = function (clientObject) {
-            var objectPath = clientObject.objectPath;
+            var objectPath = clientObject._objectPath;
             while (objectPath) {
                 if (!objectPath.isValid) {
-                    throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                    var pathExpression = Utility.getObjectPathExpression(objectPath);
+                    Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression);
                 }
                 objectPath = objectPath.parentObjectPath;
             }
         };
-
         Utility.validateReferencedObjectPaths = function (objectPaths) {
             if (objectPaths) {
                 for (var i = 0; i < objectPaths.length; i++) {
                     var objectPath = objectPaths[i];
                     while (objectPath) {
                         if (!objectPath.isValid) {
-                            throw Error(Utility.getResourceString(OfficeExtension.ResourceStrings.invalidObjectPath));
+                            var pathExpression = Utility.getObjectPathExpression(objectPath);
+                            Utility.throwError(OfficeExtension.ResourceStrings.invalidObjectPath, pathExpression);
                         }
                         objectPath = objectPath.parentObjectPath;
                     }
                 }
             }
         };
-
-        Utility.getResourceString = function (resourceId) {
-            return resourceId;
+        Utility.validateContext = function (context, obj) {
+            if (obj && obj.context !== context) {
+                Utility.throwError(OfficeExtension.ResourceStrings.invalidRequestContext);
+            }
         };
-
         Utility.log = function (message) {
             if (window.console && window.console.log) {
                 window.console.log(message);
             }
         };
+        Utility.load = function (clientObj, option) {
+            clientObj.context.load(clientObj, option);
+        };
+        Utility.throwError = function (resourceId, arg) {
+            throw new OfficeExtension.RuntimeError(resourceId, getResourceString(resourceId, arg), new Array(), {});
+            function getResourceString(resourceId, arg) {
+                var ret = resourceId;
+                if (window.Strings && window.Strings.OfficeOM) {
+                    var stringName = "L_" + resourceId;
+                    var stringValue = window.Strings.OfficeOM[stringName];
+                    if (stringValue) {
+                        ret = stringValue;
+                    }
+                }
+                if (!Utility.isNullOrUndefined(arg)) {
+                    ret = ret.replace("{0}", arg);
+                }
+                return ret;
+            }
+        };
+        Utility.throwIfNotLoaded = function (propertyName, fieldValue) {
+            if (Utility.isUndefined(fieldValue) && propertyName.charCodeAt(0) != Utility.s_underscoreCharCode) {
+                Utility.throwError(OfficeExtension.ResourceStrings.propertyNotLoaded, propertyName);
+            }
+        };
+        Utility.getObjectPathExpression = function (objectPath) {
+            var ret = "";
+            while (objectPath) {
+                switch (objectPath.objectPathInfo.ObjectPathType) {
+                    case 1 /* GlobalObject */:
+                        ret = ret;
+                        break;
+                    case 2 /* NewObject */:
+                        ret = "new()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 3 /* Method */:
+                        ret = Utility.normalizeName(objectPath.objectPathInfo.Name) + "()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 4 /* Property */:
+                        ret = Utility.normalizeName(objectPath.objectPathInfo.Name) + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 5 /* Indexer */:
+                        ret = "getItem()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                    case 6 /* ReferenceId */:
+                        ret = "_reference()" + (ret.length > 0 ? "." : "") + ret;
+                        break;
+                }
+                objectPath = objectPath.parentObjectPath;
+            }
+            return ret;
+        };
+        Utility.normalizeName = function (name) {
+            return name.substr(0, 1).toLowerCase() + name.substr(1);
+        };
+        Utility.s_underscoreCharCode = "_".charCodeAt(0);
         return Utility;
     })();
     OfficeExtension.Utility = Utility;

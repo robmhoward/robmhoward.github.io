@@ -1,6 +1,5 @@
-var ctx = new Excel.ExcelClientContext();
-var selectedRange = ctx.workbook.getSelectedRange();
-ctx.load(selectedRange);
+var ctx = new Excel.RequestContext();
+var selectedRange = ctx.workbook.getSelectedRange().load();
 ctx.executeAsync().then(function () {
 	console.log(selectedRange.address);
 	console.log("done");

@@ -1,16 +1,16 @@
-﻿declare module OfficeExtension {
+declare module OfficeExtension {
     class Action {
         private m_actionInfo;
         private m_isWriteOperation;
         constructor(actionInfo: ActionInfo, isWriteOperation: boolean);
-        public actionInfo : ActionInfo;
-        public isWriteOperation : boolean;
+        actionInfo: ActionInfo;
+        isWriteOperation: boolean;
     }
 }
 declare module OfficeExtension {
     class ActionFactory {
         static createSetPropertyAction(context: ClientRequestContext, parent: ClientObject, propertyName: string, value: any): Action;
-        static createMethodAction(context: ClientRequestContext, parent: ClientObject, methodName: string, operationType: OperationType, args: any[]): Action;
+        static createMethodAction(context: ClientRequestContext, parent: ClientObject, methodName: string, operationType: OperationType, args: Array<any>): Action;
         static createQueryAction(context: ClientRequestContext, parent: ClientObject, queryOption: QueryInfo): Action;
         static createInstantiateAction(context: ClientRequestContext, obj: ClientObject): Action;
         static createTraceAction(context: ClientRequestContext, message: string): Action;
@@ -21,9 +21,9 @@ declare module OfficeExtension {
         private m_context;
         private m_objectPath;
         constructor(context: ClientRequestContext, objectPath: ObjectPath);
-        public context : ClientRequestContext;
-        public objectPath : ObjectPath;
-        public handleResult(value: any): void;
+        context: ClientRequestContext;
+        _objectPath: ObjectPath;
+        _handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
@@ -35,18 +35,18 @@ declare module OfficeExtension {
         private m_referencedObjectPaths;
         private m_traceInfos;
         constructor(context: ClientRequestContext);
-        public flags : ClientRequestFlags;
-        public traceInfos : {
+        flags: ClientRequestFlags;
+        traceInfos: {
             [index: number]: string;
         };
-        public addAction(action: Action): void;
-        public addTrace(actionId: number, message: string): void;
-        public addReferencedObjectPath(objectPath: ObjectPath): void;
-        public addReferencedObjectPaths(objectPaths: ObjectPath[]): void;
-        public addActionResultHandler(action: Action, resultHandler: IResultHandler): void;
-        public buildRequestMessageBody(): RequestMessageBody;
-        public processResponse(msg: ResponseMessageBody): void;
-        public invalidatePendingInvalidObjectPaths(): void;
+        addAction(action: Action): void;
+        addTrace(actionId: number, message: string): void;
+        addReferencedObjectPath(objectPath: ObjectPath): void;
+        addReferencedObjectPaths(objectPaths: Array<ObjectPath>): void;
+        addActionResultHandler(action: Action, resultHandler: IResultHandler): void;
+        buildRequestMessageBody(): RequestMessageBody;
+        processResponse(msg: ResponseMessageBody): void;
+        invalidatePendingInvalidObjectPaths(): void;
     }
 }
 declare module OfficeExtension {
@@ -61,18 +61,19 @@ declare module OfficeExtension {
         private m_pendingRequest;
         private m_url;
         private m_references;
-        public m_requestExecutor: IRequestExecutor;
-        public rootObject: ClientObject;
-        public customData: string;
+        _requestExecutor: IRequestExecutor;
+        _rootObject: ClientObject;
+        _customData: string;
+        _processingResult: boolean;
         constructor(url?: string);
-        public pendingRequest : ClientRequest;
-        public references : References;
-        public load(clientObj: ClientObject, option?: any): void;
-        public trace(message: string): void;
+        _pendingRequest: ClientRequest;
+        references: References;
+        load(clientObj: ClientObject, option?: string | LoadOption): void;
+        trace(message: string): void;
         private parseSelectExpand(select);
         private executeAsyncPrivate(doneCallback, failCallback);
-        public executeAsync(): IPromise;
-        public nextId(): number;
+        executeAsync(): IPromise<ClientRequestResult>;
+        _nextId(): number;
     }
 }
 declare module OfficeExtension {
@@ -83,16 +84,17 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     class ClientRequestResult {
-        public errorCode: string;
-        public errorMessage: string;
-        public traceMessages: string[];
+        errorCode: string;
+        errorMessage: string;
+        traceMessages: Array<string>;
+        constructor(traceMessages: Array<string>);
     }
 }
 declare module OfficeExtension {
     class ClientResult<T> implements IResultHandler {
         private m_value;
-        public value : T;
-        public handleResult(value: any): void;
+        value: T;
+        _handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
@@ -109,15 +111,49 @@ declare module OfficeExtension {
     }
 }
 declare module OfficeExtension {
-    class InstantiateActionResultHandler implements IResultHandler {
-        private m_clientObject;
-        constructor(clientObject: ClientObject);
-        public handleResult(value: any): void;
+    class Error {
+        name: string;
+        message: string;
+        stack: string;
+        constructor(message?: string);
+    }
+    class RuntimeError extends Error {
+        traceMessages: Array<string>;
+        debugInfo: {
+            errorLocation?: string;
+        };
+        constructor(name: string, message: string, traceMessages: Array<string>, debugInfo: {
+            errorLocation?: string;
+        });
+        errorCode: string;
+        errorMessage: string;
+        toString(): string;
     }
 }
 declare module OfficeExtension {
-    interface IPromise {
-        then(doneCallback?: (result?: any) => void, fallCallback?: (result?: any) => void): any;
+    class ErrorCodes {
+        static accessDenied: string;
+        static generalException: string;
+    }
+}
+declare module OfficeExtension {
+    class InstantiateActionResultHandler implements IResultHandler {
+        private m_clientObject;
+        constructor(clientObject: ClientObject);
+        _handleResult(value: any): void;
+    }
+}
+declare module OfficeExtension {
+    interface IPromise<R> {
+        then<U>(onFulfilled?: (value: R) => IPromise<U>, onRejected?: (error: any) => IPromise<U>): IPromise<U>;
+        then<U>(onFulfilled?: (value: R) => IPromise<U>, onRejected?: (error: any) => U): IPromise<U>;
+        then<U>(onFulfilled?: (value: R) => IPromise<U>, onRejected?: (error: any) => void): IPromise<U>;
+        then<U>(onFulfilled?: (value: R) => U, onRejected?: (error: any) => IPromise<U>): IPromise<U>;
+        then<U>(onFulfilled?: (value: R) => U, onRejected?: (error: any) => U): IPromise<U>;
+        then<U>(onFulfilled?: (value: R) => U, onRejected?: (error: any) => void): IPromise<U>;
+        catch<U>(onRejected?: (error: any) => IPromise<U>): IPromise<U>;
+        catch<U>(onRejected?: (error: any) => U): IPromise<U>;
+        catch<U>(onRejected?: (error: any) => void): IPromise<U>;
     }
 }
 declare module OfficeExtension {
@@ -142,7 +178,7 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     interface IResultHandler {
-        handleResult(value: any): void;
+        _handleResult(value: any): void;
     }
 }
 declare module OfficeExtension {
@@ -176,12 +212,12 @@ declare module OfficeExtension {
         ReferenceId = 6,
     }
     interface ArgumentInfo {
-        Arguments?: any[];
-        ReferencedObjectPathIds?: number[];
+        Arguments?: Array<any>;
+        ReferencedObjectPathIds?: Array<number>;
     }
     interface QueryInfo {
-        Select?: string[];
-        Expand?: string[];
+        Select?: Array<string>;
+        Expand?: Array<string>;
         Skip?: number;
         Top?: number;
     }
@@ -205,7 +241,7 @@ declare module OfficeExtension {
         ArgumentInfo?: ArgumentInfo;
     }
     interface RequestMessageBody {
-        Actions: ActionInfo[];
+        Actions: Array<ActionInfo>;
         ObjectPaths: {
             [Id: number]: ObjectPathInfo;
         };
@@ -213,11 +249,12 @@ declare module OfficeExtension {
     interface ErrorInfo {
         Code: string;
         Message: string;
+        Location: string;
     }
     interface ResponseMessageBody {
         Error: ErrorInfo;
-        Results: ActionResult[];
-        TraceIds: number[];
+        Results: Array<ActionResult>;
+        TraceIds: Array<number>;
     }
 }
 declare module OfficeExtension {
@@ -230,14 +267,14 @@ declare module OfficeExtension {
         private m_isInvalidAfterRequest;
         private m_isValid;
         constructor(objectPathInfo: ObjectPathInfo, parentObjectPath: ObjectPath, isCollection: boolean, isInvalidAfterRequest: boolean);
-        public objectPathInfo : ObjectPathInfo;
-        public isWriteOperation : boolean;
-        public isCollection : boolean;
-        public isInvalidAfterRequest : boolean;
-        public parentObjectPath : ObjectPath;
-        public argumentObjectPaths : ObjectPath[];
-        public isValid : boolean;
-        public updateUsingObjectData(value: Object): void;
+        objectPathInfo: ObjectPathInfo;
+        isWriteOperation: boolean;
+        isCollection: boolean;
+        isInvalidAfterRequest: boolean;
+        parentObjectPath: ObjectPath;
+        argumentObjectPaths: Array<ObjectPath>;
+        isValid: boolean;
+        updateUsingObjectData(value: Object): void;
     }
 }
 declare module OfficeExtension {
@@ -245,9 +282,9 @@ declare module OfficeExtension {
         static createGlobalObjectObjectPath(context: ClientRequestContext): ObjectPath;
         static createNewObjectObjectPath(context: ClientRequestContext, typeName: string, isCollection?: boolean): ObjectPath;
         static createPropertyObjectPath(context: ClientRequestContext, parent: ClientObject, propertyName: string, isCollection?: boolean, isInvalidAfterRequest?: boolean): ObjectPath;
-        static createIndexerObjectPath(context: ClientRequestContext, parent: ClientObject, args: any[]): ObjectPath;
-        static createIndexerObjectPathUsingParentPath(context: ClientRequestContext, parentObjectPath: ObjectPath, args: any[]): ObjectPath;
-        static createMethodObjectPath(context: ClientRequestContext, parent: ClientObject, methodName: string, operationType: OperationType, args: any[], isCollection?: boolean, isInvalidAfterRequest?: boolean): ObjectPath;
+        static createIndexerObjectPath(context: ClientRequestContext, parent: ClientObject, args: Array<any>): ObjectPath;
+        static createIndexerObjectPathUsingParentPath(context: ClientRequestContext, parentObjectPath: ObjectPath, args: Array<any>): ObjectPath;
+        static createMethodObjectPath(context: ClientRequestContext, parent: ClientObject, methodName: string, operationType: OperationType, args: Array<any>, isCollection?: boolean, isInvalidAfterRequest?: boolean): ObjectPath;
         static createChildItemObjectPathUsingIndexer(context: ClientRequestContext, parent: ClientObject, childItem: Object): ObjectPath;
         static createChildItemObjectPathUsingGetItemAt(context: ClientRequestContext, parent: ClientObject, childItem: Object, index: number): ObjectPath;
         static createReferenceIdObjectPath(context: ClientRequestContext, referenceId: string): ObjectPath;
@@ -255,13 +292,14 @@ declare module OfficeExtension {
 }
 declare module OfficeExtension {
     class OfficeJsRequestExecutor implements IRequestExecutor {
-        public executeAsync(customData: string, requestFlags: number, requestMessage: IRequestExecutorRequestMessage, callback: (responseMessage: IRequestExecutorResponseMessage) => void): void;
+        private static OfficeJsErrorCode_ooeNoCapability;
+        executeAsync(customData: string, requestFlags: number, requestMessage: IRequestExecutorRequestMessage, callback: (responseMessage: IRequestExecutorResponseMessage) => void): void;
     }
 }
 declare module OfficeExtension {
     class OfficeXHRSettings {
-        public oldxhr: () => IXMLHttpRequest;
-        public executeRichApiRequestAsync: (message: any[], callback: (result: OSF.DDA.RichApi.ExecuteRichApiRequestResult) => void) => void;
+        oldxhr: () => IXMLHttpRequest;
+        executeRichApiRequestAsync: (message: Array<any>, callback: (result: OSF.DDA.RichApi.ExecuteRichApiRequestResult) => void) => void;
     }
     function resetXHRFactory(oldFactory: () => IXMLHttpRequest): () => IXMLHttpRequest;
     function officeXHRFactory(): OfficeXHR;
@@ -276,24 +314,27 @@ declare module OfficeExtension {
         private m_allResponseHeaders;
         private m_responseHeaders;
         private m_requestHeaders;
-        public onreadystatechange: () => void;
-        public readyState: number;
-        public status: number;
-        public statusText: string;
-        public response: any;
-        public responseText: string;
-        public responseType: string;
-        public open(method: string, url: string): void;
-        public abort(): void;
-        public send(body: string): void;
-        public setRequestHeader(header: string, value: string): void;
-        public getResponseHeader(header: string): string;
-        public getAllResponseHeaders(): string;
-        public overrideMimeType(mimeType: string): void;
+        onreadystatechange: () => void;
+        readyState: number;
+        status: number;
+        statusText: string;
+        response: any;
+        responseText: string;
+        responseType: string;
+        open(method: string, url: string): void;
+        abort(): void;
+        send(body: string): void;
+        setRequestHeader(header: string, value: string): void;
+        getResponseHeader(header: string): string;
+        getAllResponseHeaders(): string;
+        overrideMimeType(mimeType: string): void;
         private innerXhrOnreadystatechage();
         private officeContextRequestCallback(result);
         private setAllResponseHeaders(allResponseHeaders);
     }
+}
+declare module OfficeExtension {
+    function _EnsurePromise(): void;
 }
 declare module OfficeExtension {
     enum OperationType {
@@ -302,40 +343,36 @@ declare module OfficeExtension {
     }
 }
 declare module OfficeExtension {
-    class Promise implements IPromise {
-        private m_init;
-        constructor(init: (doneCallback: (result?: any) => void, failCallback: (result?: any) => void) => void);
-        public then(doneCallback: (result?: any) => void, failCallback: (result?: any) => void): void;
-    }
-}
-declare module OfficeExtension {
     class References {
         private m_context;
         constructor(context: ClientRequestContext);
-        public add(clientObject: ClientObject): void;
-        public remove(clientObject: ClientObject): void;
+        add(clientObject: ClientObject): void;
+        remove(clientObject: ClientObject): void;
+        removeAll(): void;
     }
 }
 declare module OfficeExtension {
     class ResourceStrings {
         static invalidObjectPath: string;
+        static propertyNotLoaded: string;
+        static invalidRequestContext: string;
     }
 }
 declare module OfficeExtension {
     class RichApiMessageUtility {
         static buildRequestMessageSafeArray(customData: string, requestFlags: number, method: string, path: string, headers: {
             [name: string]: string;
-        }, body: string): any[];
+        }, body: string): Array<any>;
         static getResponseBody(result: OSF.DDA.RichApi.ExecuteRichApiRequestResult): string;
         static getResponseHeaders(result: OSF.DDA.RichApi.ExecuteRichApiRequestResult): {
             [name: string]: string;
         };
-        static getResponseBodyFromSafeArray(data: any[]): string;
-        static getResponseHeadersFromSafeArray(data: any[]): {
+        static getResponseBodyFromSafeArray(data: Array<any>): string;
+        static getResponseHeadersFromSafeArray(data: Array<any>): {
             [name: string]: string;
         };
         static getResponseStatusCode(result: OSF.DDA.RichApi.ExecuteRichApiRequestResult): number;
-        static getResponseStatusCodeFromSafeArray(data: any[]): number;
+        static getResponseStatusCodeFromSafeArray(data: Array<any>): number;
     }
 }
 declare module OfficeExtension {
@@ -347,11 +384,17 @@ declare module OfficeExtension {
         static trim(str: string): string;
         static caseInsensitiveCompareString(str1: string, str2: string): boolean;
         static isReadonlyRestRequest(method: string): boolean;
-        static setMethodArguments(argumentInfo: ArgumentInfo, args: any[]): ObjectPath[];
+        static setMethodArguments(context: ClientRequestContext, argumentInfo: ArgumentInfo, args: Array<any>): Array<ObjectPath>;
         static fixObjectPathIfNecessary(clientObject: ClientObject, value: Object): void;
         static validateObjectPath(clientObject: ClientObject): void;
-        static validateReferencedObjectPaths(objectPaths: ObjectPath[]): void;
-        static getResourceString(resourceId: string): string;
+        static validateReferencedObjectPaths(objectPaths: Array<ObjectPath>): void;
+        static validateContext(context: ClientRequestContext, obj: ClientObject): void;
         static log(message: string): void;
+        static load(clientObj: ClientObject, option?: string | LoadOption): void;
+        private static s_underscoreCharCode;
+        static throwError(resourceId: string, arg?: string): void;
+        static throwIfNotLoaded(propertyName: string, fieldValue: any): void;
+        static getObjectPathExpression(objectPath: ObjectPath): string;
+        private static normalizeName(name);
     }
 }

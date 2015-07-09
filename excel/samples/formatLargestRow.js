@@ -1,6 +1,5 @@
-var ctx = new Excel.ExcelClientContext();
-var rows = ctx.workbook.tables.getItem("Table1").tableRows;
-ctx.load(rows);
+var ctx = new Excel.RequestContext();
+var rows = ctx.workbook.tables.getItem("Table1").tableRows.load();
 ctx.executeAsync().then(function () {
 	var largestRow = 0;
 	var largestValue = 0;
