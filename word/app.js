@@ -103,7 +103,7 @@ wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFact
     $scope.insideOffice = insideOffice;
 
     $scope.switchOfficeVersion = function() {
-        officeVersion = $scope.selectedBuild;
+        officeVersion = $scope.selectedBuild.name;
 
         // Reload Monaco Editor
         initializeMonacoEditor();
