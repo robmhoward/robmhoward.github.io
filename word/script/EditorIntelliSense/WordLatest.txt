@@ -2,9 +2,7 @@ declare module Word {
     class Body extends OfficeExtension.ClientObject {
         private m_contentControls;
         private m_font;
-        private m_html;
         private m_inlinePictures;
-        private m_ooxml;
         private m_paragraphs;
         private m_parentContentControl;
         private m_style;
@@ -15,8 +13,6 @@ declare module Word {
         inlinePictures: Word.InlinePictureCollection;
         paragraphs: Word.ParagraphCollection;
         parentContentControl: Word.ContentControl;
-        html: string;
-        ooxml: string;
         style: string;
         /**
          *
@@ -25,14 +21,17 @@ declare module Word {
         text: string;
         _ReferenceId: string;
         clear(): void;
-        insertBreak(bt: string, loc: string): void;
+        getHtml(): OfficeExtension.ClientResult<string>;
+        getOoxml(): OfficeExtension.ClientResult<string>;
+        insertBreak(breakType: string, insertLocation: string): void;
         insertContentControl(): Word.ContentControl;
-        insertFile(path: string, loc: string): Word.Range;
-        insertHtml(html: string, loc: string): Word.Range;
-        insertOoxml(ooxml: string, loc: string): Word.Range;
-        insertParagraph(paragraphText: string, loc: string): Word.Paragraph;
-        insertText(txt: string, loc: string): Word.Range;
+        insertFileFromBase64(base64File: string, insertLocation: string): Word.Range;
+        insertHtml(html: string, insertLocation: string): Word.Range;
+        insertOoxml(ooxml: string, insertLocation: string): Word.Range;
+        insertParagraph(paragraphText: string, insertLocation: string): Word.Paragraph;
+        insertText(text: string, insertLocation: string): Word.Range;
         search(searchText: string, searchOptions?: Word.SearchOptions): Word.SearchResultCollection;
+        select(): void;
         _KeepReference(): void;
         /** Handle results returned from the document
          * @private
@@ -41,7 +40,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Body;
+        load(option?: string | OfficeExtension.LoadOption): Word.Body;
         _initReferenceId(value: string): void;
     }
     class ContentControl extends OfficeExtension.ClientObject {
@@ -51,12 +50,11 @@ declare module Word {
         private m_color;
         private m_contentControls;
         private m_font;
-        private m_html;
         private m_id;
         private m_inlinePictures;
-        private m_ooxml;
         private m_paragraphs;
         private m_parentContentControl;
+        private m_placeholderText;
         private m_removeWhenEdited;
         private m_style;
         private m_tag;
@@ -73,9 +71,8 @@ declare module Word {
         cannotDelete: boolean;
         cannotEdit: boolean;
         color: string;
-        html: string;
         id: number;
-        ooxml: string;
+        placeholderText: string;
         removeWhenEdited: boolean;
         style: string;
         tag: string;
@@ -85,12 +82,15 @@ declare module Word {
         _ReferenceId: string;
         clear(): void;
         delete(keepContent: boolean): void;
-        insertBreak(bt: string, loc: string): void;
-        insertFile(path: string, loc: string): Word.Range;
-        insertHtml(html: string, loc: string): Word.Range;
-        insertOoxml(ooxml: string, loc: string): Word.Range;
-        insertParagraph(paragraphText: string, loc: string): Word.Paragraph;
-        insertText(txt: string, loc: string): Word.Range;
+        getHtml(): OfficeExtension.ClientResult<string>;
+        getOoxml(): OfficeExtension.ClientResult<string>;
+        insertBreak(breakType: string, insertLocation: string): void;
+        insertFileFromBase64(base64File: string, insertLocation: string): Word.Range;
+        insertHtml(html: string, insertLocation: string): Word.Range;
+        insertOoxml(ooxml: string, insertLocation: string): Word.Range;
+        insertParagraph(paragraphText: string, insertLocation: string): Word.Paragraph;
+        insertText(text: string, insertLocation: string): Word.Range;
+        search(searchText: string, searchOptions?: Word.SearchOptions): Word.SearchResultCollection;
         select(): void;
         _KeepReference(): void;
         /** Handle results returned from the document
@@ -100,7 +100,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.ContentControl;
+        load(option?: string | OfficeExtension.LoadOption): Word.ContentControl;
         _initReferenceId(value: string): void;
     }
     class ContentControlCollection extends OfficeExtension.ClientObject {
@@ -109,9 +109,9 @@ declare module Word {
         /** Gets the loaded child items in this collection. */
         items: Array<Word.ContentControl>;
         _ReferenceId: string;
-        getById(Id: number): Word.ContentControl;
-        getByTag(Tag: string): Word.ContentControlCollection;
-        getByTitle(Title: string): Word.ContentControlCollection;
+        getById(id: number): Word.ContentControl;
+        getByTag(tag: string): Word.ContentControlCollection;
+        getByTitle(title: string): Word.ContentControlCollection;
         getItem(index: number): Word.ContentControl;
         _KeepReference(): void;
         /** Handle results returned from the document
@@ -121,7 +121,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.ContentControlCollection;
+        load(option?: string | OfficeExtension.LoadOption): Word.ContentControlCollection;
         _initReferenceId(value: string): void;
     }
     class Document extends OfficeExtension.ClientObject {
@@ -133,6 +133,11 @@ declare module Word {
         contentControls: Word.ContentControlCollection;
         sections: Word.SectionCollection;
         saved: boolean;
+        /**
+         *
+         * Gets the currently selected range from the document.
+         *
+         */
         getSelection(): Word.Range;
         save(): void;
         _GetObjectByReferenceId(referenceId: string): OfficeExtension.ClientResult<any>;
@@ -146,7 +151,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Document;
+        load(option?: string | OfficeExtension.LoadOption): Word.Document;
     }
     class Font extends OfficeExtension.ClientObject {
         private m_bold;
@@ -181,7 +186,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Font;
+        load(option?: string | OfficeExtension.LoadOption): Word.Font;
         _initReferenceId(value: string): void;
     }
     class InlinePicture extends OfficeExtension.ClientObject {
@@ -213,7 +218,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.InlinePicture;
+        load(option?: string | OfficeExtension.LoadOption): Word.InlinePicture;
         _initReferenceId(value: string): void;
     }
     class InlinePictureCollection extends OfficeExtension.ClientObject {
@@ -231,7 +236,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.InlinePictureCollection;
+        load(option?: string | OfficeExtension.LoadOption): Word.InlinePictureCollection;
         _initReferenceId(value: string): void;
     }
     class Paragraph extends OfficeExtension.ClientObject {
@@ -239,13 +244,11 @@ declare module Word {
         private m_contentControls;
         private m_firstLineIndent;
         private m_font;
-        private m_html;
         private m_inlinePictures;
         private m_leftIndent;
         private m_lineSpacing;
         private m_lineUnitAfter;
         private m_lineUnitBefore;
-        private m_ooxml;
         private m_outlineLevel;
         private m_parentContentControl;
         private m_rightIndent;
@@ -261,12 +264,10 @@ declare module Word {
         parentContentControl: Word.ContentControl;
         alignment: string;
         firstLineIndent: number;
-        html: string;
         leftIndent: number;
         lineSpacing: number;
         lineUnitAfter: number;
         lineUnitBefore: number;
-        ooxml: string;
         outlineLevel: number;
         rightIndent: number;
         spaceAfter: number;
@@ -277,14 +278,17 @@ declare module Word {
         _ReferenceId: string;
         clear(): void;
         delete(): void;
-        insertBreak(bt: string, loc: string): void;
+        getHtml(): OfficeExtension.ClientResult<string>;
+        getOoxml(): OfficeExtension.ClientResult<string>;
+        insertBreak(breakType: string, insertLocation: string): void;
         insertContentControl(): Word.ContentControl;
-        insertFile(path: string, loc: string): Word.Range;
-        insertHtml(html: string, loc: string): Word.Range;
-        insertInlinePictureFromBase64(base64EncodedImage: string, loc: string): Word.InlinePicture;
-        insertOoxml(ooxml: string, loc: string): Word.Range;
-        insertParagraph(paragraphText: string, loc: string): Word.Paragraph;
-        insertText(txt: string, loc: string): Word.Range;
+        insertFileFromBase64(base64File: string, insertLocation: string): Word.Range;
+        insertHtml(html: string, insertLocation: string): Word.Range;
+        insertInlinePictureFromBase64(base64EncodedImage: string, insertLocation: string): Word.InlinePicture;
+        insertOoxml(ooxml: string, insertLocation: string): Word.Range;
+        insertParagraph(paragraphText: string, insertLocation: string): Word.Paragraph;
+        insertText(text: string, insertLocation: string): Word.Range;
+        search(searchText: string, searchOptions?: Word.SearchOptions): Word.SearchResultCollection;
         select(): void;
         _KeepReference(): void;
         /** Handle results returned from the document
@@ -294,7 +298,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Paragraph;
+        load(option?: string | OfficeExtension.LoadOption): Word.Paragraph;
         _initReferenceId(value: string): void;
     }
     class ParagraphCollection extends OfficeExtension.ClientObject {
@@ -312,14 +316,12 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.ParagraphCollection;
+        load(option?: string | OfficeExtension.LoadOption): Word.ParagraphCollection;
         _initReferenceId(value: string): void;
     }
     class Range extends OfficeExtension.ClientObject {
         private m_contentControls;
         private m_font;
-        private m_html;
-        private m_ooxml;
         private m_paragraphs;
         private m_parentContentControl;
         private m_style;
@@ -330,21 +332,22 @@ declare module Word {
         font: Word.Font;
         paragraphs: Word.ParagraphCollection;
         parentContentControl: Word.ContentControl;
-        html: string;
-        ooxml: string;
         style: string;
         text: string;
         _Id: number;
         _ReferenceId: string;
         clear(): void;
         delete(): void;
-        insertBreak(bt: string, loc: string): void;
+        getHtml(): OfficeExtension.ClientResult<string>;
+        getOoxml(): OfficeExtension.ClientResult<string>;
+        insertBreak(breakType: string, insertLocation: string): void;
         insertContentControl(): Word.ContentControl;
-        insertFile(path: string, loc: string): Word.Range;
-        insertHtml(html: string, loc: string): Word.Range;
-        insertOoxml(ooxml: string, loc: string): Word.Range;
-        insertParagraph(paragraphText: string, loc: string): Word.Paragraph;
-        insertText(txt: string, loc: string): Word.Range;
+        insertFileFromBase64(base64File: string, insertLocation: string): Word.Range;
+        insertHtml(html: string, insertLocation: string): Word.Range;
+        insertOoxml(ooxml: string, insertLocation: string): Word.Range;
+        insertParagraph(paragraphText: string, insertLocation: string): Word.Paragraph;
+        insertText(text: string, insertLocation: string): Word.Range;
+        search(searchText: string, searchOptions?: Word.SearchOptions): Word.SearchResultCollection;
         select(): void;
         _KeepReference(): void;
         /** Handle results returned from the document
@@ -354,7 +357,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Range;
+        load(option?: string | OfficeExtension.LoadOption): Word.Range;
         _initReferenceId(value: string): void;
     }
     class SearchOptions extends OfficeExtension.ClientObject {
@@ -381,7 +384,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.SearchOptions;
+        load(option?: string | OfficeExtension.LoadOption): Word.SearchOptions;
         /**
          * Create a new instance of Word.SearchOptions object
          */
@@ -402,7 +405,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.SearchResultCollection;
+        load(option?: string | OfficeExtension.LoadOption): Word.SearchResultCollection;
         _initReferenceId(value: string): void;
     }
     class Section extends OfficeExtension.ClientObject {
@@ -422,7 +425,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.Section;
+        load(option?: string | OfficeExtension.LoadOption): Word.Section;
         _initReferenceId(value: string): void;
     }
     class SectionCollection extends OfficeExtension.ClientObject {
@@ -440,7 +443,7 @@ declare module Word {
         /**
          * Load properties
          */
-        load(option?: OfficeExtension.LoadOption): Word.SectionCollection;
+        load(option?: string | OfficeExtension.LoadOption): Word.SectionCollection;
         _initReferenceId(value: string): void;
     }
     /**
