@@ -48,7 +48,9 @@
 		{ "done": true, "filename": "deleteAxisTitle.js", "name": "Hide Axis Title", "group": "Chart", "description": "Hide the Title of Value Axis" }, 
 		{ "done": true, "filename": "deleteChart.js", "name": "Delete Chart", "group": "Chart", "description": "Delete Chart Named Chart1" }, 
 		{ "done": true, "filename": "deleteChartTitle.js", "name": "Hide Chart Title", "group": "Chart", "description": "Hide the title of Chart1" },
-		{ "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
+        { "done": true, "filename": "getActiveWorksheet.js", "name": "Get Active Worksheet", "group": "Worksheet", "description": "Get the name of the workbook's active worksheet" },
+        { "done": true, "filename": "eventHandler.js", "name": "Monitor Data Change Event on a Table", "group": "Table;Complex", "description": "Create a table binding to monitor data changes in the table. When data is changed, the background color of the table will be changed to orange." },
+		{ "done": true, "filename": "reference.js", "name": "Keep Reference to a Range", "group": "Range", "description": "Keep reference to a Range" },
 		{ "done": true, "filename": "deleteActiveWorksheet.js", "name": "Delete Active Worksheet", "group": "Worksheet", "description": "Delete the active worksheet from the workbook"} 
 	],
 	"groups": [
