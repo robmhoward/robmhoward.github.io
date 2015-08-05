@@ -1,6 +1,5 @@
-var ctx = new Excel.ExcelClientContext();
-var tables = ctx.workbook.tables;
-ctx.load(tables);
+var ctx = new Excel.RequestContext();
+var tables = ctx.workbook.tables.load();
 ctx.executeAsync().then(function () {
 	for (var i = 0; i < tables.count; i++)
 	{

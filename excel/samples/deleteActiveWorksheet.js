@@ -1,3 +1,3 @@
-var ctx = new Excel.ExcelClientContext();
-ctx.workbook.worksheets.getActiveWorksheet().deleteObject();
+var ctx = new Excel.RequestContext();
+ctx.workbook.worksheets.getActiveWorksheet().delete();
 ctx.executeAsync().then();

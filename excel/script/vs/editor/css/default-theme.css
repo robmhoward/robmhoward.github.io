@@ -2,7 +2,7 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 .monaco-editor, .monaco-editor .inputarea {
-	font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", "Inconsolata", "Courier New", monospace;
+	font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
 	font-size: 14px;
 	line-height: 19px;
 	color: #333;
@@ -46,10 +46,10 @@
 	background-color: #f9f7f7;
 }
 .monaco-editor .wordHighlight {
-	background-color: rgba(253, 255, 0, 0.28);
+	background-color: rgba(87, 87, 87, 0.25);
 }
 .monaco-editor .wordHighlightStrong {
-	background-color: rgba(249, 206, 130, 0.7);
+	background-color: rgba(14, 99, 156, 0.25);
 }
 .monaco-editor .selectionHighlight {
 	background-color: rgba(173, 214, 255, 0.3);

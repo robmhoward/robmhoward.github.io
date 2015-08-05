@@ -1,6 +1,5 @@
-var ctx = new Excel.ExcelClientContext();
-var application = ctx.workbook.application;
-ctx.load(application);
+var ctx = new Excel.RequestContext();
+var application = ctx.workbook.application.load();
 ctx.executeAsync().then(function() {
 	console.log(application.calculationMode);
 	console.log("done");
