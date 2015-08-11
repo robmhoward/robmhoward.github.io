@@ -93,13 +93,13 @@ var Word;
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Clear", 0 /* Default */, []);
         };
         Body.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
         Body.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
@@ -129,7 +129,7 @@ var Word;
             return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
         };
         Body.prototype.select = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 1 /* Read */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
         Body.prototype._KeepReference = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
@@ -376,13 +376,13 @@ var Word;
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, [keepContent]);
         };
         ContentControl.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
         ContentControl.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
@@ -405,11 +405,8 @@ var Word;
         ContentControl.prototype.insertText = function (text, insertLocation) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [text, insertLocation], false, true));
         };
-        ContentControl.prototype.search = function (searchText, searchOptions) {
-            return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
-        };
         ContentControl.prototype.select = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 1 /* Read */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
         ContentControl.prototype._KeepReference = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
@@ -1019,7 +1016,7 @@ var Word;
             enumerable: true,
             configurable: true
         });
-        InlinePictureCollection.prototype.getItem = function (index) {
+        InlinePictureCollection.prototype._GetItem = function (index) {
             return new Word.InlinePicture(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
         InlinePictureCollection.prototype._KeepReference = function () {
@@ -1261,13 +1258,13 @@ var Word;
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
         Paragraph.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
         Paragraph.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
@@ -1296,11 +1293,8 @@ var Word;
         Paragraph.prototype.insertText = function (text, insertLocation) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [text, insertLocation], false, true));
         };
-        Paragraph.prototype.search = function (searchText, searchOptions) {
-            return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
-        };
         Paragraph.prototype.select = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 1 /* Read */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
         Paragraph.prototype._KeepReference = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
@@ -1396,7 +1390,7 @@ var Word;
             enumerable: true,
             configurable: true
         });
-        ParagraphCollection.prototype.getItem = function (index) {
+        ParagraphCollection.prototype._GetItem = function (index) {
             return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
         ParagraphCollection.prototype._KeepReference = function () {
@@ -1518,43 +1512,40 @@ var Word;
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Delete", 0 /* Default */, []);
         };
         Range.prototype.getHtml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetHtml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
         Range.prototype.getOoxml = function () {
-            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 1 /* Read */, []);
+            var action = OfficeExtension.ActionFactory.createMethodAction(this.context, this, "GetOoxml", 0 /* Default */, []);
             var ret = new OfficeExtension.ClientResult();
             this.context._pendingRequest.addActionResultHandler(action, ret);
             return ret;
         };
         Range.prototype.insertBreak = function (breakType, insertLocation) {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "InsertBreak", 0 /* Default */, [breakType, insertLocation]);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "InsertBreak", 1 /* Read */, [breakType, insertLocation]);
         };
         Range.prototype.insertContentControl = function () {
-            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 0 /* Default */, [], false, true));
+            return new Word.ContentControl(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertContentControl", 1 /* Read */, [], false, true));
         };
         Range.prototype.insertFileFromBase64 = function (base64File, insertLocation) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 0 /* Default */, [base64File, insertLocation], false, true));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertFileFromBase64", 1 /* Read */, [base64File, insertLocation], false, true));
         };
         Range.prototype.insertHtml = function (html, insertLocation) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 0 /* Default */, [html, insertLocation], false, true));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertHtml", 1 /* Read */, [html, insertLocation], false, true));
         };
         Range.prototype.insertOoxml = function (ooxml, insertLocation) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 0 /* Default */, [ooxml, insertLocation], false, true));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertOoxml", 1 /* Read */, [ooxml, insertLocation], false, true));
         };
         Range.prototype.insertParagraph = function (paragraphText, insertLocation) {
-            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 0 /* Default */, [paragraphText, insertLocation], false, true));
+            return new Word.Paragraph(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertParagraph", 1 /* Read */, [paragraphText, insertLocation], false, true));
         };
         Range.prototype.insertText = function (text, insertLocation) {
-            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 0 /* Default */, [text, insertLocation], false, true));
-        };
-        Range.prototype.search = function (searchText, searchOptions) {
-            return new Word.SearchResultCollection(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "Search", 1 /* Read */, [searchText, searchOptions], true, true));
+            return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createMethodObjectPath(this.context, this, "InsertText", 1 /* Read */, [text, insertLocation], false, true));
         };
         Range.prototype.select = function () {
-            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 1 /* Read */, []);
+            OfficeExtension.ActionFactory.createMethodAction(this.context, this, "Select", 0 /* Default */, []);
         };
         Range.prototype._KeepReference = function () {
             OfficeExtension.ActionFactory.createMethodAction(this.context, this, "_KeepReference", 1 /* Read */, []);
@@ -1762,7 +1753,7 @@ var Word;
             enumerable: true,
             configurable: true
         });
-        SearchResultCollection.prototype.getItem = function (index) {
+        SearchResultCollection.prototype._GetItem = function (index) {
             return new Word.Range(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
         SearchResultCollection.prototype._KeepReference = function () {
@@ -1882,7 +1873,7 @@ var Word;
             enumerable: true,
             configurable: true
         });
-        SectionCollection.prototype.getItem = function (index) {
+        SectionCollection.prototype._GetItem = function (index) {
             return new Word.Section(this.context, OfficeExtension.ObjectPathFactory.createIndexerObjectPath(this.context, this, [index]));
         };
         SectionCollection.prototype._KeepReference = function () {
