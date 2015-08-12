@@ -29,6 +29,13 @@ function initializeMonacoEditor() {
             "/word/script/EditorIntelliSense/Helpers.txt",
             "/word/script/EditorIntelliSense/jquery.txt",
     ]);
+    
+    var ua = navigator.userAgent;    
+    var ipad = ua.indexOf("iPad");    
+    if (ipad >= 0)
+    {
+         $("TxtRichApiScript").addClass("script_box_ipad");
+    }
 }
 
 function createJSFile (filename) {
