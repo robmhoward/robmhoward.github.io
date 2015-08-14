@@ -103,7 +103,7 @@ wordSamplesApp.factory("wordSamplesFactory", ['$http', function ($http) {
 
 wordSamplesApp.controller("SamplesController", function ($scope, wordSamplesFactory) {
     $scope.samples = [{ name: "Loading..." }];
-    $scope.builds = [{ name: "6007.1000"}, { name: "4229.1005"}, { name: "4229.1002"}, { name: "4229.1001"}, { name: "4229.1000"}, { name: "4220"}, { name : "4201"}];
+    $scope.builds = [{ name: "6007.1000"}, { name: "4229.1005"}];
     $scope.selectedSample = { description: "No sample loaded" };
     $scope.selectedBuild = $scope.builds[0];
     $scope.debugOption = { value: false };
