@@ -9,3 +9,11 @@
 .debug-text {
     color: blue;
 }
+
+.script_box {
+    flex-grow: 1;    
+}
+
+.script_box_ipad {
+    height: 400px;
+}

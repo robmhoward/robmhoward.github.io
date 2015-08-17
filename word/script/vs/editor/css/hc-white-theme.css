@@ -52,11 +52,6 @@
 	box-shadow: none;
 }
 .monaco-editor.hc-white .bracket-match { box-shadow: inset 0 0 0 1px #000; }
-.monaco-editor.hc-white .monaco-tree.focused .selected > .content	{ background-color: #242829; }
-.monaco-editor.hc-white .monaco-tree.focused .focused > .content	{ background-color: #484b4c; }
-.monaco-editor.hc-white .monaco-tree .selected > .content			{ background-color: #1D1F21; }
-.monaco-editor.hc-white .monaco-tree .focused > .content			{ background-color: #2a2d2e; }
-.monaco-editor.hc-white .monaco-tree .content:hover				{ background-color: #27292a; }
 .monaco-editor.hc-white .linked-editing { box-shadow: inset 0 0 0 1px #000; }
 .monaco-editor.hc-white .new-snippet				{ background-color: rgba(100, 105, 110, 0.1); }
 .monaco-editor.hc-white .snippet-placeholder		{ background-color: rgba(124, 124, 124, 0.1); }

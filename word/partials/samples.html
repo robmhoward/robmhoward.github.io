@@ -1,5 +1,8 @@
 <div class="container" style="display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 5px;">
     <div class="select_input">
+        <select ng-model="selectedBuild" ng-change="switchOfficeVersion()" ng-options="build.name for build in builds">
+        </select>
+        <br />
         <select ng-model="selectedGroup" ng-options="group.name for group in groups">
             <option value="">-- choose a group --</option>
         </select>
@@ -7,7 +10,7 @@
             <option value="">-- choose a sample --</option>
         </select>
     </div>
-    <div class="button_input" ng-hide="!insideOffice">
+    <div class="button_input">
        <button id="runButton" ng-click="runSelectedSample()">Run!</button>
        <button id="clearButton" ng-click="clearLog()">Clear Log</button>
        <label><input type="checkbox" ng-model="debugOption.value" ng-change="toggleDebugOption()" />Debug</label><br />
@@ -15,7 +18,7 @@
     <div class="sample_text">
         <p>{{selectedSample.description}}</p>
     </div>
-    <div style="flex-grow: 1" id="TxtRichApiScript">
+    <div class="script_box" id="TxtRichApiScript">
 
     </div>
     <div ng-hide="!insideOffice">

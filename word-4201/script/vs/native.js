@@ -1,0 +1,1 @@
+"use strict";define("vs/native",{load:function(e,t,n){self.MonacoEnvironment.appRoot||n.onError(new Error("missing appRoot")),self.require.nodeRequire||n.onError(new Error("missing nodeRequire"));try{var r=self.require.nodeRequire(self.MonacoEnvironment.appRoot+"/"+e);n(r)}catch(i){n.onError(i)}}});

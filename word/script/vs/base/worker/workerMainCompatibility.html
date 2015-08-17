@@ -23,13 +23,13 @@
 	});
 	
 	require(['vs/base/worker/workerServer'], function(ws) {
-		var workerServer = new ws.WorkerServer(function (msg) {
-			window.parent.postMessage(ws.marshallObject(msg), '*'); 
+		var workerServer = ws.create(function (msg) {
+			window.parent.postMessage(msg, '*'); 
 		});
 		window.isEmulatedWorker = true;
 		
 		var readyListener = function (ev) {
-			workerServer.onmessage(ws.demarshallObject(ev.data));
+			workerServer.onmessage(ev.data);
 		};
 		if (window.attachEvent) {
 			window.detachEvent('onmessage', beforeReadyListener);
