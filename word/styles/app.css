@@ -1,4 +1,5 @@
-﻿.container {
+
+.container {
     background-color: lightgray;
 }
 
@@ -16,4 +17,28 @@
 
 .script_box_ipad {
     height: 400px;
+}
+
+.header {
+	width:100%;
+	height: 60px;
+}
+
+.title {
+	font-size:20px;
+	color:black;
+	float:left;
+	cursor:default;
+}
+
+body {
+	font-family: 'Segoe UI', Helvetica, Tahoma, Arial, sans-serif;
+}
+
+.copyright {
+	font-size:10;
+}
+
+p {
+	font-size:13;
 }

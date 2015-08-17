@@ -1,4 +1,12 @@
-<div class="container" style="display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 5px;">
+
+    <div class="container" style="display:flex; flex-direction: column; position: absolute; top:0px; bottom: 0px; left: 0px; right: 0px; padding: 5px;">
+            <div class="header">
+            <h2 class="title">Word JavaScript API Snippet Explorer (Preview)</h2>
+        </div>
+    
+    <p>Welcome! Learn how to implement the new Word JavaScript APIs (Preview) with code snippets.<p>
+    <h3>Choose the API</h3>
+    
     <div class="select_input">
         <select ng-model="selectedBuild" ng-change="switchOfficeVersion()" ng-options="build.name for build in builds">
         </select>
@@ -15,6 +23,7 @@
        <button id="clearButton" ng-click="clearLog()">Clear Log</button>
        <label><input type="checkbox" ng-model="debugOption.value" ng-change="toggleDebugOption()" />Debug</label><br />
     </div>
+    <h3>Sample code</h3>
     <div class="sample_text">
         <p>{{selectedSample.description}}</p>
     </div>
@@ -24,4 +33,12 @@
     <div ng-hide="!insideOffice">
         <textarea style="width:100%; height:150px;" id="console"></textarea>
     </div>
+    
+        <div>
+        <h3>Is the explorer helpful? </h3>
+        <p>Let us know what you think on <a href="http://officespdev.uservoice.com/">User Voice</a>.</p>
+        <h3>Want to share your code?</h3>
+        <p>The code snippets referenced by the explorer are available <a href="https://github.com/robmhoward/robmhoward.github.io/tree/master/word/samples">here</a>. To share your own code snippets, submit a pull request.</p>
+    </div>
+    <div><span class="copyright">&copy; 2015 Microsoft</span></div>
 </div>
